@@ -7,2153 +7,321 @@
     <title>MarineStream - Revolutionizing Biofouling Management</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        /* CSS Variables */
-        :root {
-            /* Light Theme Colors */
-            --bg-primary-light: #ffffff;
-            --bg-secondary-light: #f7f9fc;
-            --bg-tertiary-light: #eef2f8;
-            --text-primary-light: #222831;
-            --text-secondary-light: #4e5968;
-            --accent-primary-light: #6c5ce7;
-            --accent-secondary-light: #00cec9;
-            --accent-tertiary-light: #0984e3;
-            --card-shadow-light: 0 10px 30px rgba(0, 0, 0, 0.08);
-            --card-border-light: 1px solid rgba(0, 0, 0, 0.05);
-
-            /* Dark Theme Colors */
-            --bg-primary-dark: #13151a;
-            --bg-secondary-dark: #1a1d24;
-            --bg-tertiary-dark: #242831;
-            --text-primary-dark: #e9ecef;
-            --text-secondary-dark: #b1b7c3;
-            --accent-primary-dark: #a29bfe;
-            --accent-secondary-dark: #81ecec;
-            --accent-tertiary-dark: #74b9ff;
-            --card-shadow-dark: 0 10px 30px rgba(0, 0, 0, 0.2);
-            --card-border-dark: 1px solid rgba(255, 255, 255, 0.05);
-
-            /* Theme Independent */
-            --gradient-primary: linear-gradient(135deg, var(--accent-primary), var(--accent-tertiary));
-            --gradient-secondary: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
-
-            /* Applied theme colors (set via JS) */
-            --bg-primary: var(--bg-primary-light);
-            --bg-secondary: var(--bg-secondary-light);
-            --bg-tertiary: var(--bg-tertiary-light);
-            --text-primary: var(--text-primary-light);
-            --text-secondary: var(--text-secondary-light);
-            --accent-primary: var(--accent-primary-light);
-            --accent-secondary: var(--accent-secondary-light);
-            --accent-tertiary: var(--accent-tertiary-light);
-            --card-shadow: var(--card-shadow-light);
-            --card-border: var(--card-border-light);
-
-            /* Typography */
-            --font-primary: 'Space Grotesk', sans-serif;
-            --font-secondary: 'Inter', sans-serif;
-
-            /* Spacing */
-            --spacing-xs: 0.5rem;
-            --spacing-sm: 1rem;
-            --spacing-md: 2rem;
-            --spacing-lg: 4rem;
-            --spacing-xl: 8rem;
-
-            /* Radius */
-            --radius-sm: 6px;
-            --radius-md: 12px;
-            --radius-lg: 20px;
-            --radius-xl: 28px;
-            --radius-full: 9999px;
-
-            /* Transitions */
-            --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-medium: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-
-            /* Z-index */
-            --z-header: 1000;
-            --z-overlay: 900;
-            --z-modal: 1100;
-        }
-
-        /* Dark Mode Theme */
-        html[data-theme="dark"] {
-            --bg-primary: var(--bg-primary-dark);
-            --bg-secondary: var(--bg-secondary-dark);
-            --bg-tertiary: var(--bg-tertiary-dark);
-            --text-primary: var(--text-primary-dark);
-            --text-secondary: var(--text-secondary-dark);
-            --accent-primary: var(--accent-primary-dark);
-            --accent-secondary: var(--accent-secondary-dark);
-            --accent-tertiary: var(--accent-tertiary-dark);
-            --card-shadow: var(--card-shadow-dark);
-            --card-border: var(--card-border-dark);
-        }
-
-        /* Global Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: var(--font-secondary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            background-color: var(--bg-primary);
-            font-size: 16px;
-            overflow-x: hidden;
-            transition: background-color var(--transition-medium), color var(--transition-medium);
-        }
-
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            font-family: var(--font-primary);
-            font-weight: 700;
-            line-height: 1.2;
-            color: var(--text-primary);
-            transition: color var(--transition-medium);
-        }
-
-        h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            margin-bottom: var(--spacing-md);
-            letter-spacing: -0.02em;
-        }
-
-        h2 {
-            font-size: clamp(2rem, 4vw, 3rem);
-            margin-bottom: var(--spacing-md);
-            letter-spacing: -0.02em;
-        }
-
-        h3 {
-            font-size: clamp(1.5rem, 3vw, 2rem);
-            margin-bottom: var(--spacing-sm);
-            letter-spacing: -0.01em;
-        }
-
-        p {
-            margin-bottom: var(--spacing-md);
-            color: var(--text-secondary);
-            font-size: clamp(1rem, 1.5vw, 1.125rem);
-            transition: color var(--transition-medium);
-        }
-
-        a {
-            color: var(--accent-primary);
-            text-decoration: none;
-            transition: var(--transition-medium);
-            position: relative;
-        }
-
-        a:after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -4px;
-            left: 0;
-            background-color: var(--accent-secondary);
-            transition: var(--transition-medium);
-        }
-
-        a:hover {
-            color: var(--accent-secondary);
-        }
-
-        a:hover:after {
-            width: 100%;
-        }
-
-        button,
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 28px;
-            font-size: 1rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            border: none;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: var(--transition-medium);
-            position: relative;
-            overflow: hidden;
-            font-family: var(--font-primary);
-            z-index: 1;
-            color: white;
-        }
-
-        .btn-primary {
-            background: var(--gradient-primary);
-            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
-        }
-
-        .btn-primary:active {
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            border: 2px solid var(--accent-primary);
-            color: var(--accent-primary);
-        }
-
-        .btn-secondary:hover {
-            background-color: rgba(108, 92, 231, 0.1);
-            transform: translateY(-3px);
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: var(--transition-medium);
-            z-index: -1;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 var(--spacing-sm);
-        }
-
-        section {
-            padding: var(--spacing-xl) 0;
-            position: relative;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-            border-radius: var(--radius-md);
-            transition: var(--transition-medium);
-        }
-
-        ul {
-            list-style-type: none;
-            margin-bottom: var(--spacing-md);
-        }
-
-        ul li {
-            position: relative;
-            padding-left: 1.5rem;
-            margin-bottom: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        ul li::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0.75rem;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--accent-secondary);
-        }
-
-        .section-heading {
-            position: relative;
-            display: inline-block;
-            margin-bottom: var(--spacing-lg);
-            z-index: 1;
-        }
-
-        .section-heading::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 60px;
-            height: 4px;
-            background: var(--gradient-secondary);
-            border-radius: var(--radius-sm);
-        }
-
-        .text-gradient {
-            background-image: var(--gradient-primary);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            display: inline-block;
-        }
-
-        .visually-hidden {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-
-        /* Theme Toggle */
-        .theme-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--bg-tertiary);
-            border: none;
-            cursor: pointer;
-            transition: var(--transition-medium);
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            margin-left: var(--spacing-sm);
-        }
-
-        .theme-toggle:hover {
-            background: var(--bg-secondary);
-            transform: translateY(-2px);
-        }
-
-        /* Grid Layout */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: var(--spacing-md);
-        }
-
-        .grid-center {
-            align-items: center;
-        }
-
-        .col-1 {
-            grid-column: span 1;
-        }
-
-        .col-2 {
-            grid-column: span 2;
-        }
-
-        .col-3 {
-            grid-column: span 3;
-        }
-
-        .col-4 {
-            grid-column: span 4;
-        }
-
-        .col-5 {
-            grid-column: span 5;
-        }
-
-        .col-6 {
-            grid-column: span 6;
-        }
-
-        .col-7 {
-            grid-column: span 7;
-        }
-
-        .col-8 {
-            grid-column: span 8;
-        }
-
-        .col-9 {
-            grid-column: span 9;
-        }
-
-        .col-10 {
-            grid-column: span 10;
-        }
-
-        .col-11 {
-            grid-column: span 11;
-        }
-
-        .col-12 {
-            grid-column: span 12;
-        }
-
-        /* Card Styles */
-        .card {
-            background-color: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-md);
-            transition: var(--transition-medium);
-            position: relative;
-            z-index: 1;
-            overflow: hidden;
-            height: 100%;
-            border: var(--card-border);
-        }
-
-        .card-shadow {
-            box-shadow: var(--card-shadow);
-        }
-
-        .card-shadow:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-gradient {
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-        }
-
-        .card-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 70px;
-            height: 70px;
-            border-radius: var(--radius-md);
-            background: var(--gradient-primary);
-            margin-bottom: var(--spacing-md);
-            color: white;
-            font-size: 28px;
-            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
-        }
-
-        /* Header Styles */
-        header {
-            background-color: rgba(var(--bg-primary-rgb, 255, 255, 255), 0.98);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            left: 0;
-            z-index: var(--z-header);
-            transition: var(--transition-medium);
-            border-bottom: 1px solid transparent;
-        }
-
-        header.scrolled {
-            border-bottom: 1px solid rgba(var(--text-primary-rgb, 0, 0, 0), 0.05);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        }
-
-        html[data-theme="dark"] header.scrolled {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: var(--spacing-sm) 0;
-            height: 80px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            font-family: var(--font-primary);
-            font-weight: 700;
-            font-size: 1.75rem;
-            color: var(--text-primary);
-            letter-spacing: -0.02em;
-            transition: color var(--transition-medium);
-        }
-
-        .logo span {
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        nav {
-            display: flex;
-            align-items: center;
-        }
-
-        nav ul {
-            display: flex;
-            margin: 0;
-        }
-
-        nav ul li {
-            margin: 0 0 0 var(--spacing-md);
-            padding: 0;
-        }
-
-        nav ul li::before {
-            display: none;
-        }
-
-        nav ul li a {
-            color: var(--text-primary);
-            font-weight: 500;
-            padding: 0.5rem 0;
-            position: relative;
-            transition: color var(--transition-medium);
-        }
-
-        nav ul li a:hover {
-            color: var(--accent-primary);
-        }
-
-        nav ul li a.active {
-            color: var(--accent-primary);
-        }
-
-        nav ul li a.active::after {
-            width: 100%;
-        }
-
-        .mobile-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-primary);
-            z-index: 2000;
-            transition: color var(--transition-medium);
-        }
-
-        /* Page Content */
-        .page-content {
-            padding-top: 80px;
-            min-height: calc(100vh - 80px);
-        }
-
-        /* Hide all pages initially */
-        .page {
-            display: none;
-            opacity: 0;
-            transition: opacity var(--transition-medium);
-        }
-
-        /* Show active page */
-        .page.active {
-            display: block;
-            opacity: 1;
-        }
-
-        /* Hero Section */
-        .hero {
-            position: relative;
-            overflow: hidden;
-            background-color: var(--bg-primary);
-            padding: calc(var(--spacing-xl) * 1.5) 0;
-        }
-
-        .hero .container {
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-content {
-            max-width: 650px;
-        }
-
-        .hero h1 {
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .hero p {
-            font-size: clamp(1.125rem, 2vw, 1.5rem);
-            margin-bottom: var(--spacing-md);
-            color: var(--text-secondary);
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .hero-image {
-            position: absolute;
-            right: -5%;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 55%;
-            max-width: 750px;
-            border-radius: var(--radius-xl);
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            border: var(--card-border);
-            background-color: var(--bg-tertiary);
-        }
-
-        .hero-image img {
-            width: 100%;
-            height: auto;
-            transition: transform var(--transition-slow);
-        }
-
-        .hero-image:hover img {
-            transform: scale(1.05);
-        }
-
-        /* Blob Backgrounds */
-        .blob {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            filter: blur(80px);
-            opacity: 0.06;
-            z-index: 1;
-            transition: opacity var(--transition-medium);
-        }
-
-        html[data-theme="dark"] .blob {
-            opacity: 0.08;
-        }
-
-        .blob-1 {
-            background-color: var(--accent-primary);
-            top: -300px;
-            right: -100px;
-            border-radius: 62% 38% 59% 41% / 65% 44% 56% 35%;
-            animation: blob-morph 25s linear infinite alternate;
-        }
-
-        .blob-2 {
-            background-color: var(--accent-secondary);
-            bottom: -300px;
-            left: -100px;
-            border-radius: 38% 62% 41% 59% / 44% 65% 35% 56%;
-            animation: blob-morph 30s linear infinite alternate;
-        }
-
-        @keyframes blob-morph {
-            0% {
-                border-radius: 62% 38% 59% 41% / 65% 44% 56% 35%;
-            }
-
-            25% {
-                border-radius: 45% 55% 67% 33% / 57% 48% 52% 43%;
-            }
-
-            50% {
-                border-radius: 35% 65% 48% 52% / 37% 63% 37% 63%;
-            }
-
-            75% {
-                border-radius: 58% 42% 38% 62% / 44% 54% 46% 56%;
-            }
-
-            100% {
-                border-radius: 62% 38% 59% 41% / 65% 44% 56% 35%;
-            }
-        }
-
-        /* Features Section */
-        .features {
-            background-color: var(--bg-primary);
-            position: relative;
-            z-index: 2;
-            transition: background-color var(--transition-medium);
-        }
-
-        .features-heading {
-            text-align: center;
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .features-heading p {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .feature-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--spacing-md);
-        }
-
-        /* About Section Home */
-        .about-home {
-            background-color: var(--bg-tertiary);
-            position: relative;
-            z-index: 2;
-            transition: background-color var(--transition-medium);
-        }
-
-        .about-home h2,
-        .about-home p {
-            max-width: 800px;
-        }
-
-        /* Products Section Home */
-        .products-home {
-            text-align: center;
-            position: relative;
-            z-index: 2;
-            background-color: var(--bg-primary);
-            transition: background-color var(--transition-medium);
-        }
-
-        .products-home p {
-            max-width: 800px;
-            margin: 0 auto var(--spacing-md);
-        }
-
-        /* Contact Section Home */
-        .contact-home {
-            background-color: var(--bg-secondary);
-            position: relative;
-            z-index: 2;
-            transition: background-color var(--transition-medium);
-        }
-
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--spacing-lg);
-        }
-
-        .contact-form-container,
-        .contact-info {
-            padding: var(--spacing-md);
-        }
-
-        .contact-form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group {
-            margin-bottom: var(--spacing-md);
-            position: relative;
-        }
-
-        .form-group label {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            font-size: 1rem;
-            color: var(--text-secondary);
-            pointer-events: none;
-            transition: var(--transition-fast);
-            background-color: transparent;
-        }
-
-        .form-group input:focus~label,
-        .form-group textarea:focus~label,
-        .form-group input:not(:placeholder-shown)~label,
-        .form-group textarea:not(:placeholder-shown)~label {
-            top: -12px;
-            left: 10px;
-            font-size: 0.85rem;
-            padding: 0 5px;
-            background-color: var(--bg-secondary);
-            color: var(--accent-primary);
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid rgba(var(--text-primary-rgb, 0, 0, 0), 0.1);
-            border-radius: var(--radius-md);
-            font-size: 1rem;
-            transition: var(--transition-medium);
-            background-color: var(--bg-primary);
-            font-family: var(--font-secondary);
-            color: var(--text-primary);
-        }
-
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: transparent;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
-        }
-
-        html[data-theme="dark"] .form-group input,
-        html[data-theme="dark"] .form-group textarea {
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        html[data-theme="dark"] .form-group input:focus,
-        html[data-theme="dark"] .form-group textarea:focus {
-            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
-        }
-
-        .contact-info h3 {
-            margin-bottom: var(--spacing-md);
-            color: var(--accent-primary);
-        }
-
-        .contact-info-item {
-            display: flex;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .contact-info-icon {
-            margin-right: var(--spacing-sm);
-            font-size: 1.25rem;
-            color: var(--accent-primary);
-        }
-
-        /* About Page */
-        .about-page-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .about-section {
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: var(--spacing-md);
-            margin-top: var(--spacing-md);
-        }
-
-        .team-member {
-            text-align: center;
-        }
-
-        .team-image {
-            width: 100%;
-            aspect-ratio: 1;
-            border-radius: 50%;
-            overflow: hidden;
-            margin: 0 auto var(--spacing-sm);
-            box-shadow: var(--card-shadow);
-            background-color: var(--bg-tertiary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            color: var(--accent-primary);
-            transition: var(--transition-medium);
-            transform: translateY(0);
-        }
-
-        .team-member:hover .team-image {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .team-name {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-            color: var(--accent-primary);
-        }
-
-        .team-role {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        /* Products Page */
-        .product-detail {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: var(--spacing-lg);
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .product-image {
-            width: 100%;
-            aspect-ratio: 4/3;
-            background-color: var(--bg-tertiary);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            color: var(--accent-primary);
-            box-shadow: var(--card-shadow);
-            transition: var(--transition-medium);
-            border: var(--card-border);
-        }
-
-        .product-image:hover {
-            transform: scale(1.02);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
-        }
-
-        .product-feature {
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .live-streaming {
-            background-color: var(--bg-tertiary);
-            padding: var(--spacing-lg);
-            border-radius: var(--radius-lg);
-            margin: var(--spacing-xl) 0;
-            position: relative;
-            overflow: hidden;
-            border: var(--card-border);
-            transition: background-color var(--transition-medium);
-        }
-
-        .video-placeholder {
-            position: relative;
-            max-width: 800px;
-            margin: var(--spacing-md) auto var(--spacing-lg);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-        }
-
-        .video-container {
-            width: 100%;
-            height: 0;
-            padding-bottom: 56.25%;
-            position: relative;
-            background-color: var(--bg-secondary);
-            transition: background-color var(--transition-medium);
-        }
-
-        .video-text {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            color: var(--text-secondary);
-            transition: color var(--transition-medium);
-        }
-
-        .play-button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
-            background: var(--gradient-primary);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: var(--transition-medium);
-            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.25);
-            z-index: 10;
-        }
-
-        .play-button::before {
-            content: '';
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 12px 0 12px 20px;
-            border-color: transparent transparent transparent white;
-            margin-left: 5px;
-        }
-
-        .play-button:hover {
-            transform: translate(-50%, -50%) scale(1.1);
-            box-shadow: 0 15px 35px rgba(108, 92, 231, 0.35);
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--bg-tertiary);
-            padding: var(--spacing-lg) 0 var(--spacing-md);
-            position: relative;
-            z-index: 2;
-            transition: background-color var(--transition-medium);
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--spacing-lg);
-        }
-
-        .footer-info h3,
-        .footer-links h3 {
-            margin-bottom: var(--spacing-md);
-            position: relative;
-            display: inline-block;
-        }
-
-        .footer-info h3::after,
-        .footer-links h3::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            width: 40px;
-            height: 3px;
-            background: var(--gradient-secondary);
-            border-radius: var(--radius-sm);
-        }
-
-        .footer-links ul {
-            margin-left: 0;
-        }
-
-        .footer-links ul li {
-            margin-bottom: var(--spacing-sm);
-            padding-left: 0;
-        }
-
-        .footer-links ul li::before {
-            display: none;
-        }
-
-        .footer-links ul li a {
-            color: var(--text-secondary);
-            transition: var(--transition-medium);
-        }
-
-        .footer-links ul li a:hover {
-            color: var(--accent-primary);
-        }
-
-        .footer-links ul li a::after {
-            background-color: var(--accent-primary);
-        }
-
-        .copyright {
-            margin-top: var(--spacing-lg);
-            padding-top: var(--spacing-md);
-            border-top: 1px solid rgba(var(--text-primary-rgb, 0, 0, 0), 0.05);
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
-        html[data-theme="dark"] .copyright {
-            border-top-color: rgba(255, 255, 255, 0.05);
-        }
-
-        /* Animations */
-        .fade-up {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        .fade-up.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .fade-in {
-            opacity: 0;
-            transition: opacity 0.6s ease;
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-        }
-
-        .slide-in-left {
-            opacity: 0;
-            transform: translateX(-50px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        .slide-in-left.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .slide-in-right {
-            opacity: 0;
-            transform: translateX(50px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        .slide-in-right.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        /* Modern Shape Dividers */
-        .shape-divider {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            overflow: hidden;
-            line-height: 0;
-            z-index: 1;
-        }
-
-        .shape-divider svg {
-            position: relative;
-            display: block;
-            width: calc(100% + 1.3px);
-            height: 120px;
-            transform-origin: center;
-            transition: fill var(--transition-medium);
-        }
-
-        .shape-divider.top {
-            top: 0;
-            bottom: auto;
-            transform: rotate(180deg);
-        }
-
-        .shape-divider.curve .shape-fill {
-            fill: var(--bg-primary);
-        }
-
-        .shape-divider.wave .shape-fill {
-            fill: var(--bg-tertiary);
-        }
-
-        .shape-divider.tilt .shape-fill {
-            fill: var(--bg-secondary);
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 1200px) {
-            .hero-image {
-                position: relative;
-                transform: none;
-                top: auto;
-                right: auto;
-                width: 100%;
-                margin-top: var(--spacing-lg);
-            }
-
-            .hero {
-                padding: calc(var(--spacing-xl)) 0;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .col-md-12 {
-                grid-column: span 12;
-            }
-
-            .col-md-6 {
-                grid-column: span 6;
-            }
-
-            .col-md-4 {
-                grid-column: span 4;
-            }
-
-            .col-md-3 {
-                grid-column: span 3;
-            }
-
-            .product-detail {
-                grid-template-columns: 1fr;
-            }
-
-            .header-content {
-                padding: 10px 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .col-sm-12 {
-                grid-column: span 12;
-            }
-
-            .col-sm-6 {
-                grid-column: span 6;
-            }
-
-            .grid {
-                gap: var(--spacing-sm);
-            }
-
-            .mobile-toggle {
-                display: block;
-            }
-
-            nav {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                width: 80%;
-                height: 100vh;
-                background-color: var(--bg-primary);
-                transition: var(--transition-medium);
-                box-shadow: var(--card-shadow);
-                padding: 100px var(--spacing-md) var(--spacing-md);
-                overflow-y: auto;
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            nav.active {
-                right: 0;
-            }
-
-            nav ul {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            nav ul li {
-                margin: 0 0 var(--spacing-sm);
-                width: 100%;
-            }
-
-            nav ul li a {
-                display: block;
-                font-size: 1.25rem;
-                padding: var(--spacing-sm) 0;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-                gap: var(--spacing-sm);
-            }
-
-            .hero-buttons .btn {
-                width: 100%;
-            }
-
-            .theme-toggle {
-                position: absolute;
-                top: 20px;
-                right: 20px;
-            }
-
-            .hero {
-                padding: var(--spacing-xl) 0 var(--spacing-lg);
-            }
-
-            section {
-                padding: var(--spacing-lg) 0;
-            }
-
-            .shape-divider svg {
-                height: 60px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            :root {
-                --spacing-xl: 4rem;
-                --spacing-lg: 2.5rem;
-                --spacing-md: 1.5rem;
-            }
-
-            .col-xs-12 {
-                grid-column: span 12;
-            }
-
-            h1 {
-                font-size: 2.25rem;
-            }
-
-            h2 {
-                font-size: 1.75rem;
-            }
-
-            .feature-cards {
-                grid-template-columns: 1fr;
-            }
-
-            .product-image,
-            .team-image {
-                width: 100%;
-            }
-
-            .contact-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Dashboard / App Style Elements */
-        .app-card {
-            background-color: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-md);
-            border: var(--card-border);
-            box-shadow: var(--card-shadow);
-            transition: var(--transition-medium);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .app-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .app-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: var(--radius-md);
-            background: var(--accent-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: var(--spacing-sm);
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        .app-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: var(--spacing-xs);
-            color: var(--text-primary);
-        }
-
-        .app-count {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin-top: auto;
-            padding-top: var(--spacing-sm);
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: var(--spacing-md);
-            margin-top: var(--spacing-lg);
-        }
-        :root {
-            /* Light mode colors */
-            --bg-primary: #f8f9fa;
-            --bg-secondary: #f1f8fc;
-            --text-primary: #2d3748;
-            --text-secondary: #4a5568;
-            --accent-primary: #4662f5;
-            --accent-secondary: #38b2e0;
-            --hero-text: #2d3748;
-            --hero-subtext: #4a5568;
-            --btn-primary-bg: #4662f5;
-            --btn-primary-text: #ffffff;
-            --btn-secondary-bg: rgba(70, 98, 245, 0.1);
-            --btn-secondary-text: #4662f5;
-            --section-divider: #38b2e0;
-            
-            /* Animation timing */
-            --transition-speed: 0.3s;
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #1a202c;
-            --bg-secondary: #171c26;
-            --text-primary: #f7fafc;
-            --text-secondary: #e2e8f0;
-            --accent-primary: #5a72f5;
-            --accent-secondary: #4fbce8;
-            --hero-text: #f7fafc;
-            --hero-subtext: #e2e8f0;
-            --btn-primary-bg: #5a72f5;
-            --btn-primary-text: #ffffff;
-            --btn-secondary-bg: rgba(90, 114, 245, 0.2);
-            --btn-secondary-text: #5a72f5;
-            --section-divider: #4fbce8;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            transition: background-color var(--transition-speed) ease;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-
-        /* Header and Navigation */
-        header {
-            padding: 1.5rem 0;
-            background-color: var(--bg-primary);
-            transition: background-color var(--transition-speed) ease;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .logo-text-marine {
-            color: var(--text-primary);
-        }
-
-        .logo-text-stream {
-            color: var(--accent-primary);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color var(--transition-speed) ease;
-            position: relative;
-            padding: 0.5rem 0;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            color: var(--accent-primary);
-        }
-
-        .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: var(--accent-secondary);
-        }
-
-        /* Theme Toggle */
-        .theme-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-size: 1.2rem;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color var(--transition-speed) ease;
-        }
-
-        .theme-toggle:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-
-        [data-theme="dark"] .theme-toggle:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 80vh;
-            display: flex;
-            align-items: center;
-            background-color: var(--bg-secondary);
-            position: relative;
-            overflow: hidden;
-            padding: 4rem 0;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 650px;
-        }
-
-        .hero-title {
-            font-size: 4rem;
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            color: var(--hero-text);
-            /* Fixed animation issue - no fade effect that makes text too light */
-        }
-
-        .hero-subtitle {
-            font-size: 1.2rem;
-            line-height: 1.6;
-            margin-bottom: 2.5rem;
-            color: var(--hero-subtext);
-            /* Improved contrast for better readability */
-            opacity: 0.9;
-        }
-
-        .hero-illustration {
-            position: absolute;
-            right: 10%;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 400px;
-            height: 400px;
-            z-index: 1;
-            opacity: 0.2;
-        }
-
-        /* Buttons */
-        .btn-container {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all var(--transition-speed) ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            cursor: pointer;
-            border: none;
-        }
-
-        .btn-primary {
-            background-color: var(--btn-primary-bg);
-            color: var(--btn-primary-text);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(70, 98, 245, 0.3);
-        }
-
-        .btn-secondary {
-            background-color: var(--btn-secondary-bg);
-            color: var(--btn-secondary-text);
-        }
-
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(70, 98, 245, 0.1);
-        }
-
-        .btn i {
-            margin-right: 0.5rem;
-        }
-
-        /* Solutions Section */
-        .solutions {
-            padding: 5rem 0;
-            text-align: center;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-            position: relative;
-            display: inline-block;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -0.75rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background-color: var(--section-divider);
-        }
-
-        .section-description {
-            color: var(--text-secondary);
-            max-width: 800px;
-            margin: 2rem auto;
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-    </style>
+    <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
-    <header>
+    <header class="main-header">
         <div class="container">
-            <nav>
-                <div class="logo">
-                    <span class="logo-text-marine">Marine</span><span class="logo-text-stream">Stream</span>
-                </div>
-                <div class="nav-links">
-                    <a href="#" class="nav-link active">Home</a>
-                    <a href="#" class="nav-link">About</a>
-                    <a href="#" class="nav-link">Products</a>
-                    <a href="#" class="nav-link">Contact</a>
-                    <button class="theme-toggle" id="theme-toggle">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 3a6.364 6.364 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
-                        </svg>
+            <nav class="main-nav">
+                <a href="#" class="logo">
+                    <img src="./assets/marinestream_logo_white.png" alt="MarineStream Logo" class="logo-img">
+                </a>
+                <div class="nav-links-container">
+                    <ul class="nav-links">
+                        <li><a href="#home" class="nav-link active">Home</a></li>
+                        <li><a href="#about" class="nav-link">About</a></li>
+                        <li><a href="#solutions" class="nav-link">Solutions</a></li>
+                        <li><a href="#products" class="nav-link">Products</a></li>
+                        <li><a href="#contact" class="nav-link">Contact</a></li>
+                    </ul>
+                    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+                        <i class="fas fa-moon"></i>
                     </button>
                 </div>
+                <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                    <i class="fas fa-bars"></i>
+                </button>
             </nav>
         </div>
     </header>
 
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title">Revolutionizing<br>Biofouling<br>Management</h1>
-                <p class="hero-subtitle">Integrated system for regulatory compliance, real-time collaboration, and live underwater monitoring</p>
-                <div class="btn-container">
-                    <a href="#" class="btn btn-primary">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-                            <path d="m5 12 7-7 7 7"></path>
-                            <path d="M12 19V5"></path>
-                        </svg>
-                        Explore Solutions
-                    </a>
-                    <a href="#" class="btn btn-secondary">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
-                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                        </svg>
-                        Get in Touch
-                    </a>
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <div class="ocean-overlay"></div>
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">Revolutionising <br>Biofouling <br>Management</h1>
+                    <p class="hero-subtitle">The integrated biofouling and underwater asset management system combines Australia's only regulatory compliant in-water cleaning and filtration hardware with novel blockchain technology.</p>
+                    <div class="hero-cta">
+                        <a href="#solutions" class="btn btn-primary">
+                            <i class="fas fa-anchor"></i>
+                            Explore Solutions
+                        </a>
+                        <a href="#contact" class="btn btn-secondary">
+                            <i class="fas fa-headset"></i>
+                            Get in Touch
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="floating-image"></div>
                 </div>
             </div>
-            <div class="hero-illustration">
-                <!-- Ship illustration could go here, using SVG -->
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
-                    <path d="M256 8c137 0 248 111 248 248S393 504 256 504 8 393 8 256 119 8 256 8zM140 300h116v70.9c0 10.7-13 16.1-20.5 8.5l-32.4-32.4-32.4 32.4c-7.6 7.6-20.5 2.2-20.5-8.5V300h-10.1c-11.3 0-20.4-9.1-20.4-20.4v-38.3c0-11.3 9.1-20.4 20.4-20.4H380c11.3 0 20.4 9.1 20.4 20.4v38.3c0 11.3-9.1 20.4-20.4 20.4H140z"/>
+            <div class="wave-divider">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="wave-fill"></path>
                 </svg>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="solutions">
-        <div class="container">
-            <h2 class="section-title">Our Solutions</h2>
-            <p class="section-description">Comprehensive biofouling management powered by cutting-edge technology</p>
-            <!-- Solution cards would go here -->
-
-                    <div class="feature-cards">
-                        <div class="card card-shadow fade-up">
-                            <div class="card-icon">
-                                <i class="fas fa-clipboard-check"></i>
-                            </div>
-                            <h3>Regulatory Compliance</h3>
-                            <p>Ensure compliance with global standards like NZ MPI CRMS for biofouling management with
-                                automated tracking and reporting.</p>
-                        </div>
-                        <div class="card card-shadow fade-up">
-                            <div class="card-icon">
-                                <i class="fas fa-link"></i>
-                            </div>
-                            <h3>Blockchain Technology</h3>
-                            <p>Leverage blockchain for transparency, traceability, and trust in marine operations with
-                                tamper-proof record keeping.</p>
-                        </div>
-                        <div class="card card-shadow fade-up">
-                            <div class="card-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <h3>Real-time Collaboration</h3>
-                            <p>Enable seamless stakeholder engagement with multi-party workflows and real-time data
-                                sharing across organizations.</p>
-                        </div>
-                        <div class="card card-shadow fade-up">
-                            <div class="card-icon">
-                                <i class="fas fa-video"></i>
-                            </div>
-                            <h3>Live Underwater Monitoring</h3>
-                            <p>Monitor underwater work sites in real-time with live streaming from commercial divers'
-                                helmet cameras for enhanced decision-making.</p>
-                        </div>
-                    </div>
+        <!-- Key Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Differentiators</h2>
+                    <p class="section-description">The only organisation in Australia delivering a complete marine biosecurity compliance and biofouling management service.</p>
                 </div>
-                <div class="shape-divider wave">
-                    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"
-                        preserveAspectRatio="none">
-                        <path
-                            d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
-                            class="shape-fill"></path>
-                    </svg>
-                </div>
-            </section>
 
-            <!-- About Section -->
-            <section class="about-home">
-                <div class="container">
-                    <div class="grid grid-center">
-                        <div class="col-8 col-md-12 fade-in">
-                            <h2 class="section-heading">About MarineStream</h2>
-                            <p>MarineStream is dedicated to solving biofouling challenges through innovative hardware
-                                and blockchain technology, built on Rise-X's robust SaaS platform. Our mission is to
-                                deliver comprehensive biofouling solutions that enhance compliance, transparency,
-                                collaboration, and real-time monitoring.</p>
-                            <a href="#about" class="btn btn-primary">
-                                <i class="fas fa-info-circle fa-fw me-2"></i> Learn More
-                            </a>
+                <div class="feature-grid">
+                    <div class="feature-card" data-aos="fade-up">
+                        <div class="feature-icon">
+                            <i class="fas fa-ship"></i>
                         </div>
-                    </div>
-                </div>
-                <div class="shape-divider tilt">
-                    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"
-                        preserveAspectRatio="none">
-                        <path d="M1200 120L0 16.48 0 0 1200 0 1200 120z" class="shape-fill"></path>
-                    </svg>
-                </div>
-            </section>
-
-            <!-- Products Section -->
-            <section class="products-home">
-                <div class="container">
-                    <h2 class="section-heading">Our Products</h2>
-                    <p>The MarineStream system integrates compliant in-water cleaning hardware with blockchain
-                        technology to streamline biofouling management and ensure compliance. Experience real-time
-                        underwater monitoring with our live streaming capabilities.</p>
-                    <a href="#products" class="btn btn-primary">
-                        <i class="fas fa-box-open fa-fw me-2"></i> View Products
-                    </a>
-
-                    <div class="dashboard-grid">
-                        <div class="app-card fade-up">
-                            <div class="app-icon">
-                                <i class="fas fa-ship"></i>
-                            </div>
-                            <div class="app-title">Commercial Vessels</div>
-                            <p>Manage your commercial fleet with comprehensive biofouling solutions.</p>
-                            <div class="app-count">38 items</div>
-                        </div>
-                        <div class="app-card fade-up">
-                            <div class="app-icon">
-                                <i class="fas fa-file-contract"></i>
-                            </div>
-                            <div class="app-title">Contracts</div>
-                            <p>Securely manage all your regulatory compliance contracts.</p>
-                            <div class="app-count">2 items</div>
-                        </div>
-                        <div class="app-card fade-up">
-                            <div class="app-icon">
-                                <i class="fas fa-anchor"></i>
-                            </div>
-                            <div class="app-title">RAN Assets</div>
-                            <p>Monitor and maintain Royal Australian Navy vessel compliance.</p>
-                            <div class="app-count">26 items</div>
-                        </div>
-                        <div class="app-card fade-up">
-                            <div class="app-icon">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <div class="app-title">Royal Navy Assets</div>
-                            <p>Track and report on Royal Navy biofouling management.</p>
-                            <div class="app-count">3 items</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Contact Section -->
-            <section class="contact-home">
-                <div class="shape-divider top curve">
-                    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"
-                        preserveAspectRatio="none">
-                        <path
-                            d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
-                            class="shape-fill"></path>
-                    </svg>
-                </div>
-                <div class="container">
-                    <h2 class="section-heading">Contact Us</h2>
-                    <div class="contact-grid">
-                        <div class="contact-form-container fade-up">
-                            <div class="card card-shadow">
-                                <form class="contact-form">
-                                    <div class="form-group">
-                                        <input type="text" id="name" name="name" placeholder="Your Name" required>
-                                        <label for="name">Your Name</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="email" id="email" name="email" placeholder="Your Email" required>
-                                        <label for="email">Your Email</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <textarea id="message" name="message" rows="5" placeholder="Your Message"
-                                            required></textarea>
-                                        <label for="message">Your Message</label>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-paper-plane fa-fw me-2"></i> Send Message
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="contact-info fade-up">
-                            <h3>Get in Touch</h3>
-                            <p>Interested in our solutions? Contact us to learn how MarineStream can transform your
-                                biofouling management approach.</p>
-
-                            <div class="contact-info-item">
-                                <div class="contact-info-icon">
-                                    <i class="fas fa-envelope"></i>
-                                </div>
-                                <p><strong>Email:</strong> info@marinestream.com</p>
-                            </div>
-                            <div class="contact-info-item">
-                                <div class="contact-info-icon">
-                                    <i class="fas fa-phone"></i>
-                                </div>
-                                <p><strong>Phone:</strong> +1234567890</p>
-                            </div>
-                            <div class="contact-info-item">
-                                <div class="contact-info-icon">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                </div>
-                                <p><strong>Address:</strong> 123 Main Street, City, Country</p>
-                            </div>
-
-                            <div style="margin-top:30px;">
-                                <h3>Business Hours</h3>
-                                <p>Monday - Friday: 9:00 AM - 5:00 PM</p>
-                                <p>Saturday - Sunday: Closed</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- About Page -->
-        <div id="about" class="page">
-            <section class="hero">
-                <div class="blob blob-1"></div>
-                <div class="blob blob-2"></div>
-                <div class="container">
-                    <h1 class="slide-in-left">About <span class="text-gradient">MarineStream</span></h1>
-                    <p class="slide-in-right">Learn about our mission, history, and the team behind MarineStream's
-                        innovation</p>
-                </div>
-            </section>
-
-            <section>
-                <div class="container about-page-content">
-                    <div class="about-section fade-up">
-                        <h2 class="section-heading">Our Story</h2>
-                        <p>Founded in 2018, MarineStream emerged to tackle the growing challenge of biofouling in marine
-                            industries. We recognized the need for a comprehensive solution that could address
-                            regulatory requirements while leveraging modern technology to enhance efficiency and
-                            collaboration.</p>
-                        <p>Built on a foundation of expertise in marine operations and advanced technology, MarineStream
-                            combines hardware innovation with blockchain capabilities to deliver a truly integrated
-                            approach to biofouling management.</p>
+                        <h3>Technology-Enabled Capability</h3>
+                        <p>Designed to enhance the hydrodynamic and acoustic performance of naval platforms.</p>
                     </div>
 
-                    <div class="about-section fade-up">
-                        <h2 class="section-heading">Our Mission</h2>
-                        <p>Our mission is to deliver comprehensive biofouling solutions that enhance compliance,
-                            transparency, collaboration, and real-time monitoring. We aim to transform how marine
-                            industries approach biofouling challenges by providing tools that not only meet today's
-                            requirements but anticipate tomorrow's needs.</p>
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="feature-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3>Sovereign Underwater Sustainment</h3>
+                        <p>Capability unique to Australia, extending trusted critical support to allied forces (AUKUS).</p>
                     </div>
 
-                    <div class="about-section fade-up">
-                        <h2 class="section-heading">Our Team</h2>
-                        <p>The MarineStream team brings together expertise in marine operations, blockchain technology,
-                            regulatory compliance, and sustainable practices. Our diverse backgrounds unite under a
-                            shared commitment to innovation and excellence.</p>
-
-                        <div class="team-grid">
-                            <div class="team-member fade-up">
-                                <div class="team-image">
-                                    <i class="fas fa-user fa-2x"></i>
-                                </div>
-                                <div class="team-name">John Doe</div>
-                                <div class="team-role">CEO</div>
-                            </div>
-                            <div class="team-member fade-up">
-                                <div class="team-image">
-                                    <i class="fas fa-user fa-2x"></i>
-                                </div>
-                                <div class="team-name">Jane Smith</div>
-                                <div class="team-role">CTO</div>
-                            </div>
-                            <div class="team-member fade-up">
-                                <div class="team-image">
-                                    <i class="fas fa-user fa-2x"></i>
-                                </div>
-                                <div class="team-name">Robert Johnson</div>
-                                <div class="team-role">Lead Engineer</div>
-                            </div>
-                            <div class="team-member fade-up">
-                                <div class="team-image">
-                                    <i class="fas fa-user fa-2x"></i>
-                                </div>
-                                <div class="team-name">Sarah Wilson</div>
-                                <div class="team-role">Compliance Expert</div>
-                            </div>
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="feature-icon">
+                            <i class="fas fa-certificate"></i>
                         </div>
+                        <h3>Consolidated Capability</h3>
+                        <p>Compliant with ABS, Lloyds, DNV, BV, NK Class, and marine biosecurity specification.</p>
+                    </div>
+
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="feature-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <h3>Multi-User Remote Access</h3>
+                        <p>Real-time remote access to highly technical or regulated diving and ROV interventions.</p>
                     </div>
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
 
-        <!-- Products Page -->
-        <div id="products" class="page">
-            <section class="hero">
-                <div class="blob blob-1"></div>
-                <div class="blob blob-2"></div>
-                <div class="container">
-                    <h1 class="slide-in-left">MarineStream <span class="text-gradient">Products</span></h1>
-                    <p class="slide-in-right">Discover our innovative solutions for biofouling management</p>
+        <!-- Tech Showcase Section -->
+        <section id="tech-showcase" class="tech-showcase">
+            <div class="container">
+                <div class="tech-content">
+                    <h2>The MarineStream™ In-water Cleaning System</h2>
+                    <ul class="tech-features">
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>The only in-water cleaning system compliant with the Australian In-Water Cleaning Standards</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>A single 20" container with 10μ filtration and water processing unit with UV treatment capability</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Designed for rapid deployment from wharf side or suitable support vessel</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>A multifaceted system with tailored compatible tooling capable of complete clean to biosecurity specification</span>
+                        </li>
+                    </ul>
+                    <a href="#products" class="btn btn-primary">View Full System Details</a>
                 </div>
-            </section>
-
-            <section>
-                <div class="container">
-                    <div class="product-detail">
-                        <div class="fade-up">
-                            <h2 class="section-heading">The MarineStream System</h2>
-                            <p>Our comprehensive biofouling management solution combines cutting-edge hardware with
-                                blockchain technology to deliver unmatched compliance, efficiency, and transparency.</p>
-
-                            <div class="product-feature">
-                                <h3>Hardware</h3>
-                                <p>In-water cleaning technology compliant with Australian and international standards,
-                                    designed for optimal performance and environmental protection.</p>
-                            </div>
-
-                            <div class="product-feature">
-                                <h3>Blockchain Integration</h3>
-                                <p>Secure, transparent record-keeping and compliance tracking, ensuring data integrity
-                                    and auditability across all operations.</p>
-                            </div>
-
-                            <div class="product-feature">
-                                <h3>Features</h3>
-                                <ul>
-                                    <li>Digitized biofouling plans and record books</li>
-                                    <li>Multi-party workflows for enhanced collaboration</li>
-                                    <li>Real-time data capture and sharing</li>
-                                    <li>Automated compliance reporting</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="fade-up">
-                            <div class="product-image">
-                                <i class="fas fa-ship fa-4x"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="product-feature fade-up">
-                        <h2 class="section-heading">Benefits</h2>
-                        <p>The MarineStream system delivers significant advantages for marine operators, regulators, and
-                            stakeholders:</p>
-
-                        <div class="feature-cards">
-                            <div class="card card-shadow">
-                                <h3>Improved Compliance</h3>
-                                <p>Meet and exceed regulatory requirements with comprehensive tools designed for current
-                                    and future standards.</p>
-                            </div>
-                            <div class="card card-shadow">
-                                <h3>Operational Efficiency</h3>
-                                <p>Streamline processes, reduce paperwork, and enhance decision-making with integrated
-                                    data systems.</p>
-                            </div>
-                            <div class="card card-shadow">
-                                <h3>Stakeholder Trust</h3>
-                                <p>Build confidence with transparent, verifiable operations backed by blockchain
-                                    technology.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="live-streaming fade-up">
-                        <div class="blob"
-                            style="background-color: var(--accent-secondary); top: -200px; right: -200px; opacity: 0.05;">
-                        </div>
-                        <h2>Live Underwater Monitoring</h2>
-                        <p>Experience real-time underwater monitoring with live streaming from commercial divers' helmet
-                            cameras. Gain full visibility into your underwater work sites, enabling instant
-                            decision-making, enhanced safety, and improved operational oversight.</p>
-
-                        <div class="video-placeholder">
-                            <div class="video-container">
-                                <div class="video-text">Live Stream Demo</div>
-                                <div class="play-button"></div>
-                            </div>
-                        </div>
-
-                        <h3 style="margin-top:30px;">Key Features:</h3>
-                        <div class="feature-cards" style="margin-top:var(--spacing-md);">
-                            <div class="card">
-                                <h3>Real-Time Monitoring</h3>
-                                <p>See exactly what's happening underwater as it happens, with high-quality video feeds
-                                    from diver helmet cameras.</p>
-                            </div>
-                            <div class="card">
-                                <h3>Enhanced Safety</h3>
-                                <p>Monitor diver activity live to ensure safer operations and respond immediately to any
-                                    concerns.</p>
-                            </div>
-                            <div class="card">
-                                <h3>Improved Decision-Making</h3>
-                                <p>Make informed choices on the spot with live video insights, reducing delays and
-                                    enhancing operational outcomes.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="product-feature fade-up">
-                        <h2 class="section-heading">Technology</h2>
-                        <p>Built on Rise-X's SaaS offering, the DIANA Ecosystem Orchestration Platform (EOP), for
-                            unmatched reliability, scalability, and security. Our technology stack ensures
-                            enterprise-grade performance while maintaining the flexibility to adapt to evolving needs.
-                        </p>
+                <div class="tech-image">
+                    <div class="tech-image-container">
+                        <img src="system-illustration.png" alt="MarineStream Cleaning System" class="placeholder-image">
                     </div>
                 </div>
-            </section>
-        </div>
+            </div>
+            <div class="angle-divider"></div>
+        </section>
 
-        <!-- Contact Page -->
-        <div id="contact" class="page">
-            <section class="hero">
-                <div class="blob blob-1"></div>
-                <div class="blob blob-2"></div>
-                <div class="container">
-                    <h1 class="slide-in-left">Contact <span class="text-gradient">Us</span></h1>
-                    <p class="slide-in-right">Get in touch to learn more about MarineStream solutions</p>
-                </div>
-            </section>
-
-            <section>
-                <div class="container">
-                    <div class="contact-grid">
-                        <div class="contact-form-container fade-up">
-                            <h2 class="section-heading">Send us a message</h2>
-                            <div class="card card-shadow">
-                                <form class="contact-form">
-                                    <div class="form-group">
-                                        <input type="text" id="name-contact" name="name" placeholder="Your Name"
-                                            required>
-                                        <label for="name-contact">Your Name</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="email" id="email-contact" name="email" placeholder="Your Email"
-                                            required>
-                                        <label for="email-contact">Your Email</label>
-                                    </div>
-                                    <div class="form-group">
-                                        <textarea id="message-contact" name="message" rows="5"
-                                            placeholder="Your Message" required></textarea>
-                                        <label for="message-contact">Your Message</label>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-paper-plane fa-fw me-2"></i> Send Message
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="contact-info fade-up">
-                            <h2 class="section-heading">Get in Touch</h2>
-                            <p>We'd love to hear from you! Contact us to learn more about our live streaming
-                                capabilities and how they can enhance your operations.</p>
-
-                            <div class="card card-shadow" style="margin-bottom: var(--spacing-lg);">
-                                <div class="contact-info-item">
-                                    <div class="contact-info-icon">
-                                        <i class="fas fa-envelope"></i>
-                                    </div>
-                                    <p><strong>Email:</strong> info@marinestream.com</p>
-                                </div>
-                                <div class="contact-info-item">
-                                    <div class="contact-info-icon">
-                                        <i class="fas fa-phone"></i>
-                                    </div>
-                                    <p><strong>Phone:</strong> +1234567890</p>
-                                </div>
-                                <div class="contact-info-item">
-                                    <div class="contact-info-icon">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                    </div>
-                                    <p><strong>Address:</strong> 123 Main Street, City, Country</p>
-                                </div>
-                            </div>
-
-                            <div class="card card-shadow">
-                                <h3>Business Hours</h3>
-                                <div class="contact-info-item">
-                                    <div class="contact-info-icon">
-                                        <i class="fas fa-clock"></i>
-                                    </div>
-                                    <p>Monday - Friday: 9:00 AM - 5:00 PM</p>
-                                </div>
-                                <div class="contact-info-item">
-                                    <div class="contact-info-icon">
-                                        <i class="fas fa-clock"></i>
-                                    </div>
-                                    <p>Saturday - Sunday: Closed</p>
+        <!-- Live Monitoring Section -->
+        <section id="live-monitoring" class="live-monitoring">
+            <div class="container">
+                <div class="split-layout">
+                    <div class="video-showcase">
+                        <div class="video-container">
+                            <div class="video-placeholder">
+                                <span class="play-button">
+                                    <i class="fas fa-play"></i>
+                                </span>
+                                <div class="video-overlay">
+                                    <span class="live-badge">LIVE</span>
+                                    <span class="video-title">Underwater Inspection</span>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="monitoring-content">
+                        <h2>Capabilities</h2>
+                        <p>Our comprehensive range of capabilities ensures complete underwater sustainment:</p>
+                        <ul class="feature-list">
+                            <li>Fleet wide marine biosecurity compliance and biofouling management solutions</li>
+                            <li>In-water hull cleaning, niche area cleaning and invasive marine species treatments (surface force, submarines and infrastructure)</li>
+                            <li>Corrosion management, material preservation, underwater blast and surface & infrastructure</li>
+                            <li>Marine infrastructure remediation, structural upgrades, and new construction support</li>
+                            <li>Mooring design, installation, inspection and maintenance</li>
+                            <li>Class approved ROV survey and inspection</li>
+                            <li>Marine and logistical vessel support</li>
+                        </ul>
+                        <a href="#contact" class="btn btn-secondary">Request a Demo</a>
+                    </div>
                 </div>
-            </section>
-        </div>
-    </div>
+            </div>
+        </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="shape-divider top">
-            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"
-                preserveAspectRatio="none">
-                <path
-                    d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
-                    class="shape-fill"></path>
-            </svg>
-        </div>
+        <!-- Dashboard Preview Section -->
+        <section id="dashboard-preview" class="dashboard-preview">
+            <div class="container">
+                <div class="section-header center">
+                    <h2 class="section-title">The MarineStream™ Biofouling and Underwater Asset Management Platform</h2>
+                    <p class="section-description">Holds the asset for instant operational readiness, seaworthiness and compliance demonstration purposes.</p>
+                </div>
+                <div class="dashboard-container">
+                    <div class="dashboard-image">
+                        <img src="dashboard.png" alt="MarineStream Dashboard" class="placeholder-image">
+                    </div>
+                    <div class="dashboard-features">
+                        <div class="dashboard-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Holds the asset for instant operational readiness, seaworthiness and compliance demonstration purposes</span>
+                        </div>
+                        <div class="dashboard-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Contains digitised biofouling management plans, record books and multi-party workflows</span>
+                        </div>
+                        <div class="dashboard-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Captures data directly from integrated underwater inspection hardware (CCTV & ROV)</span>
+                        </div>
+                        <div class="dashboard-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Enables interrogation of all data by authorised stakeholders within the ecosystem</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about">
+            <div class="wave-divider top">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="wave-fill"></path>
+                </svg>
+            </div>
+            <div class="container">
+                <div class="about-content">
+                    <h2>About MarineStream</h2>
+                    <p>MarineStream is dedicated to solving biofouling challenges through innovative hardware and blockchain technology, built on Rise-X's robust SaaS platform. Our mission is to deliver comprehensive biofouling solutions that enhance compliance, transparency, collaboration, and real-time monitoring.</p>
+                    <ul class="about-features">
+                        <li>Based on the DIANA Ecosystem Orchestration Platform (EOP)</li>
+                        <li>Trusted by commercial vessels and naval fleets worldwide</li>
+                        <li>Implementing transparency and traceability from down under to the world</li>
+                    </ul>
+                    <p class="mt-lg">MarineStream is a division of Franmarine, an Australian subsea and technology organisation renowned for supporting Defence with underwater services and support.</p>
+                    <a href="#about" class="btn btn-primary">Learn More About Us</a>
+                </div>
+                <div class="clients-section">
+                    <h3>Management System Certifications</h3>
+                    <div class="client-logos">
+                        <div class="client-logo">Quality Environment and OH&S</div>
+                        <div class="client-logo">ISO 9001:2015</div>
+                        <div class="client-logo">ISO 14001:2015</div>
+                        <div class="client-logo">ISO 45001:2018</div>
+                    </div>
+                    <h3 class="mt-lg">Valued Clients</h3>
+                    <div class="client-logos">
+                        <div class="client-logo">Royal Australian Navy</div>
+                        <div class="client-logo">Royal Canadian Navy</div>
+                        <div class="client-logo">Australian Border Force</div>
+                        <div class="client-logo">Ministry of Defence (UK)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact">
+            <div class="container">
+                <div class="contact-grid">
+                    <div class="contact-form-container">
+                        <h2>Get In Touch</h2>
+                        <p>Interested in our solutions? Contact us to learn how our underwater capability can transform your marine asset management.</p>
+                        <form class="contact-form">
+                            <div class="form-group">
+                                <input type="text" id="name" name="name" required>
+                                <label for="name">Your Name</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" id="email" name="email" required>
+                                <label for="email">Your Email</label>
+                            </div>
+                            <div class="form-group">
+                                <textarea id="message" name="message" rows="5" required></textarea>
+                                <label for="message">Your Message</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Send Message
+                            </button>
+                        </form>
+                    </div>
+                    <div class="contact-info">
+                        <h2>Contact Information</h2>
+                        <div class="contact-details">
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <p>info@marinestream.com</p>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <p>+1 (234) 567-8900</p>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <p>123 Ocean Way, Maritime District<br>Sydney, Australia</p>
+                            </div>
+                        </div>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-info">
-                    <h3>MarineStream</h3>
-                    <p>Revolutionizing Biofouling Management</p>
+                <div class="footer-brand">
+                    <a href="#" class="footer-logo">
+                        <img src="logo.png" alt="MarineStream Logo">
+                        <span>MarineStream</span>
+                    </a>
+                    <p>Revolutionising Biofouling Management with blockchain technology and live underwater monitoring.</p>
                 </div>
                 <div class="footer-links">
                     <h3>Quick Links</h3>
                     <ul>
                         <li><a href="#home">Home</a></li>
                         <li><a href="#about">About</a></li>
+                        <li><a href="#solutions">Solutions</a></li>
                         <li><a href="#products">Products</a></li>
                         <li><a href="#contact">Contact</a></li>
                     </ul>
@@ -2161,319 +329,29 @@
                 <div class="footer-links">
                     <h3>Solutions</h3>
                     <ul>
-                        <li><a href="#products">Regulatory Compliance</a></li>
-                        <li><a href="#products">Blockchain Technology</a></li>
-                        <li><a href="#products">Real-time Collaboration</a></li>
-                        <li><a href="#products">Live Monitoring</a></li>
+                        <li><a href="#">CLEAN</a></li>
+                        <li><a href="#">SURVEY</a></li>
+                        <li><a href="#">MAINTAIN</a></li>
+                        <li><a href="#">REPAIR</a></li>
+                        <li><a href="#">SUSTAIN</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookies Policy</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="copyright">
-                <p>&copy; 2025 MarineStream. All rights reserved.</p>
+            <div class="footer-bottom">
+                <p>&copy; 2025 MarineStream. All rights reserved. | A division of <a href="https://franmarine.com.au">franmarine.com.au</a></p>
             </div>
         </div>
     </footer>
 
-    <!-- JavaScript -->
-<script>
-// Initialize GSAP ScrollTrigger
-gsap.registerPlugin(ScrollTrigger);
-
-// Theme toggling
-const themeToggleBtn = document.getElementById('theme-toggle');
-const htmlElement = document.documentElement;
-
-// Check for saved theme preference or use preferred color scheme
-const savedTheme = localStorage.getItem('theme') ||
-    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-
-// Apply initial theme
-htmlElement.setAttribute('data-theme', savedTheme);
-updateToggleIcon(savedTheme);
-
-// Add click event to theme toggle
-themeToggleBtn.addEventListener('click', () => {
-    const currentTheme = htmlElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-    htmlElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateToggleIcon(newTheme);
-});
-
-function updateToggleIcon(theme) {
-    if (theme === 'dark') {
-        themeToggleBtn.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="5"></circle>
-                <line x1="12" y1="1" x2="12" y2="3"></line>
-                <line x1="12" y1="21" x2="12" y2="23"></line>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                <line x1="1" y1="12" x2="3" y2="12"></line>
-                <line x1="21" y1="12" x2="23" y2="12"></line>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-            </svg>
-        `;
-    } else {
-        themeToggleBtn.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 3a6.364 6.364 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
-            </svg>
-        `;
-    }
-}
-
-// CSS Variables with RGB values for transitions
-updateCSSVars();
-
-function updateCSSVars() {
-    // Get computed colors and add RGB versions for transparency
-    addRGBVar('--bg-primary');
-    addRGBVar('--text-primary');
-}
-
-function addRGBVar(varName) {
-    const color = getComputedStyle(document.documentElement).getPropertyValue(varName);
-    const rgb = colorToRGB(color);
-    document.documentElement.style.setProperty(`${varName}-rgb`, rgb);
-}
-
-function colorToRGB(color) {
-    // Create a temporary element to compute the color
-    const temp = document.createElement('div');
-    temp.style.color = color;
-    temp.style.display = 'none';
-    document.body.appendChild(temp);
-
-    // Get computed color
-    const computedColor = getComputedStyle(temp).color;
-    document.body.removeChild(temp);
-
-    // Extract RGB values
-    const match = computedColor.match(/^rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i);
-    if (match) {
-        return `${match[1]}, ${match[2]}, ${match[3]}`;
-    }
-
-    return '0, 0, 0'; // Default fallback
-}
-
-// Navigation
-const navLinks = document.querySelectorAll('.nav-link');
-const pages = document.querySelectorAll('.page');
-const mobileToggle = document.querySelector('.mobile-toggle');
-const nav = document.querySelector('nav');
-const header = document.querySelector('header');
-
-// Handle navigation
-function navigate(pageId) {
-    // Hide all pages
-    pages.forEach(page => {
-        page.classList.remove('active');
-    });
-
-    // Show selected page
-    document.getElementById(pageId).classList.add('active');
-
-    // Update active link
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${pageId}`) {
-            link.classList.add('active');
-        }
-    });
-
-    // Close mobile menu if open
-    if (nav.classList.contains('active')) {
-        nav.classList.remove('active');
-        mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
-    }
-
-    // Scroll to top
-    window.scrollTo(0, 0);
-
-    // Initialize animations for the new page
-    initAnimations();
-}
-
-// Add click event to navigation links
-navLinks.forEach(link => {
-    link.addEventListener('click', function (e) {
-        e.preventDefault();
-        const pageId = this.getAttribute('href').substring(1);
-        navigate(pageId);
-    });
-});
-
-// Mobile menu toggle
-if (mobileToggle) {
-    mobileToggle.addEventListener('click', function () {
-        nav.classList.toggle('active');
-        mobileToggle.innerHTML = nav.classList.contains('active') ?
-            '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-    });
-}
-
-// Form submission
-const forms = document.querySelectorAll('.contact-form');
-forms.forEach(form => {
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        // Simulate form submission
-        const submitButton = this.querySelector('button[type="submit"]');
-        const originalText = submitButton.innerHTML;
-
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin fa-fw me-2"></i> Sending...';
-        submitButton.disabled = true;
-
-        setTimeout(() => {
-            submitButton.innerHTML = '<i class="fas fa-check fa-fw me-2"></i> Message Sent!';
-            this.reset();
-
-            setTimeout(() => {
-                submitButton.innerHTML = originalText;
-                submitButton.disabled = false;
-            }, 2000);
-        }, 1500);
-    });
-});
-
-// Header scroll effect
-window.addEventListener('scroll', function () {
-    if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
-    }
-});
-
-// Initialize animations
-function initAnimations() {
-    // Reset animations
-    const animatedElements = document.querySelectorAll('.fade-up, .fade-in, .slide-in-left, .slide-in-right');
-    animatedElements.forEach(el => {
-        el.classList.remove('visible');
-    });
-
-    // Create GSAP animations for the hero section
-    gsap.from(".hero h1", {
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out"
-    });
-
-    gsap.from(".hero p", {
-        y: 30,
-        opacity: 0,
-        duration: 1,
-        delay: 0.3,
-        ease: "power3.out"
-    });
-
-    gsap.from(".hero-buttons", {
-        y: 30,
-        opacity: 0,
-        duration: 1,
-        delay: 0.6,
-        ease: "power3.out"
-    });
-
-    // Create scroll-triggered animations
-    const fadeUpElements = document.querySelectorAll('.fade-up');
-    fadeUpElements.forEach(element => {
-        gsap.from(element, {
-            scrollTrigger: {
-                trigger: element,
-                start: "top 80%",
-                toggleActions: "play none none none"
-            },
-            y: 50,
-            opacity: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            onComplete: () => {
-                element.classList.add('visible');
-            }
-        });
-    });
-
-    const fadeInElements = document.querySelectorAll('.fade-in');
-    fadeInElements.forEach(element => {
-        gsap.from(element, {
-            scrollTrigger: {
-                trigger: element,
-                start: "top 80%",
-                toggleActions: "play none none none"
-            },
-            opacity: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            onComplete: () => {
-                element.classList.add('visible');
-            }
-        });
-    });
-
-    const slideLeftElements = document.querySelectorAll('.slide-in-left');
-    slideLeftElements.forEach(element => {
-        gsap.from(element, {
-            scrollTrigger: {
-                trigger: element,
-                start: "top 80%",
-                toggleActions: "play none none none"
-            },
-            x: -50,
-            opacity: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            onComplete: () => {
-                element.classList.add('visible');
-            }
-        });
-    });
-
-    const slideRightElements = document.querySelectorAll('.slide-in-right');
-    slideRightElements.forEach(element => {
-        gsap.from(element, {
-            scrollTrigger: {
-                trigger: element,
-                start: "top 80%",
-                toggleActions: "play none none none"
-            },
-            x: 50,
-            opacity: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            onComplete: () => {
-                element.classList.add('visible');
-            }
-        });
-    });
-}
-
-// Initialize animations on load
-window.addEventListener('load', () => {
-    initAnimations();
-    updateCSSVars();
-});
-
-// Initial check for animations in viewport
-function checkInitialAnimations() {
-    const animatedElements = document.querySelectorAll('.fade-up, .fade-in, .slide-in-left, .slide-in-right');
-    animatedElements.forEach(element => {
-        const rect = element.getBoundingClientRect();
-        if (rect.top < window.innerHeight * 0.8) {
-            element.classList.add('visible');
-        }
-    });
-}
-
-// Run initial animation check
-setTimeout(checkInitialAnimations, 100);
-</script>
+    <script src="./script.js"></script>
 </body>
 
 </html>
