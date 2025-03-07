@@ -175,29 +175,34 @@ img {
 }
 
 .btn-primary {
-    background-color: var(--primary-blue);
+    background-color: rgba(255, 255, 255, 0.15);
     color: white;
-    box-shadow: 0 4px 14px rgba(0, 59, 111, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary:hover {
-    background-color: var(--deep-blue);
+    background-color: rgba(255, 255, 255, 0.25);
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 59, 111, 0.4);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
-.btn-secondary {
-    background-color: rgba(0, 0, 0, 0.05);
-    color: var(--text-primary);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+.btn-outline {
+    background-color: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.btn-secondary:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-    color: var(--primary-blue);
+.btn-outline:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .btn-outline {
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 [data-theme="dark"] .btn-secondary {
@@ -303,12 +308,11 @@ img {
     cursor: pointer;
 }
 
-/* Hero Section */
 .hero {
     position: relative;
     min-height: 100vh;
     padding: 140px 0 80px;
-    background: linear-gradient(135deg, #003b6f 0%, #00254a 100%); /* Match flyer blue gradient */
+    background: linear-gradient(135deg, #003b6f 0%, #002548 100%);
     color: white;
     overflow: hidden;
 }
@@ -725,6 +729,10 @@ img {
     position: relative;
 }
 
+[data-theme="dark"] .about {
+    background-color: #1e2330;
+}
+
 .about-content {
     max-width: 800px;
     margin: 0 auto var(--space-xl);
@@ -816,12 +824,16 @@ img {
 
 /* Dark mode adjustments for partner logos */
 [data-theme="dark"] .partner-logo {
-    background-color: #1e293b;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    background-color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-[data-theme="dark"] .partner-logo img {
-    filter: brightness(1.2);
+[data-theme="dark"] .partners-grid {
+    background-color: transparent;
+}
+
+[data-theme="dark"] .about {
+    background-color: #1a202c;
 }
 
 /* Certification Logos */
@@ -863,12 +875,8 @@ img {
 
 /* Dark mode adjustments for certification logos */
 [data-theme="dark"] .cert-logo {
-    background-color: #1e293b;
+    background-color: white;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-[data-theme="dark"] .cert-logo span {
-    color: #38b2e0;
 }
 
 /* Contact Section */
