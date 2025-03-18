@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MarineStream - Pricing</title>
+    <title>MarineStream - Revolutionizing Biofouling Management</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -176,17 +176,6 @@
             transition: all var(--transition-normal);
         }
 
-        .btn-primary-outline {
-            background-color: transparent;
-            color: var(--primary-blue);
-            border: 1px solid var(--primary-blue);
-        }
-
-        .btn-primary-outline:hover {
-            background-color: var(--primary-blue);
-            color: white;
-        }
-
         .pricing-enterprise {
             background-color: var(--bg-secondary);
             border-radius: var(--radius-lg);
@@ -207,31 +196,6 @@
         .enterprise-description {
             max-width: 600px;
             margin: 0 auto var(--space-lg);
-        }
-
-        .pricing-faq {
-            margin-top: var(--space-2xl);
-        }
-
-        .faq-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--space-lg);
-        }
-
-        .faq-item {
-            margin-bottom: var(--space-md);
-        }
-
-        .faq-question {
-            font-weight: 600;
-            margin-bottom: var(--space-xs);
-            color: var(--text-primary);
-        }
-
-        .faq-answer {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
         }
 
         .pricing-calculator {
@@ -322,11 +286,11 @@
                 </a>
                 <div class="nav-links-container">
                     <ul class="nav-links">
-                        <li><a href="#home" class="nav-link">Home</a></li>
+                        <li><a href="#home" class="nav-link active">Home</a></li>
                         <li><a href="#about" class="nav-link">About</a></li>
                         <li><a href="#solutions" class="nav-link">Solutions</a></li>
                         <li><a href="#products" class="nav-link">Products</a></li>
-                        <li><a href="#pricing" class="nav-link active">Pricing</a></li>
+                        <li><a href="#pricing" class="nav-link">Pricing</a></li>
                         <li><a href="#contact" class="nav-link">Contact</a></li>
                     </ul>
                     <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
@@ -342,12 +306,25 @@
 
     <main>
         <!-- Hero Section -->
-        <section id="home" class="hero" style="min-height: 60vh; padding: 120px 0 60px;">
+        <section id="home" class="hero">
             <div class="ocean-overlay"></div>
             <div class="container">
-                <div class="hero-content" style="max-width: 800px; margin: 0 auto; text-align: center;">
-                    <h1 class="hero-title">Transparent Pricing<br>For Your Fleet</h1>
-                    <p class="hero-subtitle">Simple, predictable pricing based on the number of vessels in your fleet. No hidden fees, no surprises.</p>
+                <div class="hero-content">
+                    <h1 class="hero-title">Revolutionizing <br>Biofouling <br>Management</h1>
+                    <p class="hero-subtitle">The integrated biofouling and underwater asset management system combines Australia's only regulatory compliant in-water cleaning and filtration hardware with novel blockchain technology.</p>
+                    <div class="hero-cta">
+                        <a href="#solutions" class="btn btn-primary">
+                            <i class="fas fa-anchor"></i>
+                            Explore Solutions
+                        </a>
+                        <a href="#contact" class="btn btn-outline">
+                            <i class="fas fa-headset"></i>
+                            Get in Touch
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="floating-image"></div>
                 </div>
             </div>
             <div class="wave-divider">
@@ -357,11 +334,218 @@
             </div>
         </section>
 
+        <!-- Key Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Differentiators</h2>
+                    <p class="section-description">The only organisation in Australia delivering a complete marine biosecurity compliance and biofouling management service.</p>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card" data-aos="fade-up">
+                        <div class="feature-icon">
+                            <i class="fas fa-ship"></i>
+                        </div>
+                        <h3>Technology-Enabled Capability</h3>
+                        <p>Designed to enhance the hydrodynamic and acoustic performance of naval platforms.</p>
+                    </div>
+
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="feature-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3>Sovereign Underwater Sustainment</h3>
+                        <p>Capability unique to Australia, extending trusted critical support to allied forces (AUKUS).</p>
+                    </div>
+
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="feature-icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <h3>Consolidated Capability</h3>
+                        <p>Compliant with ABS, Lloyds, DNV, BV, NK Class, and marine biosecurity specification.</p>
+                    </div>
+
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="feature-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <h3>Multi-User Remote Access</h3>
+                        <p>Real-time remote access to highly technical or regulated diving and ROV interventions.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tech Showcase Section -->
+        <section id="tech-showcase" class="tech-showcase">
+            <div class="container">
+                <div class="tech-content">
+                    <h2>The MarineStream™ In-water Cleaning System</h2>
+                    <ul class="tech-features">
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>The only in-water cleaning system compliant with the Australian In-Water Cleaning Standards</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>A single 20" container with 10μ filtration and water processing unit with UV treatment capability</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Designed for rapid deployment from wharf side or suitable support vessel</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>A multifaceted system with tailored compatible tooling capable of complete clean to biosecurity specification</span>
+                        </li>
+                    </ul>
+                    <a href="#products" class="btn btn-primary">View Full System Details</a>
+                </div>
+                <div class="tech-image">
+                    <div class="tech-image-container">
+                        <img src="system-illustration.png" alt="MarineStream Cleaning System" class="placeholder-image">
+                    </div>
+                </div>
+            </div>
+            <div class="angle-divider"></div>
+        </section>
+
+        <!-- Live Monitoring Section -->
+        <section id="live-monitoring" class="live-monitoring">
+            <div class="container">
+                <div class="split-layout">
+                    <div class="video-showcase">
+                        <div class="video-container">
+                            <div class="video-placeholder">
+                                <span class="play-button">
+                                    <i class="fas fa-play"></i>
+                                </span>
+                                <div class="video-overlay">
+                                    <span class="live-badge">LIVE</span>
+                                    <span class="video-title">Underwater Inspection</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="monitoring-content">
+                        <h2>Capabilities</h2>
+                        <p>Our comprehensive range of capabilities ensures complete underwater sustainment:</p>
+                        <ul class="feature-list">
+                            <li>Fleet wide marine biosecurity compliance and biofouling management solutions</li>
+                            <li>In-water hull cleaning, niche area cleaning and invasive marine species treatments (surface force, submarines and infrastructure)</li>
+                            <li>Corrosion management, material preservation, underwater blast and surface & infrastructure</li>
+                            <li>Marine infrastructure remediation, structural upgrades, and new construction support</li>
+                            <li>Mooring design, installation, inspection and maintenance</li>
+                            <li>Class approved ROV survey and inspection</li>
+                            <li>Marine and logistical vessel support</li>
+                        </ul>
+                        <a href="#contact" class="btn btn-secondary">Request a Demo</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Preview Section -->
+        <section id="dashboard-preview" class="dashboard-preview">
+            <div class="container">
+                <div class="section-header center">
+                    <h2 class="section-title">The MarineStream™ Biofouling and Underwater Asset Management Platform</h2>
+                    <p class="section-description">Holds the asset for instant operational readiness, seaworthiness and compliance demonstration purposes.</p>
+                </div>
+                <div class="dashboard-container">
+                    <div class="dashboard-image">
+                        <img src="dashboard.png" alt="MarineStream Dashboard" class="placeholder-image">
+                    </div>
+                    <div class="dashboard-features">
+                        <div class="dashboard-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Holds the asset for instant operational readiness, seaworthiness and compliance demonstration purposes</span>
+                        </div>
+                        <div class="dashboard-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Contains digitised biofouling management plans, record books and multi-party workflows</span>
+                        </div>
+                        <div class="dashboard-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Captures data directly from integrated underwater inspection hardware (CCTV & ROV)</span>
+                        </div>
+                        <div class="dashboard-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Enables interrogation of all data by authorised stakeholders within the ecosystem</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about">
+            <div class="wave-divider top">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="wave-fill"></path>
+                </svg>
+            </div>
+            <div class="container">
+                <div class="about-content">
+                    <h2>About MarineStream</h2>
+                    <p>MarineStream is dedicated to solving biofouling challenges through innovative hardware and blockchain technology, built on Rise-X's robust SaaS platform. Our mission is to deliver comprehensive biofouling solutions that enhance compliance, transparency, collaboration, and real-time monitoring.</p>
+                    <ul class="about-features">
+                        <li>Based on the DIANA Ecosystem Orchestration Platform (EOP)</li>
+                        <li>Trusted by commercial vessels and naval fleets worldwide</li>
+                        <li>Implementing transparency and traceability from down under to the world</li>
+                    </ul>
+                    <p class="mt-lg">MarineStream is a division of Franmarine, an Australian subsea and technology organisation renowned for supporting Defence with underwater services and support.</p>
+                    <a href="#about" class="btn btn-primary">Learn More About Us</a>
+                </div>
+                <div class="clients-section">
+                    <h3>Valued Clients</h3>
+                    <div class="partners-grid">
+                        <div class="partner-logo">
+                            <img src="./assets/AMC.jpg" alt="AMC">
+                        </div>
+                        <div class="partner-logo">
+                            <img src="./assets/AscLogo150x.jpg" alt="ASC">
+                        </div>
+                        <div class="partner-logo">
+                            <img src="./assets/austal.jpg" alt="Austal">
+                        </div>
+                        <div class="partner-logo">
+                            <img src="./assets/bae.jpg" alt="BAE Systems">
+                        </div>
+                        <div class="partner-logo">
+                            <img src="./assets/Baleen-Logo.jpg" alt="Baleen">
+                        </div>
+                        <div class="partner-logo">
+                            <img src="./assets/freoports.jpg" alt="Fremantle Ports">
+                        </div>
+                    </div>
+                    
+                    <h3 class="mt-lg">Management System Certifications</h3>
+                    <div class="cert-logos">
+                        <div class="cert-logo">
+                            <img src="./assets/iso-9001.png" alt="ISO 9001:2015" class="cert-logo-img">
+                            <span>ISO 9001:2015</span>
+                        </div>
+                        <div class="cert-logo">
+                            <img src="./assets/iso-14001.png" alt="ISO 14001:2015" class="cert-logo-img">
+                            <span>ISO 14001:2015</span>
+                        </div>
+                        <div class="cert-logo">
+                            <img src="./assets/iso-45001.png" alt="ISO 45001:2018" class="cert-logo-img">
+                            <span>ISO 45001:2018</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Pricing Section -->
         <section id="pricing" class="pricing">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">Choose Your Plan</h2>
+                    <h2 class="section-title">Simple Transparent Pricing</h2>
                     <p class="section-description">Select the plan that fits your fleet size and operational needs</p>
                 </div>
 
@@ -529,83 +713,6 @@
                     </div>
                     <p class="calculator-note">Note: For more than 20 vessels, please contact our sales team for Enterprise pricing.</p>
                 </div>
-
-                <!-- FAQs -->
-                <div class="pricing-faq">
-                    <div class="section-header">
-                        <h2 class="section-title">Frequently Asked Questions</h2>
-                    </div>
-                    <div class="faq-grid">
-                        <div class="faq-item" data-aos="fade-up">
-                            <h4 class="faq-question">What is included in the free trial?</h4>
-                            <p class="faq-answer">Our 30-day free trial gives you full access to all features in your selected plan. No credit card required to start.</p>
-                        </div>
-                        <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
-                            <h4 class="faq-question">Can I change plans later?</h4>
-                            <p class="faq-answer">Yes, you can upgrade or downgrade your plan at any time. Changes take effect at the start of your next billing cycle.</p>
-                        </div>
-                        <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
-                            <h4 class="faq-question">How is my subscription billed?</h4>
-                            <p class="faq-answer">We offer both monthly and annual billing options. Annual subscriptions receive a 10% discount.</p>
-                        </div>
-                        <div class="faq-item" data-aos="fade-up">
-                            <h4 class="faq-question">What payment methods do you accept?</h4>
-                            <p class="faq-answer">We accept all major credit cards and direct bank transfers for enterprise plans.</p>
-                        </div>
-                        <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
-                            <h4 class="faq-question">Do you offer refunds?</h4>
-                            <p class="faq-answer">We offer prorated refunds for annual subscriptions. Monthly subscriptions are non-refundable.</p>
-                        </div>
-                        <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
-                            <h4 class="faq-question">What kind of support is included?</h4>
-                            <p class="faq-answer">All plans include standard support during business hours. Premium and Enterprise plans include priority support with faster response times.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Key Features Section -->
-        <section id="features" class="features">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Why Choose MarineStream</h2>
-                    <p class="section-description">The only organisation in Australia delivering a complete marine biosecurity compliance and biofouling management service.</p>
-                </div>
-
-                <div class="feature-grid">
-                    <div class="feature-card" data-aos="fade-up">
-                        <div class="feature-icon">
-                            <i class="fas fa-ship"></i>
-                        </div>
-                        <h3>Technology-Enabled Capability</h3>
-                        <p>Designed to enhance the hydrodynamic and acoustic performance of naval platforms.</p>
-                    </div>
-
-                    <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-                        <div class="feature-icon">
-                            <i class="fas fa-globe"></i>
-                        </div>
-                        <h3>Sovereign Underwater Sustainment</h3>
-                        <p>Capability unique to Australia, extending trusted critical support to allied forces (AUKUS).</p>
-                    </div>
-
-                    <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-                        <div class="feature-icon">
-                            <i class="fas fa-certificate"></i>
-                        </div>
-                        <h3>Consolidated Capability</h3>
-                        <p>Compliant with ABS, Lloyds, DNV, BV, NK Class, and marine biosecurity specification.</p>
-                    </div>
-
-                    <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
-                        <div class="feature-icon">
-                            <i class="fas fa-video"></i>
-                        </div>
-                        <h3>Multi-User Remote Access</h3>
-                        <p>Real-time remote access to highly technical or regulated diving and ROV interventions.</p>
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -614,8 +721,8 @@
             <div class="container">
                 <div class="contact-grid">
                     <div class="contact-form-container">
-                        <h2>Ready to Get Started?</h2>
-                        <p>Contact us today to start your 30-day free trial or to learn more about how MarineStream can transform your biofouling management.</p>
+                        <h2>Get In Touch</h2>
+                        <p>Interested in our solutions? Contact us to learn how our underwater capability can transform your marine asset management.</p>
                         <form class="contact-form">
                             <div class="form-group">
                                 <input type="text" id="name" name="name" required>
@@ -626,26 +733,11 @@
                                 <label for="email">Your Email</label>
                             </div>
                             <div class="form-group">
-                                <input type="text" id="company" name="company" required>
-                                <label for="company">Company Name</label>
-                            </div>
-                            <div class="form-group">
-                                <select id="interest" name="interest" required>
-                                    <option value="" disabled selected></option>
-                                    <option value="basic">Basic Plan</option>
-                                    <option value="standard">Standard Plan</option>
-                                    <option value="premium">Premium Plan</option>
-                                    <option value="enterprise">Enterprise Plan</option>
-                                    <option value="other">Just Information</option>
-                                </select>
-                                <label for="interest">I'm Interested In</label>
-                            </div>
-                            <div class="form-group">
                                 <textarea id="message" name="message" rows="5" required></textarea>
                                 <label for="message">Your Message</label>
                             </div>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-paper-plane"></i> Start Free Trial
+                                <i class="fas fa-paper-plane"></i> Send Message
                             </button>
                         </form>
                     </div>
@@ -681,7 +773,7 @@
             <div class="footer-content">
                 <div class="footer-brand">
                     <a href="#" class="footer-logo">
-                        <img src="./assets/marinestream_logo_white.png" alt="MarineStream Logo">
+                        <img src="logo.png" alt="MarineStream Logo">
                         <span>MarineStream</span>
                     </a>
                     <p>Revolutionizing Biofouling Management with blockchain technology and live underwater monitoring.</p>
@@ -779,11 +871,13 @@
                 recommendedPlan.textContent = plan;
             }
             
-            vesselCount.addEventListener('input', updateCalculator);
-            billingCycle.addEventListener('change', updateCalculator);
-            
-            // Initial calculation
-            updateCalculator();
+            if (vesselCount && billingCycle) {
+                vesselCount.addEventListener('input', updateCalculator);
+                billingCycle.addEventListener('change', updateCalculator);
+                
+                // Initial calculation
+                updateCalculator();
+            }
         });
     </script>
 </body>
