@@ -254,6 +254,24 @@
             gap: var(--space-lg);
         }
 
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: var(--font-secondary);
+            font-size: 1rem;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 59, 111, 0.2);
+        }
+
         .calculator-result {
             margin-top: var(--space-lg);
             text-align: center;
@@ -276,6 +294,14 @@
             font-size: 0.9rem;
         }
 
+        .yearly-only {
+            display: none;
+        }
+
+        .yearly-active .yearly-only {
+            display: block;
+        }
+
         @media (max-width: 768px) {
             .pricing-plans {
                 grid-template-columns: 1fr;
@@ -296,11 +322,11 @@
                 </a>
                 <div class="nav-links-container">
                     <ul class="nav-links">
-                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li><a href="#home" class="nav-link">Home</a></li>
                         <li><a href="#about" class="nav-link">About</a></li>
                         <li><a href="#solutions" class="nav-link">Solutions</a></li>
                         <li><a href="#products" class="nav-link">Products</a></li>
-                        <li><a href="pricing.html" class="nav-link active">Pricing</a></li>
+                        <li><a href="#pricing" class="nav-link active">Pricing</a></li>
                         <li><a href="#contact" class="nav-link">Contact</a></li>
                     </ul>
                     <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
@@ -316,7 +342,7 @@
 
     <main>
         <!-- Hero Section -->
-        <section class="hero" style="min-height: 50vh; padding: 120px 0 60px;">
+        <section id="home" class="hero" style="min-height: 60vh; padding: 120px 0 60px;">
             <div class="ocean-overlay"></div>
             <div class="container">
                 <div class="hero-content" style="max-width: 800px; margin: 0 auto; text-align: center;">
@@ -346,7 +372,7 @@
 
                 <div class="pricing-plans" id="pricing-plans">
                     <!-- Basic Plan -->
-                    <div class="pricing-plan">
+                    <div class="pricing-plan" data-aos="fade-up">
                         <div class="plan-header">
                             <h3 class="plan-name">Basic</h3>
                             <p class="plan-description">Perfect for smaller fleets and organizations</p>
@@ -382,7 +408,7 @@
                     </div>
 
                     <!-- Standard Plan -->
-                    <div class="pricing-plan popular">
+                    <div class="pricing-plan popular" data-aos="fade-up" data-aos-delay="100">
                         <div class="popular-badge">Popular</div>
                         <div class="plan-header">
                             <h3 class="plan-name">Standard</h3>
@@ -419,7 +445,7 @@
                     </div>
 
                     <!-- Premium Plan -->
-                    <div class="pricing-plan">
+                    <div class="pricing-plan" data-aos="fade-up" data-aos-delay="200">
                         <div class="plan-header">
                             <h3 class="plan-name">Premium</h3>
                             <p class="plan-description">For larger fleets with advanced needs</p>
@@ -456,7 +482,7 @@
                 </div>
 
                 <!-- Enterprise Plan -->
-                <div class="pricing-enterprise">
+                <div class="pricing-enterprise" data-aos="fade-up" data-aos-delay="300">
                     <h3 class="enterprise-title">Enterprise</h3>
                     <p class="enterprise-description">Custom solutions for organizations with 20+ vessels or specialized requirements.</p>
                     <div class="enterprise-features" style="margin-bottom: var(--space-lg);">
@@ -481,12 +507,12 @@
                 </div>
 
                 <!-- Pricing Calculator -->
-                <div class="pricing-calculator">
+                <div class="pricing-calculator" data-aos="fade-up">
                     <h3 class="calculator-title">Estimate Your Cost</h3>
                     <div class="calculator-form">
                         <div class="form-group">
                             <label for="vessel-count">Number of Vessels</label>
-                            <input type="number" id="vessel-count" min="1" max="20" value="5" class="form-control">
+                            <input type="number" id="vessel-count" min="1" max="100" value="5" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="billing-cycle">Billing Cycle</label>
@@ -510,30 +536,74 @@
                         <h2 class="section-title">Frequently Asked Questions</h2>
                     </div>
                     <div class="faq-grid">
-                        <div class="faq-item">
+                        <div class="faq-item" data-aos="fade-up">
                             <h4 class="faq-question">What is included in the free trial?</h4>
                             <p class="faq-answer">Our 30-day free trial gives you full access to all features in your selected plan. No credit card required to start.</p>
                         </div>
-                        <div class="faq-item">
+                        <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
                             <h4 class="faq-question">Can I change plans later?</h4>
                             <p class="faq-answer">Yes, you can upgrade or downgrade your plan at any time. Changes take effect at the start of your next billing cycle.</p>
                         </div>
-                        <div class="faq-item">
+                        <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
                             <h4 class="faq-question">How is my subscription billed?</h4>
                             <p class="faq-answer">We offer both monthly and annual billing options. Annual subscriptions receive a 10% discount.</p>
                         </div>
-                        <div class="faq-item">
+                        <div class="faq-item" data-aos="fade-up">
                             <h4 class="faq-question">What payment methods do you accept?</h4>
                             <p class="faq-answer">We accept all major credit cards and direct bank transfers for enterprise plans.</p>
                         </div>
-                        <div class="faq-item">
+                        <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
                             <h4 class="faq-question">Do you offer refunds?</h4>
                             <p class="faq-answer">We offer prorated refunds for annual subscriptions. Monthly subscriptions are non-refundable.</p>
                         </div>
-                        <div class="faq-item">
+                        <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
                             <h4 class="faq-question">What kind of support is included?</h4>
                             <p class="faq-answer">All plans include standard support during business hours. Premium and Enterprise plans include priority support with faster response times.</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Why Choose MarineStream</h2>
+                    <p class="section-description">The only organisation in Australia delivering a complete marine biosecurity compliance and biofouling management service.</p>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card" data-aos="fade-up">
+                        <div class="feature-icon">
+                            <i class="fas fa-ship"></i>
+                        </div>
+                        <h3>Technology-Enabled Capability</h3>
+                        <p>Designed to enhance the hydrodynamic and acoustic performance of naval platforms.</p>
+                    </div>
+
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="feature-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3>Sovereign Underwater Sustainment</h3>
+                        <p>Capability unique to Australia, extending trusted critical support to allied forces (AUKUS).</p>
+                    </div>
+
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="feature-icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <h3>Consolidated Capability</h3>
+                        <p>Compliant with ABS, Lloyds, DNV, BV, NK Class, and marine biosecurity specification.</p>
+                    </div>
+
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="feature-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <h3>Multi-User Remote Access</h3>
+                        <p>Real-time remote access to highly technical or regulated diving and ROV interventions.</p>
                     </div>
                 </div>
             </div>
@@ -611,7 +681,7 @@
             <div class="footer-content">
                 <div class="footer-brand">
                     <a href="#" class="footer-logo">
-                        <img src="logo.png" alt="MarineStream Logo">
+                        <img src="./assets/marinestream_logo_white.png" alt="MarineStream Logo">
                         <span>MarineStream</span>
                     </a>
                     <p>Revolutionizing Biofouling Management with blockchain technology and live underwater monitoring.</p>
@@ -619,11 +689,11 @@
                 <div class="footer-links">
                     <h3>Quick Links</h3>
                     <ul>
-                        <li><a href="index.html">Home</a></li>
+                        <li><a href="#home">Home</a></li>
                         <li><a href="#about">About</a></li>
                         <li><a href="#solutions">Solutions</a></li>
                         <li><a href="#products">Products</a></li>
-                        <li><a href="pricing.html">Pricing</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
                         <li><a href="#contact">Contact</a></li>
                     </ul>
                 </div>
@@ -665,12 +735,14 @@
                 monthlyTab.classList.add('active');
                 yearlyTab.classList.remove('active');
                 pricingPlans.classList.remove('yearly-active');
+                updateCalculator(); // Update calculator when switching tabs
             });
             
             yearlyTab.addEventListener('click', function() {
                 yearlyTab.classList.add('active');
                 monthlyTab.classList.remove('active');
                 pricingPlans.classList.add('yearly-active');
+                updateCalculator(); // Update calculator when switching tabs
             });
             
             // Pricing calculator functionality
@@ -681,7 +753,7 @@
             
             function updateCalculator() {
                 const vessels = parseInt(vesselCount.value);
-                const isYearly = billingCycle.value === 'yearly';
+                const isYearly = billingCycle.value === 'yearly' || pricingPlans.classList.contains('yearly-active');
                 let price = 0;
                 let plan = '';
                 
