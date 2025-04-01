@@ -14,1382 +14,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-        /* Base CSS Variables - Default Green Theme */
-        :root {
-            /* Core colors - black, white, green theme */
-            --accent-color: #1DC9B7; /* Updated green from the Approve button */
-            --accent-dark: #18A999;
-            --accent-light: #5FDECF;
-            --text-dark: #000000;
-            --text-medium: #333333;
-            --text-light: #666666;
-            --bg-white: #FFFFFF;
-            --bg-light: #F8F8F8;
-            --bg-dark: #000000;
-            --success: #48bb78;
-            --warning: #ed8936;
-            --error: #e53e3e;
-
-            /* UI Elements */
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
-            --radius-sm: 0.25rem;
-            --radius-md: 0.5rem;
-            --radius-lg: 1rem;
-            --radius-xl: 1.5rem;
-            
-            /* Typography */
-            --font-primary: 'Inter', sans-serif;
-            --font-secondary: 'Inter', sans-serif;
-            
-            /* Spacing */
-            --space-xs: 0.25rem;
-            --space-sm: 0.5rem;
-            --space-md: 1rem;
-            --space-lg: 2rem;
-            --space-xl: 4rem;
-            --space-2xl: 8rem;
-            
-            /* Transitions */
-            --transition-fast: 0.2s ease;
-            --transition-normal: 0.3s ease;
-            --transition-slow: 0.5s ease;
-            
-            /* Z-index */
-            --z-header: 100;
-            --z-overlay: 200;
-            --z-dropdown: 300;
-            --z-modal: 400;
-            --z-tooltip: 500;
-            
-            /* Applied theme variables */
-            --bg-primary: var(--bg-white);
-            --bg-secondary: var(--bg-light);
-            --bg-tertiary: #F0F0F0;
-            --text-primary: var(--text-dark);
-            --text-secondary: var(--text-medium);
-            --border-color: rgba(0, 0, 0, 0.1);
-            --card-shadow: var(--shadow-md);
-        }
-
-        /* Blue Theme */
-        [data-theme="blue"] {
-            --accent-color: #3F87F5;
-            --accent-dark: #2970DB;
-            --accent-light: #75ACFF;
-        }
-
-        /* Orange Theme */
-        [data-theme="orange"] {
-            --accent-color: #FF9F43;
-            --accent-dark: #E08832;
-            --accent-light: #FFBD7A;
-        }
-
-        /* Purple Theme */
-        [data-theme="purple"] {
-            --accent-color: #9055FD;
-            --accent-dark: #7742D6;
-            --accent-light: #B488FF;
-        }
-
-        /* Dark theme */
-        [data-theme-mode="dark"] {
-            --bg-primary: #1a202c;
-            --bg-secondary: #171c26;
-            --bg-tertiary: #242831;
-            --text-primary: #f7fafc;
-            --text-secondary: #e2e8f0;
-            --border-color: rgba(255, 255, 255, 0.1);
-            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Reset and base styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: var(--font-secondary);
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            transition: background-color var(--transition-normal), color var(--transition-normal);
-            overflow-x: hidden;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            font-family: var(--font-primary);
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: var(--space-md);
-            color: var(--text-primary);
-        }
-
-        p {
-            margin-bottom: var(--space-md);
-            color: var(--text-secondary);
-        }
-
-        a {
-            color: var(--accent-color);
-            text-decoration: none;
-            transition: color var(--transition-fast);
-        }
-
-        a:hover {
-            color: var(--accent-dark);
-        }
-
-        ul {
-            list-style: none;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 var(--space-lg);
-        }
-
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-md);
-            font-family: var(--font-primary);
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            border: none;
-            text-decoration: none;
-            gap: 0.5rem;
-        }
-
-        .btn i {
-            font-size: 1.1rem;
-        }
-
-        .btn-primary {
-            background-color: var(--accent-color);
-            color: var(--bg-dark);
-            border: 1px solid var(--accent-dark);
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--accent-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: var(--accent-color);
-            border: 1px solid var(--accent-color);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--accent-color);
-            color: var(--bg-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Header Styles */
-        .main-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: var(--bg-dark);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: var(--z-header);
-            box-shadow: var(--shadow-sm);
-            transition: background-color var(--transition-normal), box-shadow var(--transition-normal);
-        }
-
-        .main-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 80px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo-img {
-            height: 40px;
-            width: auto;
-            max-width: 250px;
-            filter: brightness(0) invert(1);
-        }
-
-        .nav-links-container {
-            display: flex;
-            align-items: center;
-            gap: var(--space-lg);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: var(--space-lg);
-        }
-
-        .nav-link {
-            color: white;
-            font-weight: 500;
-            position: relative;
-            padding: 0.5rem 0;
-        }
-
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--accent-color);
-            transition: width var(--transition-normal);
-        }
-
-        .nav-link:hover::after,
-        .nav-link.active::after {
-            width: 100%;
-        }
-
-        .nav-link.active {
-            color: var(--accent-color);
-        }
-
-        .theme-toggle {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 1.25rem;
-            padding: 0.5rem;
-            transition: color var(--transition-fast);
-        }
-
-        .theme-toggle:hover {
-            color: var(--accent-color);
-        }
-
-        .mobile-menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* Hero Section */
-        .hero {
-            position: relative;
-            min-height: 100vh;
-            padding: 140px 0 80px;
-            background-color: var(--bg-dark);
-            color: white;
-            overflow: hidden;
-        }
-
-        .ocean-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('underwater-bg.jpg');
-            background-size: cover;
-            background-position: center;
-            opacity: 0.15;
-            mix-blend-mode: overlay;
-        }
-
-        .hero-content {
-            max-width: 600px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-title {
-            font-size: clamp(2.5rem, 5vw, 4.5rem);
-            margin-bottom: 1.5rem;
-            color: white;
-            line-height: 1.1;
-        }
-
-        .hero-subtitle {
-            font-size: clamp(1.125rem, 2vw, 1.35rem);
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 2.5rem;
-            max-width: 550px;
-        }
-
-        .hero-cta {
-            display: flex;
-            gap: var(--space-md);
-            margin-bottom: var(--space-xl);
-        }
-
-        .hero-image {
-            position: absolute;
-            right: 5%;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 45%;
-            max-width: 600px;
-            z-index: 1;
-        }
-
-        .floating-image {
-            width: 100%;
-            height: 450px;
-            background-image: url('system-illustration.png');
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
-        }
-
-        /* Features Section */
-        .features {
-            padding: var(--space-2xl) 0;
-            background-color: var(--bg-primary);
-        }
-
-        .section-header {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto var(--space-xl);
-        }
-
-        .section-title {
-            font-size: clamp(2rem, 4vw, 3rem);
-            margin-bottom: var(--space-md);
-            position: relative;
-            display: inline-block;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background-color: var(--accent-color);
-            border-radius: 2px;
-        }
-
-        .section-description {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: var(--space-lg);
-            margin-top: var(--space-xl);
-        }
-
-        .feature-card {
-            background-color: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            box-shadow: var(--card-shadow);
-            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-            border: 1px solid var(--border-color);
-            height: 100%;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            background-color: var(--accent-color);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: var(--space-md);
-            color: var(--bg-dark);
-            font-size: 1.5rem;
-        }
-
-        /* Tech Showcase Section */
-        .tech-showcase {
-            padding: var(--space-2xl) 0;
-            background-color: var(--bg-tertiary);
-            position: relative;
-        }
-
-        .tech-showcase .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-xl);
-            align-items: center;
-        }
-
-        .tech-content h2 {
-            font-size: clamp(1.75rem, 3vw, 2.5rem);
-            margin-bottom: var(--space-lg);
-            position: relative;
-        }
-
-        .tech-content h2::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 60px;
-            height: 4px;
-            background-color: var(--accent-color);
-            border-radius: 2px;
-        }
-
-        .tech-features {
-            margin-bottom: var(--space-lg);
-        }
-
-        .tech-features li {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: var(--space-md);
-        }
-
-        .tech-features li i {
-            color: var(--accent-color);
-            margin-right: var(--space-md);
-            font-size: 1.25rem;
-            margin-top: 3px;
-        }
-
-        .tech-image-container {
-            width: 100%;
-            padding-bottom: 75%; /* 4:3 aspect ratio */
-            position: relative;
-            overflow: hidden;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .tech-image-container img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Live Monitoring Section */
-        .live-monitoring {
-            padding: var(--space-2xl) 0;
-            background-color: var(--bg-primary);
-        }
-
-        .split-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-xl);
-            align-items: center;
-        }
-
-        .video-container {
-            position: relative;
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .video-placeholder {
-            width: 100%;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
-            position: relative;
-            background-color: var(--bg-dark);
-            background-image: url('mooring-inspection.jpg');
-            background-size: cover;
-            background-position: center;
-        }
-
-        .play-button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70px;
-            height: 70px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color var(--transition-normal), transform var(--transition-normal);
-        }
-
-        .play-button i {
-            color: white;
-            font-size: 1.75rem;
-            margin-left: 5px;
-        }
-
-        .play-button:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%) scale(1.1);
-        }
-
-        .video-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: var(--space-md);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .live-badge {
-            background-color: #e53e3e;
-            color: white;
-            padding: 4px 10px;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-
-        .video-title {
-            color: white;
-            font-weight: 600;
-            font-size: 1.125rem;
-        }
-
-        .monitoring-content h2 {
-            font-size: clamp(1.75rem, 3vw, 2.5rem);
-            margin-bottom: var(--space-md);
-        }
-
-        .feature-list {
-            margin-bottom: var(--space-lg);
-        }
-
-        .feature-list li {
-            padding-left: 1.5rem;
-            position: relative;
-            margin-bottom: var(--space-sm);
-        }
-
-        .feature-list li::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0.65rem;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--accent-color);
-        }
-
-        /* Dashboard Preview Section */
-        .dashboard-preview {
-            padding: var(--space-2xl) 0;
-            background-color: var(--bg-secondary);
-        }
-
-        .section-header.center {
-            text-align: center;
-        }
-
-        .dashboard-container {
-            margin-top: var(--space-xl);
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: var(--space-xl);
-            align-items: center;
-        }
-
-        .dashboard-image {
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .dashboard-image img {
-            width: 100%;
-            display: block;
-        }
-
-        .dashboard-features {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-md);
-        }
-
-        .dashboard-feature {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            padding: var(--space-md);
-            background-color: var(--bg-primary);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-            transition: transform var(--transition-normal);
-        }
-
-        .dashboard-feature:hover {
-            transform: translateX(10px);
-        }
-
-        .dashboard-feature i {
-            color: var(--accent-color);
-            font-size: 1.25rem;
-        }
-
-        /* About Section */
-        .about {
-            padding: var(--space-2xl) 0;
-            background-color: var(--bg-tertiary);
-            position: relative;
-        }
-
-        .about-content {
-            max-width: 800px;
-            margin: 0 auto var(--space-xl);
-        }
-
-        .about-content h2 {
-            font-size: clamp(2rem, 4vw, 3rem);
-            margin-bottom: var(--space-md);
-            text-align: center;
-        }
-
-        .about-content p {
-            font-size: 1.125rem;
-            margin-bottom: var(--space-lg);
-            text-align: center;
-        }
-
-        .about-features {
-            max-width: 600px;
-            margin: 0 auto var(--space-lg);
-        }
-
-        .about-features li {
-            padding-left: 1.5rem;
-            position: relative;
-            margin-bottom: var(--space-md);
-            text-align: center;
-        }
-
-        .about-features li::before {
-            content: '•';
-            position: absolute;
-            left: 0;
-            color: var(--accent-color);
-            font-weight: bold;
-        }
-
-        .about-content .btn {
-            display: block;
-            max-width: 200px;
-            margin: 0 auto;
-        }
-
-        .clients-section {
-            text-align: center;
-        }
-
-        .clients-section h3 {
-            font-size: 1.5rem;
-            margin-bottom: var(--space-lg);
-        }
-
-        /* Partners Grid - Clean Logo Display */
-        .partners-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            margin: 40px 0;
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .partner-logo {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            height: 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .partner-logo img {
-            max-width: 80%;
-            max-height: 80%;
-            object-fit: contain;
-            filter: grayscale(0%);
-            opacity: 1;
-            transition: all 0.3s ease;
-        }
-
-        .partner-logo:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Certification Logos */
-        .cert-logos {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin: 40px 0;
-        }
-
-        .cert-logo {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            min-width: 180px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .cert-logo:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .cert-logo-img {
-            height: 70px;
-            width: auto;
-        }
-
-        .cert-logo span {
-            font-weight: 600;
-            color: var(--accent-color);
-        }
-
-        /* Contact Section */
-        .contact {
-            padding: var(--space-2xl) 0;
-            background-color: var(--bg-primary);
-        }
-
-        .contact-grid {
-            display: grid;
-            grid-template-columns: 3fr 2fr;
-            gap: var(--space-xl);
-        }
-
-        .contact-form-container h2,
-        .contact-info h2 {
-            font-size: clamp(1.75rem, 3vw, 2.25rem);
-            margin-bottom: var(--space-md);
-        }
-
-        .contact-form {
-            margin-top: var(--space-lg);
-        }
-
-        .form-group {
-            margin-bottom: var(--space-lg);
-            position: relative;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 1rem;
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            color: var(--text-primary);
-            font-family: var(--font-secondary);
-            font-size: 1rem;
-            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(29, 201, 183, 0.2);
-        }
-
-        .form-group label {
-            position: absolute;
-            top: 50%;
-            left: 1rem;
-            transform: translateY(-50%);
-            background-color: var(--bg-secondary);
-            padding: 0 0.5rem;
-            color: var(--text-secondary);
-            transition: all var(--transition-fast);
-            pointer-events: none;
-        }
-
-        .form-group textarea ~ label {
-            top: 1rem;
-            transform: translateY(0);
-        }
-
-        .form-group input:focus ~ label,
-        .form-group textarea:focus ~ label,
-        .form-group input:not(:placeholder-shown) ~ label,
-        .form-group textarea:not(:placeholder-shown) ~ label {
-            top: 0;
-            transform: translateY(-50%);
-            font-size: 0.875rem;
-            color: var(--accent-color);
-        }
-
-        .contact-details {
-            margin-top: var(--space-lg);
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-
-        .contact-item i {
-            color: var(--accent-color);
-            font-size: 1.25rem;
-        }
-
-        .social-links {
-            display: flex;
-            gap: var(--space-sm);
-            margin-top: var(--space-lg);
-        }
-
-        .social-link {
-            width: 40px;
-            height: 40px;
-            background-color: var(--bg-secondary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent-color);
-            font-size: 1.25rem;
-            transition: all var(--transition-normal);
-        }
-
-        .social-link:hover {
-            background-color: var(--accent-color);
-            color: white;
-            transform: translateY(-3px);
-        }
-
-        /* Footer */
-        .main-footer {
-            background-color: var(--bg-dark);
-            padding: var(--space-xl) 0 var(--space-md);
-            color: white;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: 2fr repeat(3, 1fr);
-            gap: var(--space-xl);
-            margin-bottom: var(--space-xl);
-        }
-
-        .footer-brand p {
-            margin-top: var(--space-md);
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            color: white;
-        }
-
-        .footer-logo img {
-            height: 30px;
-            max-width: 200px;
-            margin-right: var(--space-sm);
-            filter: brightness(0) invert(1);
-        }
-
-        .footer-links h3 {
-            font-size: 1.1rem;
-            margin-bottom: var(--space-md);
-            position: relative;
-            display: inline-block;
-            color: white;
-        }
-
-        .footer-links h3::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 30px;
-            height: 2px;
-            background-color: var(--accent-color);
-        }
-
-        .footer-links ul li {
-            margin-bottom: var(--space-sm);
-        }
-
-        .footer-links ul li a {
-            color: rgba(255, 255, 255, 0.8);
-            transition: color var(--transition-fast), transform var(--transition-fast);
-            display: inline-block;
-        }
-
-        .footer-links ul li a:hover {
-            color: white;
-            transform: translateX(5px);
-        }
-
-        .footer-bottom {
-            padding-top: var(--space-md);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            font-size: 0.875rem;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .footer-bottom a {
-            color: var(--accent-color);
-        }
-
-        /* Theme Switcher */
-        .theme-switcher {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            background-color: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            padding: 15px;
-            box-shadow: var(--shadow-lg);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 99;
-            border: 1px solid var(--border-color);
-        }
-
-        .theme-option {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all var(--transition-fast);
-        }
-
-        .theme-option:hover, .theme-option.active {
-            transform: scale(1.2);
-            border-color: var(--bg-dark);
-        }
-
-        .theme-option-green {
-            background-color: #1DC9B7;
-        }
-
-        .theme-option-blue {
-            background-color: #3F87F5;
-        }
-
-        .theme-option-orange {
-            background-color: #FF9F43;
-        }
-
-        .theme-option-purple {
-            background-color: #9055FD;
-        }
-
-        .dark-mode-toggle {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            border: 2px solid var(--border-color);
-        }
-
-        /* New Tools Sections */
-        .tools-section {
-            padding: var(--space-2xl) 0;
-            background-color: var(--bg-primary);
-        }
-
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--space-xl);
-        }
-
-        .tool-card {
-            background-color: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            box-shadow: var(--card-shadow);
-            border: 1px solid var(--border-color);
-        }
-
-        .tool-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-            margin-bottom: var(--space-md);
-        }
-
-        .tool-icon {
-            width: 50px;
-            height: 50px;
-            background-color: var(--accent-color);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--bg-dark);
-            font-size: 1.5rem;
-        }
-
-        .tool-title {
-            font-size: 1.5rem;
-            margin-bottom: 0;
-        }
-
-        .tool-description {
-            margin-bottom: var(--space-lg);
-        }
-
-        /* PDF Generator Button */
-        .pdf-generator {
-            background-color: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            box-shadow: var(--card-shadow);
-            border: 1px solid var(--border-color);
-            margin-top: var(--space-xl);
-            text-align: center;
-        }
-
-        .pdf-generator h3 {
-            font-size: 1.5rem;
-            margin-bottom: var(--space-md);
-        }
-
-        .pdf-generator p {
-            margin-bottom: var(--space-lg);
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Capability statement template for PDF */
-        #capability-statement-template {
-            display: none;
-        }
-
-        /* Fouling Calculator */
-        .calculator-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--space-md);
-            margin-bottom: var(--space-lg);
-        }
-
-        .calculator-result {
-            background-color: var(--bg-tertiary);
-            padding: var(--space-lg);
-            border-radius: var(--radius-md);
-            display: none;
-        }
-
-        .calculator-result h4 {
-            margin-bottom: var(--space-md);
-            color: var(--accent-color);
-        }
-
-        .result-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        /* Management Plan Generator */
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--space-md);
-        }
-
-        .plan-preview {
-            background-color: var(--bg-tertiary);
-            padding: var(--space-lg);
-            border-radius: var(--radius-md);
-            margin-top: var(--space-lg);
-            display: none;
-        }
-
-        .plan-preview h4 {
-            margin-bottom: var(--space-md);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .hero-image {
-                width: 40%;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .hero {
-                padding: 120px 0 80px;
-            }
-            
-            .hero-image {
-                position: relative;
-                width: 80%;
-                max-width: 400px;
-                margin: 0 auto;
-                right: auto;
-                top: auto;
-                transform: none;
-            }
-            
-            .hero-content {
-                max-width: 100%;
-                text-align: center;
-                margin-bottom: var(--space-xl);
-            }
-            
-            .hero-cta {
-                justify-content: center;
-            }
-            
-            .tech-showcase .container,
-            .split-layout,
-            .dashboard-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .tech-content {
-                order: 2;
-            }
-            
-            .tech-image {
-                order: 1;
-                margin-bottom: var(--space-lg);
-            }
-            
-            .dashboard-container {
-                gap: var(--space-lg);
-            }
-            
-            .dashboard-image {
-                margin-bottom: var(--space-lg);
-            }
-            
-            .footer-content {
-                grid-template-columns: 1fr 1fr;
-                gap: var(--space-lg);
-            }
-            
-            .nav-link {
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .main-nav {
-                height: 70px;
-            }
-            
-            .nav-links-container {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                width: 80%;
-                height: 100vh;
-                background-color: var(--bg-dark);
-                flex-direction: column;
-                justify-content: flex-start;
-                padding: 100px var(--space-lg) var(--space-lg);
-                box-shadow: var(--shadow-lg);
-                transition: right var(--transition-normal);
-                z-index: var(--z-overlay);
-            }
-            
-            .nav-links-container.active {
-                right: 0;
-            }
-            
-            .nav-links {
-                flex-direction: column;
-                width: 100%;
-            }
-            
-            .nav-link {
-                font-size: 1.25rem;
-                padding: var(--space-sm) 0;
-                width: 100%;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-            
-            .mobile-menu-toggle {
-                display: block;
-                z-index: var(--z-dropdown);
-            }
-            
-            .hero-cta {
-                flex-direction: column;
-                gap: var(--space-md);
-                width: 100%;
-            }
-            
-            .hero-cta .btn {
-                width: 100%;
-            }
-            
-            .hero-title {
-                font-size: 2.25rem;
-            }
-            
-            .section-title {
-                font-size: 1.75rem;
-            }
-            
-            .contact-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .footer-content {
-                grid-template-columns: 1fr;
-                gap: var(--space-xl);
-            }
-            
-            .feature-card {
-                padding: var(--space-md);
-            }
-            
-            .feature-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.25rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .container {
-                padding: 0 var(--space-md);
-            }
-            
-            .hero-title {
-                font-size: 2rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1rem;
-            }
-            
-            .feature-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .feature-card {
-                margin-bottom: var(--space-md);
-            }
-            
-            .cert-logos {
-                gap: var(--space-md);
-            }
-            
-            .cert-logo {
-                min-width: 140px;
-            }
-            
-            .dashboard-feature {
-                padding: var(--space-sm);
-            }
-            
-            .section-title {
-                font-size: 1.5rem;
-            }
-            
-            .section-description {
-                font-size: 1rem;
-            }
-            
-            .tech-features li, 
-            .feature-list li {
-                font-size: 0.9rem;
-            }
-            
-            .form-group input, 
-            .form-group textarea {
-                padding: 0.75rem;
-            }
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
@@ -1397,7 +23,8 @@
         <div class="container">
             <nav class="main-nav">
                 <a href="#" class="logo">
-                    <img src="./assets/marinestream_logo_white.png" alt="MarineStream Logo" class="logo-img">
+                    <!-- Ensure this path is correct -->
+                    <img src="./assets/marinestream_logo_white.png" alt="MarineStream Logo - White" class="logo-img">
                 </a>
                 <div class="nav-links-container">
                     <ul class="nav-links">
@@ -1408,7 +35,7 @@
                         <li><a href="#tools" class="nav-link">Tools</a></li>
                         <li><a href="#contact" class="nav-link">Contact</a></li>
                     </ul>
-                    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+                    <button class="theme-toggle" id="header-theme-toggle" aria-label="Toggle dark mode">
                         <i class="fas fa-moon"></i>
                     </button>
                 </div>
@@ -1439,7 +66,8 @@
                     </div>
                 </div>
                 <div class="hero-image">
-                    <div class="floating-image"></div>
+                     <!-- Assumes system-illustration.png exists -->
+                    <div class="floating-image" style="background-image: url('./assets/system-illustration.png');"></div>
                 </div>
             </div>
         </section>
@@ -1485,7 +113,7 @@
                         <p>Real-time remote access to highly technical or regulated diving and ROV interventions.</p>
                     </div>
                 </div>
-                
+
                 <!-- PDF Generator Button -->
                 <div class="pdf-generator">
                     <h3>Print Capability Statement</h3>
@@ -1525,42 +153,78 @@
                 </div>
                 <div class="tech-image">
                     <div class="tech-image-container">
-                        <img src="system-illustration.png" alt="MarineStream Cleaning System" class="placeholder-image">
+                         <!-- Assumes system-illustration.png exists -->
+                        <img src="./assets/system-illustration.png" alt="MarineStream Cleaning System Illustration" class="placeholder-image">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Live Monitoring Section -->
+        <!-- Updated Live Monitoring Section with ROV Video -->
         <section id="live-monitoring" class="live-monitoring">
             <div class="container">
                 <div class="split-layout">
                     <div class="video-showcase">
                         <div class="video-container">
-                            <div class="video-placeholder">
-                                <span class="play-button">
+                            <video id="rov-video" controls poster="./assets/rov-inspection-poster.jpg">
+                                <source src="./assets/ROV.mp4" type="video/mp4">
+                                Your browser does not support HTML5 video.
+                            </video>
+                            <div class="video-controls">
+                                <button class="play-btn" id="rov-play-btn" aria-label="Play ROV Inspection Video">
                                     <i class="fas fa-play"></i>
-                                </span>
-                                <div class="video-overlay">
-                                    <span class="live-badge">LIVE</span>
-                                    <span class="video-title">Underwater Inspection</span>
-                                </div>
+                                </button>
+                                <span class="video-label">ROV Inspection</span>
                             </div>
                         </div>
                     </div>
                     <div class="monitoring-content">
-                        <h2>Capabilities</h2>
-                        <p>Our comprehensive range of capabilities ensures complete underwater sustainment:</p>
+                        <h2>ROV Inspection Capabilities</h2>
+                        <p>MarineStream utilizes advanced Remotely Operated Vehicles (ROVs) for comprehensive underwater inspections and monitoring:</p>
                         <ul class="feature-list">
-                            <li>Fleet wide marine biosecurity compliance and biofouling management solutions</li>
-                            <li>In-water hull cleaning, niche area cleaning and invasive marine species treatments (surface force, submarines and infrastructure)</li>
-                            <li>Corrosion management, material preservation, underwater blast and surface & infrastructure</li>
-                            <li>Marine infrastructure remediation, structural upgrades, and new construction support</li>
-                            <li>Mooring design, installation, inspection and maintenance</li>
-                            <li>Class approved ROV survey and inspection</li>
-                            <li>Marine and logistical vessel support</li>
+                            <li>High-definition imaging and recording of underwater assets</li>
+                            <li>Detailed inspection of hulls, propellers, and niche areas</li>
+                            <li>Real-time monitoring and assessment of biofouling conditions</li>
+                            <li>Regulatory compliant inspection methodology</li>
+                            <li>Multi-stakeholder remote access to live inspection footage</li>
+                            <li>Integration with the MarineStream™ platform for documentation and compliance</li>
                         </ul>
-                        <a href="#contact" class="btn btn-secondary">Request a Demo</a>
+                        <a href="#contact" class="btn btn-secondary">Learn More About ROV Inspections</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- New ROV Crawler Section -->
+        <section id="crawler-capabilities" class="crawler-capabilities">
+            <div class="container">
+                <div class="split-layout reverse">
+                    <div class="monitoring-content">
+                        <h2>ROV Crawler Cleaning Technology</h2>
+                        <p>Our specialized ROV crawler systems revolutionize underwater cleaning with advanced capture technology:</p>
+                        <ul class="feature-list">
+                            <li>Fully contained biofouling removal with 10μ filtration system</li>
+                            <li>Compliant with Australian In-Water Cleaning Standards</li>
+                            <li>Ability to access and clean difficult niche areas</li>
+                            <li>Minimal environmental impact through complete capture and filtration</li>
+                            <li>Real-time monitoring and control with direct operator feedback</li>
+                            <li>Integration with the MarineStream™ Biofouling Management Platform</li>
+                        </ul>
+                        <a href="#contact" class="btn btn-primary">Request Cleaning Demonstration</a>
+                    </div>
+                    <div class="video-showcase">
+                        <div class="video-container">
+                            <video id="crawler-video" controls poster="./assets/crawler-cleaning-poster.jpg">
+                                <source src="./assets/crawler001.mp4" type="video/mp4">
+                                Your browser does not support HTML5 video.
+                            </video>
+                            <div class="video-controls">
+                                <button class="play-btn" id="crawler-play-btn" aria-label="Play ROV Crawler Cleaning Video">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <span class="video-label">ROV Crawler Cleaning</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1575,7 +239,8 @@
                 </div>
                 <div class="dashboard-container">
                     <div class="dashboard-image">
-                        <img src="dashboard.png" alt="MarineStream Dashboard" class="placeholder-image">
+                        <!-- Assumes dashboard.png exists -->
+                        <img src="./assets/dashboard.png" alt="MarineStream Dashboard Preview" class="placeholder-image">
                     </div>
                     <div class="dashboard-features">
                         <div class="dashboard-feature">
@@ -1599,7 +264,7 @@
             </div>
         </section>
 
-        <!-- New Tools Section -->
+        <!-- Interactive Tools Section -->
         <section id="tools" class="tools-section">
             <div class="container">
                 <div class="section-header">
@@ -1608,73 +273,277 @@
                 </div>
 
                 <div class="tools-grid">
-                    <!-- Fouling Calculator Tool -->
-                    <div class="tool-card">
+                    <!-- Hull Fouling Cost Calculator -->
+                    <div id="fouling-calculator-card" class="tool-card">
                         <div class="tool-header">
                             <div class="tool-icon">
                                 <i class="fas fa-calculator"></i>
                             </div>
-                            <h3 class="tool-title">Fouling Calculator</h3>
+                            <h3 class="tool-title">Hull Fouling Cost Calculator</h3>
                         </div>
-                        <p class="tool-description">Calculate the potential impact of biofouling on vessel performance and fuel consumption.</p>
-                        
-                        <form id="fouling-calculator" class="calculator-form">
-                            <div class="form-group">
-                                <label for="vessel-length">Vessel Length (m)</label>
-                                <input type="number" id="vessel-length" class="form-control" min="1" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="fouling-level">Fouling Level</label>
-                                <select id="fouling-level" class="form-control" required>
-                                    <option value="">Select Level</option>
-                                    <option value="light">Light (Slime Layer)</option>
-                                    <option value="medium">Medium (Small Organisms)</option>
-                                    <option value="heavy">Heavy (Large Organisms)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="vessel-speed">Avg. Speed (knots)</label>
-                                <input type="number" id="vessel-speed" class="form-control" min="1" max="50" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Calculate</button>
-                        </form>
-
-                        <div id="calculator-result" class="calculator-result">
-                            <h4>Calculation Results</h4>
-                            <div class="result-item">
-                                <p>Estimated Drag Increase:</p>
-                                <div class="result-value" id="drag-result">--</div>
-                            </div>
-                            <div class="result-item">
-                                <p>Potential Fuel Consumption Increase:</p>
-                                <div class="result-value" id="fuel-result">--</div>
-                            </div>
-                            <div class="result-item">
-                                <p>Recommended Cleaning Schedule:</p>
-                                <div class="result-value" id="schedule-result">--</div>
-                            </div>
-                        </div>
+                        <p class="tool-description">Calculate the economic and environmental impact of biofouling on vessel performance and fuel consumption based on research data.</p>
+                        <button id="open-cost-calculator" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt"></i>
+                            Open Calculator
+                        </button>
                     </div>
 
                     <!-- Biofouling Management Plan Generator -->
-                    <div class="tool-card">
+                    <div id="management-plan-card" class="tool-card">
                         <div class="tool-header">
                             <div class="tool-icon">
                                 <i class="fas fa-file-alt"></i>
                             </div>
                             <h3 class="tool-title">Management Plan Generator</h3>
                         </div>
-                        <p class="tool-description">Generate a customized biofouling management plan compliant with international standards.</p>
-                        
-                        <form id="plan-generator" class="plan-form">
+                        <p class="tool-description">Generate a customized biofouling management plan and inspection report compliant with international standards.</p>
+                        <button id="open-plan-generator" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt"></i>
+                            Open Generator
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hull Fouling Cost Calculator Tool Modal -->
+        <div id="cost-calculator-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Hull Fouling Cost Calculator</h2>
+                    <button class="modal-close" data-modal="cost-calculator-modal" aria-label="Close Cost Calculator">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Currency Selector -->
+                    <div class="currency-selector-container">
+                        <div class="currency-selector">
+                            <label for="currencySelect"><i class="fas fa-money-bill-wave"></i> Currency:</label>
+                            <select id="currencySelect">
+                                <option value="AUD">AUD</option>
+                                <option value="USD">USD</option>
+                                <option value="GBP">GBP</option>
+                                <option value="EUR">EUR</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Calculator Grid -->
+                    <div class="calculator-grid">
+                        <!-- Controls Card -->
+                        <div class="calculator-controls">
+                            <div class="card-header">
+                                <h3 class="card-header-title">Vessel Parameters</h3>
+                                <div class="card-header-icon">
+                                    <i class="fas fa-sliders-h"></i>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <!-- Vessel Selection -->
+                                <div class="form-group">
+                                    <label for="vesselTypeCalc">Vessel Type</label> <!-- Renamed ID -->
+                                    <div class="input-wrapper">
+                                        <select id="vesselTypeCalc"> <!-- Renamed ID -->
+                                            <option value="tug">Harbor Tug (32m)</option>
+                                            <option value="cruiseShip">Passenger Cruise Ship (93m)</option>
+                                            <option value="osv">Offshore Supply Vessel (50m)</option>
+                                            <option value="coaster">Coastal Freighter (80m)</option>
+                                        </select>
+                                    </div>
+                                    <span class="help-text">Select vessel to load parameters measured in research</span>
+                                </div>
+
+                                <!-- Cost Inputs -->
+                                <div class="form-group">
+                                    <label for="costEco">Operating Cost @ Economic Speed</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-dollar-sign input-icon"></i>
+                                        <input type="number" id="costEco" class="input-with-icon" step="50" min="100">
+                                    </div>
+                                    <span class="help-text">Base fuel cost at economic speed ($/hr with clean hull)</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="costFull">Operating Cost @ Full Speed</label>
+                                    <div class="input-wrapper">
+                                        <i class="fas fa-dollar-sign input-icon"></i>
+                                        <input type="number" id="costFull" class="input-with-icon" step="50" min="500">
+                                    </div>
+                                    <span class="help-text">Base fuel cost at full speed ($/hr with clean hull)</span>
+                                </div>
+
+                                <!-- Fouling Rating Slider -->
+                                <div class="slider-container">
+                                    <div class="slider-header">
+                                        <label for="frSlider">Hull Fouling Rating</label>
+                                        <div id="frLabel" class="slider-value">FR2</div>
+                                    </div>
+                                    <input type="range" id="frSlider" class="range-slider" min="0" max="5" step="1" value="2">
+                                    <div class="range-ticks">
+                                        <div class="range-tick" data-value="0">
+                                            <div class="tick-dot"></div>
+                                            <div class="tick-label">FR0</div>
+                                        </div>
+                                        <div class="range-tick" data-value="1">
+                                            <div class="tick-dot"></div>
+                                            <div class="tick-label">FR1</div>
+                                        </div>
+                                        <div class="range-tick" data-value="2">
+                                            <div class="tick-dot"></div>
+                                            <div class="tick-label">FR2</div>
+                                        </div>
+                                        <div class="range-tick" data-value="3">
+                                            <div class="tick-dot"></div>
+                                            <div class="tick-label">FR3</div>
+                                        </div>
+                                        <div class="range-tick" data-value="4">
+                                            <div class="tick-dot"></div>
+                                            <div class="tick-label">FR4</div>
+                                        </div>
+                                        <div class="range-tick" data-value="5">
+                                            <div class="tick-dot"></div>
+                                            <div class="tick-label">FR5</div>
+                                        </div>
+                                    </div>
+
+                                    <table class="fouling-rating-table">
+                                         <thead>
+                                            <tr>
+                                                <th>Rating</th>
+                                                <th>Description</th>
+                                                <th>Impact</th>
+                                                <th>Validation</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>FR0</td>
+                                                <td>Clean hull</td>
+                                                <td>+0%</td>
+                                                <td>Baseline</td>
+                                            </tr>
+                                            <tr>
+                                                <td>FR1</td>
+                                                <td>Light slime</td>
+                                                <td>+15%</td>
+                                                <td>Research calibrated</td>
+                                            </tr>
+                                            <tr>
+                                                <td>FR2</td>
+                                                <td>Medium slime</td>
+                                                <td>+35%</td>
+                                                <td>Research calibrated</td>
+                                            </tr>
+                                            <tr>
+                                                <td>FR3</td>
+                                                <td>Heavy slime</td>
+                                                <td>+60%</td>
+                                                <td>Research calibrated</td>
+                                            </tr>
+                                            <tr>
+                                                <td>FR4</td>
+                                                <td>Light calcareous</td>
+                                                <td>+95%</td>
+                                                <td>Research calibrated</td>
+                                            </tr>
+                                            <tr>
+                                                <td>FR5</td>
+                                                <td>Heavy calcareous</td>
+                                                <td>+193%</td>
+                                                <td>Directly measured</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Results Section -->
+                                <div class="results-section">
+                                    <h3><i class="fas fa-chart-line"></i> Cost Impact Analysis</h3>
+                                    <div id="resultsText"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chart Card -->
+                        <div class="calculator-chart">
+                            <div class="card-header">
+                                <h3 class="card-header-title">Cost & Emissions vs. Speed</h3>
+                                <div class="card-header-icon">
+                                    <i class="fas fa-chart-area"></i>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <div class="chart-wrapper">
+                                        <canvas id="myChart" height="400"></canvas>
+                                    </div>
+                                </div>
+                                <p>This chart shows how operating costs and emissions increase with speed for both clean and fouled hulls. The difference between the two cost lines represents your potential savings from hull maintenance.</p>
+
+                                <div class="information-note">
+                                    <h4><i class="fas fa-lightbulb"></i> Understanding The Model</h4>
+                                    <p>The calculator uses a physics-based model that accounts for both frictional resistance (affected by fouling) and wave-making resistance (primarily affected by speed). The fouling impact values at FR5 (193% increase in friction) are directly measured from research, with intermediate values derived from fluid dynamics modeling.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="research-section">
+                        <h3>Research Foundation</h3>
+                        <p>This calculator is based on research studies that used advanced 3D underwater scanning technology to measure hull roughness and calculate the impact on vessel performance.</p>
+                        <div class="research-highlights">
+                            <div class="highlight">
+                                <h4>Key Findings</h4>
+                                <ul>
+                                    <li>Heavy calcareous fouling increased friction coefficient by up to 193%</li>
+                                    <li>For a medium-sized cruise ship, this translates to approximately $3M in additional annual fuel costs</li>
+                                    <li>CO₂ emissions increase proportionally with fuel consumption</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Biofouling Management Plan Generator Modal -->
+        <div id="plan-generator-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Biofouling Management Plan Generator</h2>
+                    <button class="modal-close" data-modal="plan-generator-modal" aria-label="Close Plan Generator">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="vessel-details">Vessel Details</button>
+                        <button class="tab-btn" data-tab="inspection-details">Inspection Details</button>
+                        <button class="tab-btn" data-tab="components">Components</button>
+                        <button class="tab-btn" data-tab="recommendations">Recommendations</button>
+                        <button class="tab-btn" data-tab="generate">Generate Report</button>
+                    </div>
+
+                    <div class="tab-content">
+                        <!-- Vessel Details Tab -->
+                        <div class="tab-pane active" id="vessel-details">
+                            <h3>Vessel Information</h3>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="vessel-name">Vessel Name</label>
-                                    <input type="text" id="vessel-name" class="form-control" required>
+                                    <label for="vesselName">Vessel Name:</label>
+                                    <input type="text" id="vesselName" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                    <label for="vessel-type">Vessel Type</label>
-                                    <select id="vessel-type" class="form-control" required>
+                                    <label for="imo">IMO Number:</label>
+                                    <input type="text" id="imo" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="vesselTypeGen">Vessel Type:</label> <!-- Renamed ID -->
+                                    <select id="vesselTypeGen" class="form-control"> <!-- Renamed ID -->
                                         <option value="">Select Type</option>
                                         <option value="cargo">Cargo Ship</option>
                                         <option value="tanker">Tanker</option>
@@ -1684,39 +553,292 @@
                                         <option value="other">Other</option>
                                     </select>
                                 </div>
+                                <div class="form-group">
+                                    <label for="vesselCommissioned">Commissioned:</label>
+                                    <input type="text" id="vesselCommissioned" class="form-control">
+                                </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="operating-area">Primary Operating Area</label>
-                                    <select id="operating-area" class="form-control" required>
-                                        <option value="">Select Area</option>
-                                        <option value="domestic">Domestic Waters</option>
-                                        <option value="international">International Waters</option>
-                                        <option value="mixed">Mixed Operations</option>
-                                    </select>
+                                    <label for="grossTonnage">Gross Tonnage (t):</label>
+                                    <input type="text" id="grossTonnage" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                    <label for="antifouling-date">Last Antifouling Date</label>
-                                    <input type="date" id="antifouling-date" class="form-control" required>
+                                    <label for="length">Length (m):</label>
+                                    <input type="text" id="length" class="form-control">
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Generate Plan</button>
-                        </form>
-
-                        <div id="plan-preview" class="plan-preview">
-                            <h4>Biofouling Management Plan Preview</h4>
-                            <div id="plan-content">
-                                <p><strong>Plan will be generated here.</strong></p>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="beam">Beam (m):</label>
+                                    <input type="text" id="beam" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="vesselDraft">Draft (m):</label>
+                                    <input type="text" id="vesselDraft" class="form-control">
+                                </div>
                             </div>
-                            <button id="download-plan" class="btn btn-primary">
-                                <i class="fas fa-download"></i>
-                                Download Full Plan
-                            </button>
+                            <div class="form-group">
+                                <label for="operatingArea">Primary Operating Area:</label>
+                                <select id="operatingArea" class="form-control">
+                                    <option value="">Select Area</option>
+                                    <option value="domestic">Domestic Waters</option>
+                                    <option value="international">International Waters</option>
+                                    <option value="mixed">Mixed Operations</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="antifoulingDate">Last Antifouling Date:</label>
+                                <input type="date" id="antifoulingDate" class="form-control">
+                            </div>
+                            <button class="btn btn-primary next-tab" data-next="inspection-details">Next: Inspection Details</button>
+                        </div>
+
+                        <!-- Inspection Details Tab -->
+                        <div class="tab-pane" id="inspection-details">
+                            <h3>Inspection Information</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="inspectionDate">Date of Inspection:</label>
+                                    <input type="date" id="inspectionDate" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inspectionLocation">Location:</label>
+                                    <input type="text" id="inspectionLocation" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="visibility">Visibility:</label>
+                                    <input type="text" id="visibility" class="form-control" placeholder="e.g., Clear, 3-4 meters">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inspector">Inspector:</label>
+                                    <input type="text" id="inspector" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="clientDetails">Client:</label>
+                                    <input type="text" id="clientDetails" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="clientRep">Client Representative:</label>
+                                    <input type="text" id="clientRep" class="form-control">
+                                </div>
+                            </div>
+                            <h3>Inspection Team</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="supervisor">Supervisor:</label>
+                                    <input type="text" id="supervisor" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="diverCount">Number of Divers:</label>
+                                    <select id="diverCount" class="form-control">
+                                        <option value="1">1 Diver</option>
+                                        <option value="2">2 Divers</option>
+                                        <option value="3">3 Divers</option>
+                                        <option value="4">4 Divers</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="diverFields" class="form-row">
+                                <div class="form-group">
+                                    <label for="diver1">Diver 1:</label>
+                                    <input type="text" id="diver1" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="methodologyText">Inspection Methodology:</label>
+                                <textarea id="methodologyText" class="form-control" rows="5" placeholder="Describe the inspection methodology used..."></textarea>
+                            </div>
+                            <div class="button-group">
+                                <button class="btn prev-tab" data-prev="vessel-details">Previous</button>
+                                <button class="btn btn-primary next-tab" data-next="components">Next: Components</button>
+                            </div>
+                        </div>
+
+                        <!-- Components Tab -->
+                        <div class="tab-pane" id="components">
+                            <h3>Hull Components</h3>
+                            <div class="components-container">
+                                <div class="component-list">
+                                    <div class="component-item" data-id="hull-sides">
+                                        <div class="component-name">Hull Sides</div>
+                                    </div>
+                                    <div class="component-item" data-id="transom">
+                                        <div class="component-name">Transom</div>
+                                    </div>
+                                    <div class="component-item" data-id="bow-thrusters">
+                                        <div class="component-name">Bow Thrusters</div>
+                                    </div>
+                                    <div class="component-item" data-id="propeller">
+                                        <div class="component-name">Propeller</div>
+                                    </div>
+                                    <div class="component-item" data-id="rudder">
+                                        <div class="component-name">Rudder</div>
+                                    </div>
+                                    <div class="component-item" data-id="sea-chests">
+                                        <div class="component-name">Sea Chests</div>
+                                    </div>
+                                    <div class="component-item" data-id="bilge-keels">
+                                        <div class="component-name">Bilge Keels</div>
+                                    </div>
+                                </div>
+
+                                <div class="component-details" id="component-details">
+                                    <p class="select-component-message">Select a component to add details</p>
+                                    <div class="component-form" style="display: none;">
+                                        <h4 id="component-title">Component Name</h4>
+                                        <div class="form-group">
+                                            <label for="component-comments">Observations:</label>
+                                            <textarea id="component-comments" class="form-control" rows="3"></textarea>
+                                        </div>
+
+                                        <h4>Fouling and Paint Ratings</h4>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="fouling-rating">Fouling Rating:</label>
+                                                <select id="fouling-rating" class="form-control">
+                                                    <option value="FR0">FR0 - Clean hull</option>
+                                                    <option value="FR10">FR10 - Light slime</option>
+                                                    <option value="FR20">FR20 - Medium slime</option>
+                                                    <option value="FR30">FR30 - Heavy slime</option>
+                                                    <option value="FR40">FR40 - Light calcareous</option>
+                                                    <option value="FR50">FR50 - Heavy calcareous</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="fouling-coverage">Coverage:</label>
+                                                <select id="fouling-coverage" class="form-control">
+                                                    <option value="0%">Absent (0%)</option>
+                                                    <option value="1-5%">Sparse (1-5%)</option>
+                                                    <option value="6-15%">Moderate (6-15%)</option>
+                                                    <option value="16-40%">Extensive (16-40%)</option>
+                                                    <option value="41-100%">Very Heavy (41-100%)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="pdr-rating">Paint Deterioration Rating:</label>
+                                                <select id="pdr-rating" class="form-control">
+                                                    <option value="PDR0">PDR0 - No anti-foul coating</option>
+                                                    <option value="PDR10">PDR10 - AF Paint intact</option>
+                                                    <option value="PDR20">PDR20 - AF missing at edges</option>
+                                                    <option value="PDR30">PDR30 - AF missing on flat areas</option>
+                                                    <option value="PDR40">PDR40 - AF blisters</option>
+                                                    <option value="PDR50">PDR50 - AF/AC paint missing</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="component-photo">Upload Photo:</label>
+                                            <input type="file" id="component-photo" class="form-control" accept="image/*">
+                                            <div id="photo-preview" class="photo-preview"></div>
+                                        </div>
+
+                                        <button id="save-component" class="btn btn-primary">Save Component</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="button-group">
+                                <button class="btn prev-tab" data-prev="inspection-details">Previous</button>
+                                <button class="btn btn-primary next-tab" data-next="recommendations">Next: Recommendations</button>
+                            </div>
+                        </div>
+
+                        <!-- Recommendations Tab -->
+                        <div class="tab-pane" id="recommendations">
+                            <h3>Recommendations and Summary</h3>
+                            <div class="form-group">
+                                <label for="summaryText">Executive Summary:</label>
+                                <textarea id="summaryText" class="form-control" rows="5" placeholder="Provide a brief summary of findings..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="recommendationsText">Recommendations:</label>
+                                <textarea id="recommendationsText" class="form-control" rows="8" placeholder="Provide detailed recommendations..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="declaration">IMS Declaration:</label>
+                                <textarea id="declaration" class="form-control" rows="3">I, [Inspector Name], declare my inspection and findings outlined above to be true and correct to the best of my knowledge on the date of inspection.</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Signature:</label>
+                                <div class="signature-pad">
+                                    <canvas id="signaturePad" width="400" height="200"></canvas>
+                                </div>
+                                <button id="clearSignature" class="btn">Clear Signature</button>
+                            </div>
+                            <div class="button-group">
+                                <button class="btn prev-tab" data-prev="components">Previous</button>
+                                <button class="btn btn-primary next-tab" data-next="generate">Next: Generate Report</button>
+                            </div>
+                        </div>
+
+                        <!-- Generate Report Tab -->
+                        <div class="tab-pane" id="generate">
+                            <h3>Generate Report</h3>
+                            <div class="form-group">
+                                <label for="reportTitle">Report Title:</label>
+                                <input type="text" id="reportTitle" class="form-control" value="Marine Inspection Report">
+                            </div>
+                            <div class="form-group">
+                                <label for="coverPhoto">Cover Photo:</label>
+                                <input type="file" id="coverPhoto" class="form-control" accept="image/*">
+                                <div id="cover-preview" class="photo-preview"></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="documentNumber">Document Number:</label>
+                                    <input type="text" id="documentNumber" class="form-control" value="MS-RPT-2025-">
+                                </div>
+                                <div class="form-group">
+                                    <label for="documentRevision">Revision:</label>
+                                    <input type="text" id="documentRevision" class="form-control" value="0">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reportFormat">Report Format:</label>
+                                <select id="reportFormat" class="form-control">
+                                    <option value="full">Full Report</option>
+                                    <option value="summary">Summary Report</option>
+                                </select>
+                            </div>
+                            <div class="button-group">
+                                <button class="btn prev-tab" data-prev="recommendations">Previous</button>
+                                <button id="preview-report" class="btn">Preview Report</button>
+                                <button id="generate-report" class="btn btn-primary">Generate Report</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+
+        <!-- Report Preview Modal -->
+        <div id="report-preview-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Report Preview</h2>
+                    <button class="modal-close" data-modal="report-preview-modal" aria-label="Close Report Preview">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="report-preview-container" class="report-preview">
+                        <!-- Report preview will be inserted here via JavaScript -->
+                    </div>
+                    <div class="button-group">
+                        <button id="close-preview" class="btn">Close</button>
+                        <button id="download-report" class="btn btn-primary">Download Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <!-- About Section -->
         <section id="about" class="about">
@@ -1730,43 +852,43 @@
                         <li>Implementing transparency and traceability from down under to the world</li>
                     </ul>
                     <p class="mt-lg">MarineStream is a division of Franmarine, an Australian subsea and technology organisation renowned for supporting Defence with underwater services and support.</p>
-                    <a href="#about" class="btn btn-primary">Learn More About Us</a>
+                    <a href="#contact" class="btn btn-primary">Learn More About Us</a> <!-- Changed link from #about to #contact -->
                 </div>
                 <div class="clients-section">
                     <h3>Valued Clients</h3>
                     <div class="partners-grid">
                         <div class="partner-logo">
-                            <img src="./assets/AMC.jpg" alt="AMC">
+                            <img src="./assets/AMC.jpg" alt="Australian Maritime College Logo">
                         </div>
                         <div class="partner-logo">
-                            <img src="./assets/AscLogo150x.jpg" alt="ASC">
+                            <img src="./assets/AscLogo150x.jpg" alt="ASC Logo">
                         </div>
                         <div class="partner-logo">
-                            <img src="./assets/austal.jpg" alt="Austal">
+                            <img src="./assets/austal.jpg" alt="Austal Logo">
                         </div>
                         <div class="partner-logo">
-                            <img src="./assets/bae.jpg" alt="BAE Systems">
+                            <img src="./assets/bae.jpg" alt="BAE Systems Logo">
                         </div>
                         <div class="partner-logo">
-                            <img src="./assets/Baleen-Logo.jpg" alt="Baleen">
+                            <img src="./assets/Baleen-Logo.jpg" alt="Baleen Logo">
                         </div>
                         <div class="partner-logo">
-                            <img src="./assets/freoports.jpg" alt="Fremantle Ports">
+                            <img src="./assets/freoports.jpg" alt="Fremantle Ports Logo">
                         </div>
                     </div>
-                    
+
                     <h3 class="mt-lg">Management System Certifications</h3>
                     <div class="cert-logos">
                         <div class="cert-logo">
-                            <img src="./assets/iso-9001.png" alt="ISO 9001:2015" class="cert-logo-img">
+                            <img src="./assets/iso-9001.png" alt="ISO 9001:2015 Certification Logo" class="cert-logo-img">
                             <span>ISO 9001:2015</span>
                         </div>
                         <div class="cert-logo">
-                            <img src="./assets/iso-14001.png" alt="ISO 14001:2015" class="cert-logo-img">
+                            <img src="./assets/iso-14001.png" alt="ISO 14001:2015 Certification Logo" class="cert-logo-img">
                             <span>ISO 14001:2015</span>
                         </div>
                         <div class="cert-logo">
-                            <img src="./assets/iso-45001.png" alt="ISO 45001:2018" class="cert-logo-img">
+                            <img src="./assets/iso-45001.png" alt="ISO 45001:2018 Certification Logo" class="cert-logo-img">
                             <span>ISO 45001:2018</span>
                         </div>
                     </div>
@@ -1783,15 +905,15 @@
                         <p>Interested in our solutions? Contact us to learn how our underwater capability can transform your marine asset management.</p>
                         <form class="contact-form">
                             <div class="form-group">
-                                <input type="text" id="name" name="name" required>
+                                <input type="text" id="name" name="name" required placeholder=" "> <!-- Added placeholder for label animation -->
                                 <label for="name">Your Name</label>
                             </div>
                             <div class="form-group">
-                                <input type="email" id="email" name="email" required>
+                                <input type="email" id="email" name="email" required placeholder=" "> <!-- Added placeholder for label animation -->
                                 <label for="email">Your Email</label>
                             </div>
                             <div class="form-group">
-                                <textarea id="message" name="message" rows="5" required></textarea>
+                                <textarea id="message" name="message" rows="5" required placeholder=" "></textarea> <!-- Added placeholder for label animation -->
                                 <label for="message">Your Message</label>
                             </div>
                             <button type="submit" class="btn btn-primary">
@@ -1816,9 +938,10 @@
                             </div>
                         </div>
                         <div class="social-links">
-                            <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                             <!-- Add actual social media links -->
+                            <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
                         </div>
                     </div>
                 </div>
@@ -1831,7 +954,8 @@
             <div class="footer-content">
                 <div class="footer-brand">
                     <a href="#" class="footer-logo">
-                        <img src="logo.png" alt="MarineStream Logo">
+                         <!-- Make sure logo.png exists -->
+                        <img src="./assets/logo.png" alt="MarineStream Logo - Footer">
                         <span>MarineStream</span>
                     </a>
                     <p>Revolutionising Biofouling Management with blockchain technology and live underwater monitoring.</p>
@@ -1867,7 +991,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 MarineStream. All rights reserved. | A division of <a href="https://franmarine.com.au">franmarine.com.au</a></p>
+                <p>© 2025 MarineStream. All rights reserved. | A division of <a href="https://franmarine.com.au" target="_blank" rel="noopener noreferrer">franmarine.com.au</a></p>
             </div>
         </div>
     </footer>
@@ -1887,677 +1011,61 @@
     <script id="capability-statement-template" type="text/x-handlebars-template">
         <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
             <div style="text-align: center; margin-bottom: 30px;">
-                <h1 style="color: #000; margin-bottom: 10px;">MarineStream Capability Statement</h1>
-                <p style="color: #666;">Revolutionising Biofouling Management</p>
+                <!-- Removed inline style color - relies on default -->
+                <h1 style="margin-bottom: 10px;">MarineStream Capability Statement</h1>
+                 <!-- Use a standard dark color for PDF text -->
+                <p style="color: #333;">Revolutionising Biofouling Management</p>
             </div>
-            
+
             <div style="margin-bottom: 30px;">
-                <h2 style="color: #000; border-bottom: 2px solid #1DC9B7; padding-bottom: 5px;">About Us</h2>
-                <p>{{about}}</p>
+                 <!-- Use a standard dark color for PDF text -->
+                <h2 style="color: #111; border-bottom: 2px solid #1DC9B7; padding-bottom: 5px;">About Us</h2>
+                <p style="color: #333;">{{about}}</p>
             </div>
-            
+
             <div style="margin-bottom: 30px;">
-                <h2 style="color: #000; border-bottom: 2px solid #1DC9B7; padding-bottom: 5px;">Key Capabilities</h2>
-                <ul>
+                <h2 style="color: #111; border-bottom: 2px solid #1DC9B7; padding-bottom: 5px;">Key Capabilities</h2>
+                <ul style="color: #333;">
                     {{#each capabilities}}
                     <li style="margin-bottom: 10px;">{{this}}</li>
                     {{/each}}
                 </ul>
             </div>
-            
+
             <div style="margin-bottom: 30px;">
-                <h2 style="color: #000; border-bottom: 2px solid #1DC9B7; padding-bottom: 5px;">Our Technology</h2>
-                <p>{{technology}}</p>
-                <ul>
+                <h2 style="color: #111; border-bottom: 2px solid #1DC9B7; padding-bottom: 5px;">Our Technology</h2>
+                <p style="color: #333;">{{technology}}</p>
+                <ul style="color: #333;">
                     {{#each techFeatures}}
                     <li style="margin-bottom: 10px;">{{this}}</li>
                     {{/each}}
                 </ul>
             </div>
-            
+
             <div style="margin-bottom: 30px;">
-                <h2 style="color: #000; border-bottom: 2px solid #1DC9B7; padding-bottom: 5px;">Certifications</h2>
-                <ul>
+                <h2 style="color: #111; border-bottom: 2px solid #1DC9B7; padding-bottom: 5px;">Certifications</h2>
+                <ul style="color: #333;">
                     {{#each certifications}}
                     <li style="margin-bottom: 10px;">{{this}}</li>
                     {{/each}}
                 </ul>
             </div>
-            
+
             <div style="margin-bottom: 30px;">
-                <h2 style="color: #000; border-bottom: 2px solid #00FF00; padding-bottom: 5px;">Contact Information</h2>
-                <p><strong>Email:</strong> {{contactEmail}}</p>
-                <p><strong>Phone:</strong> {{contactPhone}}</p>
-                <p><strong>Address:</strong> {{contactAddress}}</p>
+                <!-- Changed border color for consistency -->
+                <h2 style="color: #111; border-bottom: 2px solid #1DC9B7; padding-bottom: 5px;">Contact Information</h2>
+                <p style="color: #333;"><strong>Email:</strong> {{contactEmail}}</p>
+                <p style="color: #333;"><strong>Phone:</strong> {{contactPhone}}</p>
+                <p style="color: #333;"><strong>Address:</strong> {{contactAddress}}</p>
             </div>
-            
-            <div style="text-align: center; margin-top: 50px; color: #666; font-size: 12px;">
+
+            <div style="text-align: center; margin-top: 50px; color: #555; font-size: 12px;">
                 <p>© 2025 MarineStream. All rights reserved. | A division of franmarine.com.au</p>
             </div>
         </div>
     </script>
 
-    <script>
-        // Initialize GSAP ScrollTrigger
-        gsap.registerPlugin(ScrollTrigger);
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Theme Toggling
-            initThemeToggle();
-            
-            // Mobile Navigation
-            initMobileNavigation();
-            
-            // Animations
-            initAnimations();
-            
-            // Intersection Observer for Animation on Scroll
-            initAOS();
-            
-            // Header Scroll Effect
-            initHeaderScroll();
-            
-            // Smooth Scrolling for Anchor Links
-            initSmoothScroll();
-            
-            // Theme Switcher
-            initThemeSwitcher();
-            
-            // Initialize Tools
-            initFoulingCalculator();
-            initManagementPlanGenerator();
-            
-            // Initialize PDF Generator
-            initPDFGenerator();
-        });
-
-        // Theme Toggle Functionality
-        function initThemeToggle() {
-            const themeToggleBtn = document.getElementById('dark-mode-toggle');
-            const htmlElement = document.documentElement;
-            
-            // Check for saved theme mode preference
-            const savedThemeMode = localStorage.getItem('themeMode') ||
-                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            
-            // Apply initial theme mode
-            if (savedThemeMode === 'dark') {
-                htmlElement.setAttribute('data-theme-mode', 'dark');
-                themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
-            }
-            
-            // Add click event to dark mode toggle
-            themeToggleBtn.addEventListener('click', () => {
-                const currentThemeMode = htmlElement.getAttribute('data-theme-mode');
-                
-                if (currentThemeMode === 'dark') {
-                    htmlElement.removeAttribute('data-theme-mode');
-                    localStorage.setItem('themeMode', 'light');
-                    themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
-                } else {
-                    htmlElement.setAttribute('data-theme-mode', 'dark');
-                    localStorage.setItem('themeMode', 'dark');
-                    themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
-                }
-            });
-        }
-
-        // Theme Switcher Functionality
-        function initThemeSwitcher() {
-            const themeOptions = document.querySelectorAll('.theme-option');
-            const htmlElement = document.documentElement;
-            
-            // Check for saved theme color preference
-            const savedTheme = localStorage.getItem('themeColor') || 'green';
-            
-            // Apply initial theme
-            htmlElement.setAttribute('data-theme', savedTheme);
-            
-            // Set active class on current theme
-            themeOptions.forEach(option => {
-                if (option.dataset.theme === savedTheme) {
-                    option.classList.add('active');
-                } else {
-                    option.classList.remove('active');
-                }
-            });
-            
-            // Add click event to theme options
-            themeOptions.forEach(option => {
-                option.addEventListener('click', () => {
-                    const theme = option.dataset.theme;
-                    
-                    // Update active class
-                    themeOptions.forEach(opt => opt.classList.remove('active'));
-                    option.classList.add('active');
-                    
-                    // Update theme
-                    htmlElement.setAttribute('data-theme', theme);
-                    localStorage.setItem('themeColor', theme);
-                });
-            });
-        }
-
-        // Mobile Navigation
-        function initMobileNavigation() {
-            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-            const navLinksContainer = document.querySelector('.nav-links-container');
-            const navLinks = document.querySelectorAll('.nav-link');
-            
-            if (mobileMenuToggle) {
-                mobileMenuToggle.addEventListener('click', () => {
-                    navLinksContainer.classList.toggle('active');
-                    
-                    // Update icon
-                    if (navLinksContainer.classList.contains('active')) {
-                        mobileMenuToggle.innerHTML = '<i class="fas fa-times"></i>';
-                        document.body.style.overflow = 'hidden'; // Prevent scrolling
-                    } else {
-                        mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-                        document.body.style.overflow = ''; // Restore scrolling
-                    }
-                });
-            }
-            
-            // Close mobile menu when clicking on a link
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    navLinksContainer.classList.remove('active');
-                    mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-                    document.body.style.overflow = ''; // Restore scrolling
-                });
-            });
-            
-            // Close mobile menu when clicking outside
-            document.addEventListener('click', (e) => {
-                if (
-                    navLinksContainer.classList.contains('active') && 
-                    !navLinksContainer.contains(e.target) && 
-                    !mobileMenuToggle.contains(e.target)
-                ) {
-                    navLinksContainer.classList.remove('active');
-                    mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-                    document.body.style.overflow = ''; // Restore scrolling
-                }
-            });
-        }
-
-        // GSAP Animations
-        function initAnimations() {
-            // Hero section animations
-            gsap.from(".hero-title", {
-                y: 50,
-                opacity: 0,
-                duration: 1,
-                ease: "power3.out"
-            });
-            
-            gsap.from(".hero-subtitle", {
-                y: 30,
-                opacity: 0,
-                duration: 1,
-                delay: 0.3,
-                ease: "power3.out"
-            });
-            
-            gsap.from(".hero-cta", {
-                y: 30,
-                opacity: 0,
-                duration: 1,
-                delay: 0.6,
-                ease: "power3.out"
-            });
-            
-            gsap.from(".floating-image", {
-                y: 100,
-                opacity: 0,
-                duration: 1.2,
-                delay: 0.4,
-                ease: "power3.out"
-            });
-            
-            // Section heading animations
-            gsap.utils.toArray('.section-title').forEach(title => {
-                gsap.from(title, {
-                    scrollTrigger: {
-                        trigger: title,
-                        start: "top 80%",
-                        toggleActions: "play none none none"
-                    },
-                    y: 30,
-                    opacity: 0,
-                    duration: 0.8,
-                    ease: "power2.out"
-                });
-            });
-            
-            // Feature card animations with stagger
-            const featureCards = document.querySelectorAll('.feature-card');
-            if (featureCards.length) {
-                gsap.from(featureCards, {
-                    scrollTrigger: {
-                        trigger: '.feature-grid',
-                        start: "top 75%",
-                    },
-                    y: 50,
-                    opacity: 0,
-                    duration: 0.8,
-                    stagger: 0.15,
-                    ease: "power2.out"
-                });
-            }
-            
-            // Dashboard features animation
-            const dashboardFeatures = document.querySelectorAll('.dashboard-feature');
-            if (dashboardFeatures.length) {
-                gsap.from(dashboardFeatures, {
-                    scrollTrigger: {
-                        trigger: '.dashboard-features',
-                        start: "top 80%",
-                    },
-                    x: 50,
-                    opacity: 0,
-                    duration: 0.8,
-                    stagger: 0.15,
-                    ease: "power2.out"
-                });
-            }
-        }
-
-        // Animation on Scroll (AOS) - custom implementation
-        function initAOS() {
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.1
-            };
-            
-            const handleIntersect = (entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const delay = entry.target.dataset.aosDelay || 0;
-                        setTimeout(() => {
-                            entry.target.classList.add('aos-animate');
-                        }, delay);
-                        observer.unobserve(entry.target);
-                    }
-                });
-            };
-            
-            const observer = new IntersectionObserver(handleIntersect, observerOptions);
-            
-            const elements = document.querySelectorAll('[data-aos]');
-            elements.forEach(element => {
-                observer.observe(element);
-            });
-        }
-
-        // Header Scroll Effect
-        function initHeaderScroll() {
-            const header = document.querySelector('.main-header');
-            
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-            });
-        }
-
-        // Smooth Scroll for Anchor Links
-        function initSmoothScroll() {
-            const links = document.querySelectorAll('a[href^="#"]');
-            
-            links.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    if (this.getAttribute('href') === '#') return;
-                    
-                    e.preventDefault();
-                    
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        const headerOffset = 80;
-                        const elementPosition = target.getBoundingClientRect().top;
-                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                        
-                        window.scrollTo({
-                            top: offsetPosition,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
-        }
-
-        // Fouling Calculator
-        function initFoulingCalculator() {
-            const calculatorForm = document.getElementById('fouling-calculator');
-            const calculatorResult = document.getElementById('calculator-result');
-            const dragResult = document.getElementById('drag-result');
-            const fuelResult = document.getElementById('fuel-result');
-            const scheduleResult = document.getElementById('schedule-result');
-            
-            if (calculatorForm) {
-                calculatorForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    // Get form values
-                    const vesselLength = parseFloat(document.getElementById('vessel-length').value);
-                    const foulingLevel = document.getElementById('fouling-level').value;
-                    const vesselSpeed = parseFloat(document.getElementById('vessel-speed').value);
-                    
-                    // Calculate results (simplified calculation)
-                    let dragIncrease = 0;
-                    let fuelIncrease = 0;
-                    let cleaningSchedule = '';
-                    
-                    switch(foulingLevel) {
-                        case 'light':
-                            dragIncrease = 5 + (vesselLength / 10);
-                            fuelIncrease = dragIncrease * 1.2;
-                            cleaningSchedule = 'Every 6 months';
-                            break;
-                        case 'medium':
-                            dragIncrease = 15 + (vesselLength / 8);
-                            fuelIncrease = dragIncrease * 1.5;
-                            cleaningSchedule = 'Every 3 months';
-                            break;
-                        case 'heavy':
-                            dragIncrease = 30 + (vesselLength / 5);
-                            fuelIncrease = dragIncrease * 1.8;
-                            cleaningSchedule = 'Immediate cleaning recommended';
-                            break;
-                    }
-                    
-                    // Adjust for speed (higher speeds = higher impact)
-                    dragIncrease = dragIncrease * (1 + (vesselSpeed / 50));
-                    fuelIncrease = fuelIncrease * (1 + (vesselSpeed / 40));
-                    
-                    // Update results
-                    dragResult.textContent = `${dragIncrease.toFixed(1)}%`;
-                    fuelResult.textContent = `${fuelIncrease.toFixed(1)}%`;
-                    scheduleResult.textContent = cleaningSchedule;
-                    
-                    // Show results
-                    calculatorResult.style.display = 'block';
-                });
-            }
-        }
-
-        // Management Plan Generator
-        function initManagementPlanGenerator() {
-            const planForm = document.getElementById('plan-generator');
-            const planPreview = document.getElementById('plan-preview');
-            const planContent = document.getElementById('plan-content');
-            const downloadBtn = document.getElementById('download-plan');
-            
-            if (planForm) {
-                planForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    // Get form values
-                    const vesselName = document.getElementById('vessel-name').value;
-                    const vesselType = document.getElementById('vessel-type').value;
-                    const operatingArea = document.getElementById('operating-area').value;
-                    const antifoulingDate = new Date(document.getElementById('antifouling-date').value);
-                    
-                    // Format date for display
-                    const formattedDate = antifoulingDate.toLocaleDateString('en-US', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                    });
-                    
-                    // Calculate next recommended antifouling date (generally 24-36 months)
-                    const nextAntifoulingDate = new Date(antifoulingDate);
-                    nextAntifoulingDate.setMonth(nextAntifoulingDate.getMonth() + 30);
-                    const formattedNextDate = nextAntifoulingDate.toLocaleDateString('en-US', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                    });
-                    
-                    // Create plan content
-                    let planHTML = `
-                        <div class="plan-section">
-                            <h3>Biofouling Management Plan for ${vesselName}</h3>
-                            <p><strong>Vessel Type:</strong> ${document.getElementById('vessel-type').options[document.getElementById('vessel-type').selectedIndex].text}</p>
-                            <p><strong>Primary Operating Area:</strong> ${document.getElementById('operating-area').options[document.getElementById('operating-area').selectedIndex].text}</p>
-                            <p><strong>Last Antifouling Application:</strong> ${formattedDate}</p>
-                            <p><strong>Recommended Next Application:</strong> ${formattedNextDate}</p>
-                        </div>
-                        
-                        <div class="plan-section">
-                            <h4>Recommended Maintenance Procedures</h4>
-                            <ul>
-                                <li>Regular hull inspections every 6 months or after extended periods of inactivity</li>
-                                <li>Clean hull in accordance with local regulations and biosecurity requirements</li>
-                                <li>Maintain detailed records of all cleaning and inspection activities</li>
-                                <li>Monitor niche areas for biofouling accumulation</li>
-                                <li>Implement MarineStream's recommended practices for ${document.getElementById('vessel-type').options[document.getElementById('vessel-type').selectedIndex].text} vessels</li>
-                            </ul>
-                        </div>
-                    `;
-                    
-                    // Add operating area specific recommendations
-                    if (operatingArea === 'international') {
-                        planHTML += `
-                            <div class="plan-section">
-                                <h4>International Voyage Considerations</h4>
-                                <p>Due to your international operating profile, additional precautions are recommended:</p>
-                                <ul>
-                                    <li>Pre-departure inspections before entering new bioregions</li>
-                                    <li>Compliance with IMO Biofouling Guidelines</li>
-                                    <li>Maintenance of a Biofouling Record Book</li>
-                                    <li>Consider in-water cleaning services at major ports</li>
-                                </ul>
-                            </div>
-                        `;
-                    }
-                    
-                    // Update content and show preview
-                    planContent.innerHTML = planHTML;
-                    planPreview.style.display = 'block';
-                    
-                    // Scroll to preview
-                    planPreview.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                });
-                
-                // Download button
-                if (downloadBtn) {
-                    downloadBtn.addEventListener('click', function() {
-                        // In a real implementation, this would generate a PDF
-                        alert('In a complete implementation, this would download a full PDF with your customized biofouling management plan.');
-                    });
-                }
-            }
-        }
-
-        // PDF Generator
-        function initPDFGenerator() {
-            const generatePDFBtn = document.getElementById('generate-pdf');
-            
-            if (generatePDFBtn) {
-                generatePDFBtn.addEventListener('click', function() {
-                    // Get the template source
-                    const source = document.getElementById('capability-statement-template').innerHTML;
-                    
-                    // Compile the template
-                    const template = Handlebars.compile(source);
-                    
-                    // Data for the template
-                    const data = {
-                        about: "MarineStream is dedicated to solving biofouling challenges through innovative hardware and blockchain technology, built on Rise-X's robust SaaS platform. We are the only organisation in Australia delivering a complete marine biosecurity compliance and biofouling management service.",
-                        capabilities: [
-                            "Fleet wide marine biosecurity compliance and biofouling management solutions",
-                            "In-water hull cleaning, niche area cleaning and invasive marine species treatments",
-                            "Corrosion management, material preservation, underwater blast and surface treatments",
-                            "Marine infrastructure remediation, structural upgrades, and new construction support",
-                            "Mooring design, installation, inspection and maintenance",
-                            "Class approved ROV survey and inspection",
-                            "Marine and logistical vessel support"
-                        ],
-                        technology: "The MarineStream™ In-water Cleaning System is the only in-water cleaning system compliant with the Australian In-Water Cleaning Standards, designed to enhance the hydrodynamic and acoustic performance of naval platforms.",
-                        techFeatures: [
-                            "A single 20\" container with 10μ filtration and water processing unit with UV treatment capability",
-                            "Designed for rapid deployment from wharf side or suitable support vessel",
-                            "A multifaceted system with tailored compatible tooling capable of complete clean to biosecurity specification",
-                            "The MarineStream™ Biofouling and Underwater Asset Management Platform holds the asset for instant operational readiness"
-                        ],
-                        certifications: [
-                            "ISO 9001:2015 - Quality Management System",
-                            "ISO 14001:2015 - Environmental Management System",
-                            "ISO 45001:2018 - Occupational Health and Safety Management",
-                            "Compliant with ABS, Lloyds, DNV, BV, NK Class specifications"
-                        ],
-                        contactEmail: "info@marinestream.com",
-                        contactPhone: "+61 8 9437 3900",
-                        contactAddress: "13 Possner Way, Henderson, WA 6166, Australia"
-                    };
-                    
-                    // Apply the template to the data
-                    const html = template(data);
-                    
-                    // Create a temporary div to hold the content
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = html;
-                    tempDiv.style.position = 'absolute';
-                    tempDiv.style.left = '-9999px';
-                    document.body.appendChild(tempDiv);
-                    
-                    // Use html2canvas to convert the div to an image
-                    html2canvas(tempDiv).then(canvas => {
-                        // Create PDF
-                        const { jsPDF } = window.jspdf;
-                        const pdf = new jsPDF('p', 'pt', 'a4');
-                        
-                        // Calculate dimensions to fit on A4
-                        const imgData = canvas.toDataURL('image/png');
-                        const imgWidth = 595.28; // A4 width in pt
-                        const imgHeight = canvas.height * imgWidth / canvas.width;
-                        
-                        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-                        pdf.save('MarineStream_Capability_Statement.pdf');
-                        
-                        // Remove the temporary div
-                        document.body.removeChild(tempDiv);
-                    });
-                });
-            }
-        }
-
-        // Form Submission
-        const contactForms = document.querySelectorAll('.contact-form');
-        contactForms.forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Validate form
-                const valid = validateForm(this);
-                if (!valid) return;
-                
-                // Get submit button
-                const submitBtn = this.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
-                
-                // Show loading state
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-                submitBtn.disabled = true;
-                
-                // Simulate form submission (replace with actual form submission)
-                setTimeout(() => {
-                    // Show success state
-                    submitBtn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
-                    
-                    // Show success message
-                    const successMessage = document.createElement('div');
-                    successMessage.className = 'form-success-message';
-                    successMessage.innerHTML = 'Thank you for your message. We\'ll get back to you soon!';
-                    form.appendChild(successMessage);
-                    
-                    // Reset form
-                    form.reset();
-                    
-                    // Reset button after 3 seconds
-                    setTimeout(() => {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                        
-                        // Remove success message after fade out
-                        successMessage.style.opacity = 0;
-                        setTimeout(() => {
-                            form.removeChild(successMessage);
-                        }, 500);
-                    }, 3000);
-                }, 1500);
-            });
-        });
-
-        // Form validation
-        function validateForm(form) {
-            let valid = true;
-            const inputs = form.querySelectorAll('input, textarea');
-            
-            // Remove existing error messages
-            const existingErrors = form.querySelectorAll('.input-error');
-            existingErrors.forEach(error => error.remove());
-            
-            inputs.forEach(input => {
-                input.classList.remove('error');
-                
-                if (input.required && !input.value.trim()) {
-                    valid = false;
-                    markAsInvalid(input, 'This field is required');
-                } else if (input.type === 'email' && input.value.trim() && !isValidEmail(input.value)) {
-                    valid = false;
-                    markAsInvalid(input, 'Please enter a valid email address');
-                }
-            });
-            
-            return valid;
-        }
-
-        function markAsInvalid(input, message) {
-            input.classList.add('error');
-            
-            const errorMessage = document.createElement('div');
-            errorMessage.className = 'input-error';
-            errorMessage.textContent = message;
-            
-            input.parentNode.appendChild(errorMessage);
-            
-            // Focus the first invalid input
-            if (document.querySelectorAll('.error').length === 1) {
-                input.focus();
-            }
-        }
-
-        function isValidEmail(email) {
-            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(String(email).toLowerCase());
-        }
-
-        // Play Button Interaction
-        const playButtons = document.querySelectorAll('.play-button');
-        playButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // In a real implementation, this would trigger a video player
-                const videoContainer = this.closest('.video-container');
-                
-                // Create video element (in real implementation)
-                const videoMessage = document.createElement('div');
-                videoMessage.className = 'video-message';
-                videoMessage.innerHTML = '<p>Video player would open here in the full implementation</p><button class="close-video">Close</button>';
-                videoContainer.appendChild(videoMessage);
-                
-                // Add close button functionality
-                const closeBtn = videoMessage.querySelector('.close-video');
-                closeBtn.addEventListener('click', () => {
-                    videoContainer.removeChild(videoMessage);
-                });
-            });
-        });
-    </script>
+    <!-- Script for the page -->
+    <script src="./script.js"></script>
 </body>
 </html>
