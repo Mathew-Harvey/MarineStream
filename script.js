@@ -212,80 +212,51 @@ function initMobileNavigation() {
 
 // GSAP Animations - Enhanced
 function initAnimations() {
-    gsap.registerPlugin(ScrollTrigger);
-
-    // Smoother default ease
-    gsap.defaults({ ease: "power3.out", duration: 1 });
-
-    // Hero section animations
-    gsap.from(".hero-title", { y: 60, opacity: 0, delay: 0.3, duration: 1.2 });
-    gsap.from(".hero-subtitle", { y: 40, opacity: 0, delay: 0.6, duration: 1.2 });
-    // Removed button animation
-    gsap.from(".floating-image", { y: 100, opacity: 0, duration: 1.5, delay: 0.7, ease: "elastic.out(1, 0.75)" }); // Elastic entry
-
-    // Section heading animations (Staggered reveal)
+    // Remove scroll-triggered animations and just set elements to their final state
+    gsap.set('.hero-title', { opacity: 1, y: 0 });
+    gsap.set('.hero-subtitle', { opacity: 1, y: 0 });
+    gsap.set('.hero-cta', { opacity: 1, y: 0 });
+    gsap.set('.floating-image', { opacity: 1, y: 0 });
+    
+    // Set all section headers to visible
     gsap.utils.toArray('.section-header').forEach(header => {
-        const tl = gsap.timeline({
-            scrollTrigger: { trigger: header, start: "top 85%", toggleActions: "play none none none" }
-        });
-        tl.from(header.querySelector('.section-title'), { y: 40, opacity: 0, duration: 0.8 })
-          .from(header.querySelector('.section-title::after'), { width: 0, duration: 0.6, ease: "power2.inOut" }, "-=0.5") // Animate underline
-          .from(header.querySelector('.section-description'), { y: 20, opacity: 0, duration: 0.8 }, "-=0.4");
+        gsap.set(header, { opacity: 1, y: 0 });
     });
 
-
-    // Feature card animations with stagger
-    const featureCards = gsap.utils.toArray('.feature-card');
-    if (featureCards.length) {
-        gsap.from(featureCards, {
-            scrollTrigger: { trigger: '.feature-grid', start: "top 80%", end: "bottom 60%", scrub: 1 }, // Subtle scrub effect
-            y: 60, opacity: 0, stagger: 0.1
-        });
-    }
-
-     // Staggered animation for list items (Smoother)
-     gsap.utils.toArray('.tech-features li, .feature-list li, .about-features li').forEach(item => {
-        gsap.from(item, {
-            scrollTrigger: { trigger: item, start: "top 90%", toggleActions: "play none none reset" },
-            opacity: 0, duration: 0.5, ease: "power2.out"
-        });
+    // Set all feature cards to visible
+    gsap.utils.toArray('.feature-card').forEach(card => {
+        gsap.set(card, { opacity: 1, y: 0 });
     });
 
-    // Simpler animation for dashboard features
-    gsap.utils.toArray('.dashboard-feature').forEach(item => {
-        gsap.from(item, {
-            scrollTrigger: { trigger: item, start: "top 90%", toggleActions: "play none none reset" },
-            opacity: 0, duration: 0.5, ease: "power2.out"
-        });
+    // Set all list items to visible
+    gsap.utils.toArray('.feature-list li').forEach(item => {
+        gsap.set(item, { opacity: 1, x: 0 });
     });
 
-    // Image/Video reveals
-     gsap.utils.toArray('.tech-image-container, .video-showcase, .dashboard-image').forEach(media => {
-        gsap.from(media, {
-            scrollTrigger: { trigger: media, start: "top 85%", toggleActions: "play none none none" },
-            scale: 0.95, opacity: 0, duration: 1, ease: "power3.out"
-        });
+    // Set all dashboard features to visible
+    gsap.utils.toArray('.dashboard-feature').forEach(feature => {
+        gsap.set(feature, { opacity: 1, x: 0 });
     });
 
-    // Content reveals alongside media
-     gsap.utils.toArray('.tech-content, .monitoring-content, .dashboard-features').forEach(content => {
-         gsap.from(content.children, { // Animate children individually
-             scrollTrigger: { trigger: content, start: "top 80%", toggleActions: "play none none none" },
-             y: 30, opacity: 0, duration: 0.8, stagger: 0.15, ease: "power2.out"
-         });
-     });
+    // Set all media elements to visible
+    gsap.utils.toArray('.media-element').forEach(element => {
+        gsap.set(element, { opacity: 1, y: 0 });
+    });
 
-     // Tool card reveal
-     gsap.from(".tool-card", {
-         scrollTrigger: { trigger: '.tools-grid', start: "top 80%" },
-         y: 50, opacity: 0, duration: 0.7, stagger: 0.15, ease: "power2.out"
-     });
+    // Set all content elements to visible
+    gsap.utils.toArray('.content-element').forEach(element => {
+        gsap.set(element, { opacity: 1, y: 0 });
+    });
 
-     // Partner logo reveal
-      gsap.from(".partner-logo", {
-         scrollTrigger: { trigger: '.partners-grid', start: "top 85%" },
-         y: 30, opacity: 0, duration: 0.5, stagger: 0.08, ease: "power1.out"
-     });
+    // Set all tool cards to visible
+    gsap.utils.toArray('.tool-card').forEach(card => {
+        gsap.set(card, { opacity: 1, y: 0 });
+    });
+
+    // Set all partner logos to visible
+    gsap.utils.toArray('.partner-logo').forEach(logo => {
+        gsap.set(logo, { opacity: 1, y: 0 });
+    });
 }
 
 
