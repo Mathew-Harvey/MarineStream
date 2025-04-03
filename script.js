@@ -16,11 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('rov-video') || document.getElementById('crawler-video')) {
         initVideos(); // Modified to handle autoplay
     }
-
-    // Initialize PDF Generator if button exists
-    if (document.getElementById('generate-pdf')) {
-        initPDFGenerator();
-    }
 });
 
 // === Core Website Functions ===
@@ -249,7 +244,15 @@ function initAnimations() {
     }
 
      // Staggered animation for list items (Smoother)
-     gsap.utils.toArray('.tech-features li, .dashboard-feature, .feature-list li, .about-features li').forEach(item => {
+     gsap.utils.toArray('.tech-features li, .feature-list li, .about-features li').forEach(item => {
+        gsap.from(item, {
+            scrollTrigger: { trigger: item, start: "top 90%", toggleActions: "play none none reset" },
+            opacity: 0, duration: 0.5, ease: "power2.out"
+        });
+    });
+
+    // Simpler animation for dashboard features
+    gsap.utils.toArray('.dashboard-feature').forEach(item => {
         gsap.from(item, {
             scrollTrigger: { trigger: item, start: "top 90%", toggleActions: "play none none reset" },
             opacity: 0, duration: 0.5, ease: "power2.out"
@@ -396,116 +399,6 @@ function initNavLinkHighlighting() {
     window.addEventListener('scroll', () => {
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(changeLinkState, 50); // Adjust throttle delay
-    });
-}
-
-
-// PDF Generator (Ensure libraries are loaded in HTML)
-function initPDFGenerator() {
-    const generatePDFBtn = document.getElementById('generate-pdf');
-    const templateSource = document.getElementById('capability-statement-template');
-
-    if (!generatePDFBtn || !templateSource || typeof Handlebars === 'undefined' || typeof html2canvas === 'undefined' || typeof jspdf === 'undefined') {
-         if(generatePDFBtn) {
-            generatePDFBtn.disabled = true;
-            generatePDFBtn.style.opacity = '0.5';
-            generatePDFBtn.style.cursor = 'not-allowed';
-            generatePDFBtn.title = "PDF Generation requires external libraries.";
-         }
-         console.warn("PDF Generator dependencies missing (Handlebars, html2canvas, jsPDF) or template not found.");
-        return;
-    }
-
-    generatePDFBtn.addEventListener('click', async function() {
-        this.disabled = true;
-        const originalText = this.innerHTML;
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
-
-        try {
-            // Compile the template
-            const template = Handlebars.compile(templateSource.innerHTML);
-
-            // Data (Could be fetched dynamically)
-            // (Data from original request remains the same)
-             const data = {
-                accentColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim() || '#FF6600', // Get current accent color
-                about: "MarineStream is dedicated to solving biofouling challenges through innovative hardware and blockchain technology, built on Rise-X's robust SaaS platform. We are the only organisation in Australia delivering a complete marine biosecurity compliance and biofouling management service.",
-                capabilities: [ /* ... capabilities data ... */ ],
-                technology: "The MarineStream™ In-water Cleaning System is the only in-water cleaning system compliant with the Australian In-Water Cleaning Standards, designed to enhance the hydrodynamic and acoustic performance of naval platforms.",
-                techFeatures: [ /* ... techFeatures data ... */ ],
-                certifications: [ /* ... certifications data ... */ ],
-                contactEmail: "info@marinestream.com",
-                contactPhone: "+61 8 9437 3900",
-                contactAddress: "13 Possner Way, Henderson, WA 6166, Australia"
-            };
-
-
-            // Render HTML
-            const htmlContent = template(data);
-
-            // Create temporary div for rendering
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = htmlContent;
-            tempDiv.style.position = 'absolute';
-            tempDiv.style.left = '-9999px';
-            tempDiv.style.width = '840px'; // A4-ish width for rendering
-            tempDiv.style.background = '#fff'; // Ensure white background
-            document.body.appendChild(tempDiv);
-
-            // Wait a moment for styles to apply (optional but can help)
-            await new Promise(resolve => setTimeout(resolve, 100));
-
-            // Generate Canvas
-            const canvas = await html2canvas(tempDiv, {
-                scale: 2, // Higher scale for better quality
-                useCORS: true,
-                logging: false, // Reduce console noise
-                 backgroundColor: '#ffffff' // Explicit white background
-            });
-
-            // Create PDF
-            const { jsPDF } = window.jspdf;
-            // Use pt as units for better A4 mapping
-            const pdf = new jsPDF({ orientation: 'p', unit: 'pt', format: 'a4' });
-
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
-            const canvasWidth = canvas.width;
-            const canvasHeight = canvas.height;
-            const ratio = canvasHeight / canvasWidth;
-
-            const imgWidth = pdfWidth - 40; // Add some margin (20pt each side)
-            const imgHeight = imgWidth * ratio;
-            let heightLeft = imgHeight;
-            let position = 20; // Initial top margin
-
-            // Add image to first page
-            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 20, position, imgWidth, imgHeight);
-            heightLeft -= (pdfHeight - 40); // Subtract usable page height
-
-            // Add subsequent pages if needed
-            while (heightLeft > 0) {
-                position = heightLeft - imgHeight + 20; // Calculate offset for next page's content
-                pdf.addPage();
-                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 20, position, imgWidth, imgHeight);
-                heightLeft -= (pdfHeight - 40);
-            }
-
-            // Save PDF
-            pdf.save('MarineStream_Capability_Statement.pdf');
-
-        } catch (error) {
-            console.error("Error generating PDF:", error);
-            alert("Failed to generate PDF. Please check console for details.");
-        } finally {
-            // Cleanup
-            const tempDiv = document.querySelector('div[style*="left: -9999px"]');
-             if (tempDiv && document.body.contains(tempDiv)) {
-                document.body.removeChild(tempDiv);
-             }
-            generatePDFBtn.disabled = false;
-            generatePDFBtn.innerHTML = originalText;
-        }
     });
 }
 

@@ -31,9 +31,9 @@
                         <li><a href="#home" class="nav-link active">Home</a></li>
                         <li><a href="#about" class="nav-link">About</a></li>
                         <li><a href="#solutions" class="nav-link">Solutions</a></li>
-                        <li><a href="#products" class="nav-link">Products</a></li>
                         <li><a href="#tools" class="nav-link">Tools</a></li>
-                        <li><a href="#contact" class="nav-link">Contact</a></li>
+                        <li><a href="https://app.marinestream.io/marinestream/home" class="nav-link btn btn-primary" target="_blank" rel="noopener noreferrer">Get Started</a></li>
+                        <li><a href="mailto:mharvey@franmarine.com.au" class="nav-link btn btn-outline">Talk to Our Team</a></li>
                     </ul>
                     <button class="theme-toggle" id="header-theme-toggle" aria-label="Toggle dark mode">
                         <i class="fas fa-moon"></i>
@@ -55,7 +55,7 @@
                     <h1 class="hero-title">Revolutionising <br>Biofouling <br>Management</h1>
                     <p class="hero-subtitle">The integrated biofouling and underwater asset management system combines Australia's only regulatory compliant in-water cleaning and filtration hardware with novel blockchain technology.</p>
                     <div class="hero-cta">
-                        <a href="#solutions" class="btn btn-primary">
+                        <a href="#solutions" class="btn btn-outline">
                             <i class="fas fa-anchor"></i>
                             Explore Solutions
                         </a>
@@ -66,7 +66,6 @@
                     </div>
                 </div>
                 <div class="hero-image">
-                     <!-- Assumes system-illustration.png exists -->
                     <div class="floating-image" style="background-image: url('./assets/system-illustration.png');"></div>
                 </div>
             </div>
@@ -240,7 +239,7 @@
                 <div class="dashboard-container">
                     <div class="dashboard-image">
                         <!-- Assumes dashboard.png exists -->
-                        <img src="./assets/dashboard.png" alt="MarineStream Dashboard Preview" class="placeholder-image">
+                        <img src="./assets/marinestreamMock1.png" alt="MarineStream Dashboard Preview" class="placeholder-image">
                     </div>
                     <div class="dashboard-features">
                         <div class="dashboard-feature">
@@ -966,7 +965,6 @@
                         <li><a href="#home">Home</a></li>
                         <li><a href="#about">About</a></li>
                         <li><a href="#solutions">Solutions</a></li>
-                        <li><a href="#products">Products</a></li>
                         <li><a href="#tools">Tools</a></li>
                         <li><a href="#contact">Contact</a></li>
                     </ul>
@@ -1009,63 +1007,172 @@
 
     <!-- Capability Statement Template for PDF generation -->
     <script id="capability-statement-template" type="text/x-handlebars-template">
-        <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-                <!-- Removed inline style color - relies on default -->
-                <h1 style="margin-bottom: 10px;">MarineStream Capability Statement</h1>
-                 <!-- Use a standard dark color for PDF text -->
-                <p style="color: #333;">Revolutionising Biofouling Management</p>
-            </div>
+        <div style="font-family: 'Inter', Arial, sans-serif; max-width: 842px; /* A4 width approx */ margin: 0 auto; background-color: #ffffff; color: #333333; font-size: 10pt; line-height: 1.45;">
 
-            <div style="margin-bottom: 30px;">
-                 <!-- Use a standard dark color for PDF text -->
-                <h2 style="color: #111; border-bottom: 2px solid #1DC9B7; padding-bottom: 5px;">About Us</h2>
-                <p style="color: #333;">{{about}}</p>
-            </div>
+            <!-- Page Container with Padding -->
+            <div style="padding: 35px;">
 
-            <div style="margin-bottom: 30px;">
-                <h2 style="color: #111; border-bottom: 2px solid #1DC9B7; padding-bottom: 5px;">Key Capabilities</h2>
-                <ul style="color: #333;">
-                    {{#each capabilities}}
-                    <li style="margin-bottom: 10px;">{{this}}</li>
-                    {{/each}}
-                </ul>
-            </div>
+                <!-- Header -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 4px solid {{accentColor}}; padding-bottom: 15px; margin-bottom: 25px;">
+                    <img src="./assets/marinestream_logo_colour.png" alt="MarineStream Logo" style="height: 55px; max-width: 320px;">
+                    <div style="text-align: right;">
+                        <h1 style="color: #1a1a1a; font-size: 20pt; font-weight: 700; margin: 0 0 5px 0;">Capability Statement</h1>
+                        <p style="color: {{accentColor}}; font-size: 11pt; font-weight: 600; margin: 0;">Integrated Biofouling & Asset Management</p>
+                    </div>
+                </div>
 
-            <div style="margin-bottom: 30px;">
-                <h2 style="color: #111; border-bottom: 2px solid #1DC9B7; padding-bottom: 5px;">Our Technology</h2>
-                <p style="color: #333;">{{technology}}</p>
-                <ul style="color: #333;">
-                    {{#each techFeatures}}
-                    <li style="margin-bottom: 10px;">{{this}}</li>
-                    {{/each}}
-                </ul>
-            </div>
+                <!-- Introduction -->
+                <div style="margin-bottom: 25px;">
+                     <p style="font-size: 11pt; margin-bottom: 15px;"><strong>MarineStream™</strong>, a Franmarine company, provides a revolutionary integrated system for proactive biofouling management and underwater asset sustainment. We merge Australia's only regulatory-compliant in-water cleaning (IWC) technology with a state-of-the-art, blockchain-secured data platform, delivering unparalleled compliance assurance, operational efficiency, and asset performance intelligence for the global maritime industry.</p>
+                </div>
 
-            <div style="margin-bottom: 30px;">
-                <h2 style="color: #111; border-bottom: 2px solid #1DC9B7; padding-bottom: 5px;">Certifications</h2>
-                <ul style="color: #333;">
-                    {{#each certifications}}
-                    <li style="margin-bottom: 10px;">{{this}}</li>
-                    {{/each}}
-                </ul>
-            </div>
+                <!-- Two Column Layout: Challenge & Solution -->
+                <div style="display: flex; gap: 25px; margin-bottom: 25px;">
+                    <div style="flex: 1; background-color: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #e9ecef;">
+                        <h2 style="color: #1a1a1a; font-size: 13pt; font-weight: 600; margin-top: 0; margin-bottom: 10px; border-bottom: 2px solid {{accentColor}}; padding-bottom: 5px;">The Challenge</h2>
+                        <p style="font-size: 9.5pt; margin-bottom: 8px;">Ineffective biofouling management leads to increased fuel consumption, higher emissions, invasive species transfer, regulatory penalties, and compromised asset integrity. Traditional methods often lack verifiable data, transparency, and proactive insights.</p>
+                    </div>
+                    <div style="flex: 1; background-color: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #e9ecef;">
+                         <h2 style="color: #1a1a1a; font-size: 13pt; font-weight: 600; margin-top: 0; margin-bottom: 10px; border-bottom: 2px solid {{accentColor}}; padding-bottom: 5px;">The MarineStream™ Solution</h2>
+                        <p style="font-size: 9.5pt; margin-bottom: 8px;">An integrated ecosystem combining compliant hardware and an immutable digital platform to transform underwater sustainment from a reactive cost centre into a proactive, data-driven capability.</p>
+                    </div>
+                </div>
 
-            <div style="margin-bottom: 30px;">
-                <!-- Changed border color for consistency -->
-                <h2 style="color: #111; border-bottom: 2px solid #1DC9B7; padding-bottom: 5px;">Contact Information</h2>
-                <p style="color: #333;"><strong>Email:</strong> {{contactEmail}}</p>
-                <p style="color: #333;"><strong>Phone:</strong> {{contactPhone}}</p>
-                <p style="color: #333;"><strong>Address:</strong> {{contactAddress}}</p>
-            </div>
 
-            <div style="text-align: center; margin-top: 50px; color: #555; font-size: 12px;">
-                <p>© 2025 MarineStream. All rights reserved. | A division of franmarine.com.au</p>
+                <!-- Core Offerings: Platform & Cleaning System -->
+                 <h2 style="color: {{accentColor}}; font-size: 14pt; font-weight: 600; margin-bottom: 15px; border-bottom: 1px solid #eeeeee; padding-bottom: 6px;">Core System Components</h2>
+                <div style="display: flex; gap: 25px; margin-bottom: 25px;">
+                    <!-- Platform -->
+                    <div style="flex: 1; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden;">
+                         <h3 style="background-color: #343a40; color: #ffffff; font-size: 12pt; font-weight: 600; margin: 0; padding: 10px 15px;">MarineStream™ Management Platform</h3>
+                         <div style="padding: 15px;">
+                            <ul style="margin: 0; padding-left: 0; list-style-type: none;">
+                                <li style="margin-bottom: 10px; padding-left: 22px; position: relative;">
+                                    <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058'; /* fa-check-circle */"></span>
+                                    <strong>Blockchain Foundation:</strong> Ensures immutable, auditable records for compliance and data integrity across all operations.
+                                </li>
+                                <li style="margin-bottom: 10px; padding-left: 22px; position: relative;">
+                                     <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058';"></span>
+                                    <strong>Digitised BMP & Workflows:</strong> Manages Biofouling Management Plans, Record Books, multi-party inspection, cleaning, and repair processes.
+                                </li>
+                                <li style="margin-bottom: 10px; padding-left: 22px; position: relative;">
+                                     <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058';"></span>
+                                    <strong>Integrated Data Fusion:</strong> Captures live data directly from ROV, CCTV, and cleaning hardware for a 'single source of truth'.
+                                </li>
+                                 <li style="margin-bottom: 10px; padding-left: 22px; position: relative;">
+                                     <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058';"></span>
+                                    <strong>Remote Oversight:</strong> Secure, real-time access for authorised stakeholders (Class, Regulators, Owners) to live operations and historical data.
+                                </li>
+                                <li style="margin-bottom: 0; padding-left: 22px; position: relative;">
+                                     <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058';"></span>
+                                     <strong>Actionable Intelligence:</strong> Provides instant insights into asset readiness, compliance status, and maintenance requirements.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Cleaning System -->
+                    <div style="flex: 1; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden;">
+                        <h3 style="background-color: #343a40; color: #ffffff; font-size: 12pt; font-weight: 600; margin: 0; padding: 10px 15px;">Compliant In-Water Cleaning System</h3>
+                        <div style="padding: 15px;">
+                            <ul style="margin: 0; padding-left: 0; list-style-type: none;">
+                                <li style="margin-bottom: 10px; padding-left: 22px; position: relative;">
+                                    <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058';"></span>
+                                    <strong>Australian IWCS Compliant:</strong> The *only* IWC system fully compliant with Australia's stringent standards, mitigating biosecurity risks.
+                                </li>
+                                <li style="margin-bottom: 10px; padding-left: 22px; position: relative;">
+                                    <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058';"></span>
+                                    <strong>Advanced Filtration & Treatment:</strong> Containerised 10µ filtration with UV sterilisation ensures effluent meets environmental regulations.
+                                </li>
+                                <li style="margin-bottom: 10px; padding-left: 22px; position: relative;">
+                                    <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058';"></span>
+                                    <strong>Full Biofouling Capture:</strong> Proprietary ROV crawler and tooling designed for effective removal and capture on flat surfaces and complex niche areas.
+                                </li>
+                                <li style="margin-bottom: 10px; padding-left: 22px; position: relative;">
+                                    <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058';"></span>
+                                    <strong>Rapid & Versatile Deployment:</strong> Self-contained system deployable from wharf or vessel for maximum operational flexibility.
+                                </li>
+                                <li style="margin-bottom: 0; padding-left: 22px; position: relative;">
+                                    <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058';"></span>
+                                    <strong>Defence & International Approval:</strong> Trusted by the Royal Australian Navy; Approved for use in Canada (RCN/CCG).
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>  
+<br>
+<br>
+<br>
+        <!-- Key Capabilities / Differentiators -->
+                <div style="margin-bottom: 25px; page-break-inside: avoid; break-inside: avoid;">
+                    <h2 style="color: {{accentColor}}; font-size: 14pt; font-weight: 600; margin-bottom: 15px; border-bottom: 1px solid #eeeeee; padding-bottom: 6px;">Key Capabilities & Value Proposition</h2>
+                    <ul style="margin: 0; padding-left: 0; list-style-type: none; columns: 2; gap: 25px; page-break-inside: avoid; break-inside: avoid;">
+                        <li style="margin-bottom: 10px; padding-left: 22px; position: relative; page-break-inside: avoid; break-inside: avoid;">
+                           <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058';"></span>
+                           <strong>Unmatched Compliance:</strong> De-risk operations with verifiable adherence to biosecurity (IMO, AU IWCS) and Class requirements.
+                        </li>
+                         <li style="margin-bottom: 10px; padding-left: 22px; position: relative; page-break-inside: avoid; break-inside: avoid;">
+                           <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058';"></span>
+                           <strong>Operational Efficiency:</strong> Reduce vessel downtime, optimise maintenance schedules, and streamline port entry processes.
+                        </li>
+                         <li style="margin-bottom: 10px; padding-left: 22px; position: relative; page-break-inside: avoid; break-inside: avoid;">
+                           <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058';"></span>
+                           <strong>Performance Enhancement:</strong> Maintain optimal hull condition for improved fuel economy, reduced emissions, and enhanced acoustic performance.
+                        </li>
+                         <li style="margin-bottom: 10px; padding-left: 22px; position: relative; page-break-inside: avoid; break-inside: avoid;">
+                           <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058';"></span>
+                           <strong>Data-Driven Decisions:</strong> Leverage objective, verifiable data for predictive maintenance and lifecycle asset management.
+                        </li>
+                        <li style="margin-bottom: 10px; padding-left: 22px; position: relative; page-break-inside: avoid; break-inside: avoid;">
+                           <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058';"></span>
+                           <strong>Sovereign & Allied Capability:</strong> Australian-developed technology providing critical underwater sustainment support domestically and internationally (AUKUS).
+                        </li>
+                        <li style="margin-bottom: 10px; padding-left: 22px; position: relative; page-break-inside: avoid; break-inside: avoid;">
+                            <span style="position: absolute; left: 0; top: 2px; color: {{accentColor}}; font-family: 'Font Awesome 6 Free'; font-weight: 900; content: '\f058';"></span>
+                            <strong>Environmental Stewardship:</strong> Prevent translocation of invasive marine species through compliant cleaning and effluent treatment.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Force page break after Key Capabilities section -->
+                <div style="display: block; page-break-before: always; break-before: always; page-break-after: always; break-after: always; margin: 0; padding: 0; height: 1px;"></div>
+
+                <!-- Certifications -->
+                <div style="background-color: #f8f9fa; padding: 12px 15px; border-radius: 6px; border: 1px solid #e9ecef; margin-bottom: 25px; text-align: center;">
+                     <h3 style="color: #1a1a1a; font-size: 11pt; font-weight: 600; margin: 0 0 5px 0;">Certified Management Systems</h3>
+                     <p style="font-size: 9pt; margin: 0; color: #555;">
+                        ISO 9001:2015 (Quality)   •   ISO 14001:2015 (Environmental)   •   ISO 45001:2018 (OH&S)
+                     </p>
+                </div>
+
+                <!-- Contact Information -->
+                <div style="border-top: 2px solid {{accentColor}}; padding-top: 15px;">
+                    <h2 style="color: #1a1a1a; font-size: 14pt; font-weight: 600; margin-top: 0; margin-bottom: 15px;">Partner with MarineStream</h2>
+                    <p style="margin-bottom: 10px;">Contact us to discuss how MarineStream can optimise your fleet's performance, ensure compliance, and enhance your underwater asset management strategy.</p>
+                    <p style="margin-bottom: 5px;"><strong>{{contactName}}</strong></p>
+                    <p style="margin-bottom: 5px;"><strong>Phone:</strong> {{contactPhone}}</p>
+                    <p style="margin-bottom: 5px;"><strong>Email:</strong> <a href="mailto:{{contactEmail}}" style="color: {{accentColor}}; text-decoration: none;">{{contactEmail}}</a></p>
+                    <p style="margin-bottom: 5px;"><strong>Web:</strong> <a href="https://www.marinestream.com.au" target="_blank" style="color: {{accentColor}}; text-decoration: none;">www.marinestream.com.au</a></p>
+                    <p style="margin-bottom: 5px;"><strong>Address:</strong> {{contactAddress}}</p>
+                </div>
+
+            </div> <!-- End Page Container -->
+
+            <!-- Footer -->
+            <div style="text-align: center; margin-top: 10px; padding: 10px 35px 0 35px; color: #777777; font-size: 8pt; border-top: 1px solid #eeeeee;">
+                <p style="margin: 0;">© {{currentYear}} MarineStream™ | A Franmarine Company | Providing Practical Solutions</p>
             </div>
         </div>
     </script>
-
     <!-- Script for the page -->
+    <script src="./capStat.js"></script>
     <script src="./script.js"></script>
 </body>
 </html>
