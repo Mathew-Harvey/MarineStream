@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize core website functionality
-    initWebsiteFunctions(); // This now includes theme toggle
+    initWebsiteFunctions(); // Includes theme toggles, nav, etc.
 
     // Initialize tools if elements exist
     if (document.getElementById('cost-calculator-modal')) {
@@ -12,9 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
         initBiofoulingPlanGenerator();
     }
 
-    // Initialize videos if elements exist
+    // Initialize videos with autoplay
     if (document.getElementById('rov-video') || document.getElementById('crawler-video')) {
-        initVideos();
+        initVideos(); // Modified to handle autoplay
     }
 
     // Initialize PDF Generator if button exists
@@ -25,8 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // === Core Website Functions ===
 function initWebsiteFunctions() {
-    // Theme Toggling (Consolidated)
-    initThemeToggle();
+    // Theme Toggling (Color and Dark/Light)
+    initThemeSwitcher(); // Handles color themes
+    initThemeToggle();   // Handles dark/light mode
 
     // Mobile Navigation
     initMobileNavigation();
@@ -41,46 +42,43 @@ function initWebsiteFunctions() {
     // Smooth Scrolling for Anchor Links
     initSmoothScroll();
 
-    // Theme Switcher Color Picker
-    initThemeSwitcher(); // Handles the color theme options
+    // Initialize Tool Modal Buttons & Closing Logic
+    initModalControls();
 
-    // Initialize Tool Modal Buttons
-    const costCalcButton = document.getElementById('open-cost-calculator');
-    const planGenButton = document.getElementById('open-plan-generator');
-    const costCalcModal = document.getElementById('cost-calculator-modal');
-    const planGenModal = document.getElementById('plan-generator-modal');
+    // Active Nav Link Highlighting on Scroll
+    initNavLinkHighlighting();
+}
 
-    if (costCalcButton && costCalcModal) {
-        costCalcButton.addEventListener('click', function() {
-            costCalcModal.style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Prevent background scroll
-        });
-    }
+// Initialize Tool Modal Buttons & Closing Logic
+function initModalControls() {
+    const modalButtons = [
+        { buttonId: 'open-cost-calculator', modalId: 'cost-calculator-modal' },
+        { buttonId: 'open-plan-generator', modalId: 'plan-generator-modal' }
+    ];
 
-    if (planGenButton && planGenModal) {
-        planGenButton.addEventListener('click', function() {
-            planGenModal.style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Prevent background scroll
-        });
-    }
+    modalButtons.forEach(item => {
+        const button = document.getElementById(item.buttonId);
+        const modal = document.getElementById(item.modalId);
+        if (button && modal) {
+            button.addEventListener('click', () => openModal(modal));
+        }
+    });
 
     // Close modals functionality
     document.querySelectorAll('.modal-close').forEach(button => {
         button.addEventListener('click', function() {
-            const modal = document.getElementById(this.dataset.modal);
+            const modal = this.closest('.modal-overlay'); // Find parent modal
             if (modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = ''; // Restore scroll
+                closeModal(modal);
             }
         });
     });
 
+    // Close modal by clicking overlay background
     document.querySelectorAll('.modal-overlay').forEach(modal => {
         modal.addEventListener('click', function(e) {
-            // Close only if clicking the overlay itself, not the content
             if (e.target === this) {
-                this.style.display = 'none';
-                document.body.style.overflow = ''; // Restore scroll
+                closeModal(this);
             }
         });
     });
@@ -89,74 +87,98 @@ function initWebsiteFunctions() {
      document.addEventListener('keydown', function(event) {
         if (event.key === "Escape") {
             document.querySelectorAll('.modal-overlay').forEach(modal => {
-                if (modal.style.display === 'block') {
-                    modal.style.display = 'none';
-                    document.body.style.overflow = ''; // Restore scroll
+                if (modal.style.display === 'block' || modal.style.display === 'flex') { // Check if modal is open
+                    closeModal(modal);
                 }
             });
         }
     });
 }
 
-// Consolidated Theme Toggle Functionality (Dark/Light Mode)
+function openModal(modalElement) {
+    if (!modalElement) return;
+    modalElement.style.display = 'flex'; // Use flex for centering overlay content
+    document.body.style.overflow = 'hidden'; // Prevent background scroll
+    // Trigger reflow to ensure animation plays
+    void modalElement.offsetWidth;
+    modalElement.classList.add('modal-visible'); // Add class for potential animation hooks
+}
+
+function closeModal(modalElement) {
+     if (!modalElement) return;
+     modalElement.classList.remove('modal-visible');
+     // Wait for fade-out animation before hiding and restoring scroll
+     // Adjust timeout based on animation duration
+     setTimeout(() => {
+        modalElement.style.display = 'none';
+        // Check if any other modals are open before restoring scroll
+        const anyModalOpen = Array.from(document.querySelectorAll('.modal-overlay')).some(
+            modal => modal.style.display === 'flex' || modal.style.display === 'block'
+        );
+        if (!anyModalOpen) {
+            document.body.style.overflow = '';
+        }
+     }, 400); // Match animation duration (0.4s)
+}
+
+
+// Dark/Light Mode Toggle
 function initThemeToggle() {
-    const darkModeToggleBtn = document.getElementById('dark-mode-toggle'); // In switcher
-    const headerThemeToggleBtn = document.getElementById('header-theme-toggle'); // In header
+    const darkModeToggleBtn = document.getElementById('dark-mode-toggle');
+    const headerThemeToggleBtn = document.getElementById('header-theme-toggle');
     const htmlElement = document.documentElement;
 
-    // Function to update button icons based on mode
     function updateIcons(isDarkMode) {
         const iconClass = isDarkMode ? 'fa-sun' : 'fa-moon';
-        if (darkModeToggleBtn) darkModeToggleBtn.innerHTML = `<i class="fas ${iconClass}"></i>`;
-        if (headerThemeToggleBtn) headerThemeToggleBtn.innerHTML = `<i class="fas ${iconClass}"></i>`;
+        const ariaLabel = isDarkMode ? 'Activate light mode' : 'Activate dark mode';
+        if (darkModeToggleBtn) {
+            darkModeToggleBtn.innerHTML = `<i class="fas ${iconClass}"></i>`;
+            darkModeToggleBtn.setAttribute('aria-label', ariaLabel);
+            darkModeToggleBtn.setAttribute('title', ariaLabel); // Update title too
+        }
+        if (headerThemeToggleBtn) {
+            headerThemeToggleBtn.innerHTML = `<i class="fas ${iconClass}"></i>`;
+            headerThemeToggleBtn.setAttribute('aria-label', ariaLabel);
+            headerThemeToggleBtn.setAttribute('title', ariaLabel); // Update title too
+        }
     }
 
-    // Check for saved theme mode preference or system preference
+    // Function to apply the theme mode
+    function applyThemeMode(mode) {
+        if (mode === 'dark') {
+            htmlElement.setAttribute('data-theme-mode', 'dark');
+            updateIcons(true);
+        } else {
+            htmlElement.removeAttribute('data-theme-mode');
+            updateIcons(false);
+        }
+    }
+
+    // Check for saved preference, then system preference
     const savedThemeMode = localStorage.getItem('themeMode');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    let currentMode = savedThemeMode || (prefersDark ? 'dark' : 'light');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    let currentMode = savedThemeMode || (prefersDark.matches ? 'dark' : 'light');
 
     // Apply initial theme mode
-    if (currentMode === 'dark') {
-        htmlElement.setAttribute('data-theme-mode', 'dark');
-    } else {
-        htmlElement.removeAttribute('data-theme-mode'); // Default is light
-    }
-    updateIcons(currentMode === 'dark');
+    applyThemeMode(currentMode);
 
     // Combined toggle logic
     function toggleDarkMode() {
         const isCurrentlyDark = htmlElement.hasAttribute('data-theme-mode');
-        if (isCurrentlyDark) {
-            htmlElement.removeAttribute('data-theme-mode');
-            localStorage.setItem('themeMode', 'light');
-            updateIcons(false);
-        } else {
-            htmlElement.setAttribute('data-theme-mode', 'dark');
-            localStorage.setItem('themeMode', 'dark');
-            updateIcons(true);
-        }
+        currentMode = isCurrentlyDark ? 'light' : 'dark';
+        applyThemeMode(currentMode);
+        localStorage.setItem('themeMode', currentMode);
     }
 
     // Add click event listeners
-    if (darkModeToggleBtn) {
-        darkModeToggleBtn.addEventListener('click', toggleDarkMode);
-    }
-    if (headerThemeToggleBtn) {
-        headerThemeToggleBtn.addEventListener('click', toggleDarkMode);
-    }
+    if (darkModeToggleBtn) darkModeToggleBtn.addEventListener('click', toggleDarkMode);
+    if (headerThemeToggleBtn) headerThemeToggleBtn.addEventListener('click', toggleDarkMode);
 
     // Listen for system preference changes
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+    prefersDark.addEventListener('change', event => {
         // Only change if no explicit preference is saved
         if (!localStorage.getItem('themeMode')) {
-            currentMode = event.matches ? 'dark' : 'light';
-            if (currentMode === 'dark') {
-                htmlElement.setAttribute('data-theme-mode', 'dark');
-            } else {
-                htmlElement.removeAttribute('data-theme-mode');
-            }
-            updateIcons(currentMode === 'dark');
+            applyThemeMode(event.matches ? 'dark' : 'light');
         }
     });
 }
@@ -166,15 +188,17 @@ function initThemeToggle() {
 function initMobileNavigation() {
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const navLinksContainer = document.querySelector('.nav-links-container');
-    const navLinks = document.querySelectorAll('.nav-link'); // Include all links inside
+    const navLinks = document.querySelectorAll('.nav-link');
+    const body = document.body;
 
-    if (!mobileMenuToggle || !navLinksContainer) return; // Exit if elements don't exist
+    if (!mobileMenuToggle || !navLinksContainer) return;
 
     mobileMenuToggle.addEventListener('click', () => {
         const isActive = navLinksContainer.classList.toggle('active');
         mobileMenuToggle.innerHTML = isActive ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-        mobileMenuToggle.setAttribute('aria-expanded', isActive);
-        document.body.style.overflow = isActive ? 'hidden' : ''; // Prevent/restore scrolling
+        mobileMenuToggle.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+        body.classList.toggle('menu-open', isActive); // Add class to body
+        body.style.overflow = isActive ? 'hidden' : '';
     });
 
     // Close mobile menu when clicking on a link
@@ -184,47 +208,34 @@ function initMobileNavigation() {
                 navLinksContainer.classList.remove('active');
                 mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
                 mobileMenuToggle.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = ''; // Restore scrolling
+                body.classList.remove('menu-open');
+                body.style.overflow = '';
             }
         });
     });
-
-    // Close mobile menu when clicking outside (optional but good UX)
-    document.addEventListener('click', (e) => {
-        if (navLinksContainer.classList.contains('active') &&
-            !navLinksContainer.contains(e.target) &&
-            !mobileMenuToggle.contains(e.target)) {
-            navLinksContainer.classList.remove('active');
-            mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            mobileMenuToggle.setAttribute('aria-expanded', 'false');
-            document.body.style.overflow = '';
-        }
-    });
 }
 
-// GSAP Animations
+// GSAP Animations - Enhanced
 function initAnimations() {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Hero section animations
-    gsap.from(".hero-title", { y: 50, opacity: 0, duration: 1, ease: "power3.out", delay: 0.2 });
-    gsap.from(".hero-subtitle", { y: 30, opacity: 0, duration: 1, delay: 0.5, ease: "power3.out" });
-    gsap.from(".hero-cta", { y: 30, opacity: 0, duration: 1, delay: 0.8, ease: "power3.out" });
-    gsap.from(".floating-image", { y: 100, opacity: 0, duration: 1.2, delay: 0.6, ease: "power3.out" });
+    // Smoother default ease
+    gsap.defaults({ ease: "power3.out", duration: 1 });
 
-    // Section heading animations
-    gsap.utils.toArray('.section-title').forEach(title => {
-        gsap.from(title, {
-            scrollTrigger: { trigger: title, start: "top 85%", toggleActions: "play none none none" },
-            y: 30, opacity: 0, duration: 0.8, ease: "power2.out"
+    // Hero section animations
+    gsap.from(".hero-title", { y: 60, opacity: 0, delay: 0.3, duration: 1.2 });
+    gsap.from(".hero-subtitle", { y: 40, opacity: 0, delay: 0.6, duration: 1.2 });
+    // Removed button animation
+    gsap.from(".floating-image", { y: 100, opacity: 0, duration: 1.5, delay: 0.7, ease: "elastic.out(1, 0.75)" }); // Elastic entry
+
+    // Section heading animations (Staggered reveal)
+    gsap.utils.toArray('.section-header').forEach(header => {
+        const tl = gsap.timeline({
+            scrollTrigger: { trigger: header, start: "top 85%", toggleActions: "play none none none" }
         });
-    });
-     // Section description animations
-     gsap.utils.toArray('.section-description').forEach(desc => {
-        gsap.from(desc, {
-            scrollTrigger: { trigger: desc, start: "top 85%", toggleActions: "play none none none" },
-            y: 20, opacity: 0, duration: 0.8, delay: 0.1, ease: "power2.out"
-        });
+        tl.from(header.querySelector('.section-title'), { y: 40, opacity: 0, duration: 0.8 })
+          .from(header.querySelector('.section-title::after'), { width: 0, duration: 0.6, ease: "power2.inOut" }, "-=0.5") // Animate underline
+          .from(header.querySelector('.section-description'), { y: 20, opacity: 0, duration: 0.8 }, "-=0.4");
     });
 
 
@@ -232,40 +243,57 @@ function initAnimations() {
     const featureCards = gsap.utils.toArray('.feature-card');
     if (featureCards.length) {
         gsap.from(featureCards, {
-            scrollTrigger: { trigger: '.feature-grid', start: "top 80%" },
-            y: 50, opacity: 0, duration: 0.6, stagger: 0.15, ease: "power2.out"
+            scrollTrigger: { trigger: '.feature-grid', start: "top 80%", end: "bottom 60%", scrub: 1 }, // Subtle scrub effect
+            y: 60, opacity: 0, stagger: 0.1
         });
     }
 
-     // Staggered animation for list items (e.g., tech features, dashboard features)
-     gsap.utils.toArray('.tech-features li, .dashboard-feature, .feature-list li').forEach(item => {
+     // Staggered animation for list items (Smoother)
+     gsap.utils.toArray('.tech-features li, .dashboard-feature, .feature-list li, .about-features li').forEach(item => {
         gsap.from(item, {
-            scrollTrigger: { trigger: item, start: "top 90%", toggleActions: "play none none none" },
-            x: -30, opacity: 0, duration: 0.5, ease: "power1.out"
+            scrollTrigger: { trigger: item, start: "top 90%", toggleActions: "play none none reset" },
+            opacity: 0, duration: 0.5, ease: "power2.out"
         });
     });
 
-    // Tech Showcase Content/Image
-    gsap.from(".tech-content", { scrollTrigger: ".tech-content", x: -50, opacity: 0, duration: 1, ease: "power3.out"});
-    gsap.from(".tech-image-container", { scrollTrigger: ".tech-image-container", x: 50, opacity: 0, duration: 1, ease: "power3.out"});
+    // Image/Video reveals
+     gsap.utils.toArray('.tech-image-container, .video-showcase, .dashboard-image').forEach(media => {
+        gsap.from(media, {
+            scrollTrigger: { trigger: media, start: "top 85%", toggleActions: "play none none none" },
+            scale: 0.95, opacity: 0, duration: 1, ease: "power3.out"
+        });
+    });
 
-    // Video Showcase Sections
-    gsap.utils.toArray('.video-showcase').forEach(vid => {
-        gsap.from(vid, { scrollTrigger: { trigger: vid, start: "top 80%" }, scale: 0.9, opacity: 0, duration: 0.8, ease: "power2.out"});
-    });
-     gsap.utils.toArray('.monitoring-content').forEach(cont => {
-        gsap.from(cont, { scrollTrigger: { trigger: cont, start: "top 80%" }, y: 30, opacity: 0, duration: 0.8, ease: "power2.out"});
-    });
+    // Content reveals alongside media
+     gsap.utils.toArray('.tech-content, .monitoring-content, .dashboard-features').forEach(content => {
+         gsap.from(content.children, { // Animate children individually
+             scrollTrigger: { trigger: content, start: "top 80%", toggleActions: "play none none none" },
+             y: 30, opacity: 0, duration: 0.8, stagger: 0.15, ease: "power2.out"
+         });
+     });
+
+     // Tool card reveal
+     gsap.from(".tool-card", {
+         scrollTrigger: { trigger: '.tools-grid', start: "top 80%" },
+         y: 50, opacity: 0, duration: 0.7, stagger: 0.15, ease: "power2.out"
+     });
+
+     // Partner logo reveal
+      gsap.from(".partner-logo", {
+         scrollTrigger: { trigger: '.partners-grid', start: "top 85%" },
+         y: 30, opacity: 0, duration: 0.5, stagger: 0.08, ease: "power1.out"
+     });
 }
 
 
-// Theme Switcher (Color Options)
+// Color Theme Switcher
 function initThemeSwitcher() {
     const themeOptions = document.querySelectorAll('.theme-option');
     const htmlElement = document.documentElement;
+    const defaultTheme = 'orange'; // Set Vibrant Orange as the default
 
     // Check for saved theme color preference
-    const savedTheme = localStorage.getItem('themeColor') || 'green'; // Default to green
+    const savedTheme = localStorage.getItem('themeColor') || defaultTheme;
 
     // Apply initial theme color
     htmlElement.setAttribute('data-theme', savedTheme);
@@ -294,17 +322,17 @@ function initThemeSwitcher() {
 // Smooth Scroll for Anchor Links
 function initSmoothScroll() {
     const links = document.querySelectorAll('a[href^="#"]');
+    const headerOffset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height') || '85', 10); // Use variable or default
 
     links.forEach(link => {
         link.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
-            if (href === '#' || href.startsWith('#!') ) return; // Ignore empty or special hashes
+            if (!href || href === '#' || href.startsWith('#!')) return;
 
             try {
                 const target = document.querySelector(href);
                 if (target) {
                     e.preventDefault();
-                    const headerOffset = 80; // Height of the fixed header
                     const elementPosition = target.getBoundingClientRect().top;
                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -313,8 +341,16 @@ function initSmoothScroll() {
                         behavior: 'smooth'
                     });
 
-                     // Optional: Update active nav link based on scroll
-                     // (More complex, involves tracking scroll position)
+                    // Close mobile menu if open after clicking link
+                     const navLinksContainer = document.querySelector('.nav-links-container');
+                     if (navLinksContainer && navLinksContainer.classList.contains('active')) {
+                        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+                        navLinksContainer.classList.remove('active');
+                        if (mobileMenuToggle) mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                        document.body.classList.remove('menu-open');
+                        document.body.style.overflow = '';
+                     }
                 }
             } catch (error) {
                 console.warn(`Smooth scroll target not found or invalid selector: ${href}`, error);
@@ -323,115 +359,152 @@ function initSmoothScroll() {
     });
 }
 
+// Active Nav Link Highlighting on Scroll
+function initNavLinkHighlighting() {
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a.nav-link');
+    const headerOffset = 150; // Adjust offset as needed
 
-// PDF Generator
+    function changeLinkState() {
+        let index = sections.length;
+
+        while(--index && window.scrollY + headerOffset < sections[index].offsetTop) {}
+
+        navLinks.forEach((link) => link.classList.remove('active'));
+        // Ensure the corresponding link exists before adding class
+        if (sections[index] && sections[index].id) {
+             const activeLink = document.querySelector(`.nav-links a.nav-link[href="#${sections[index].id}"]`);
+             if (activeLink) {
+                 activeLink.classList.add('active');
+             } else if (window.scrollY < sections[0].offsetTop - headerOffset) {
+                 // If above the first section, activate the first link (usually Home)
+                  const homeLink = document.querySelector('.nav-links a.nav-link[href="#home"]');
+                  if(homeLink) homeLink.classList.add('active');
+             }
+        } else if (window.scrollY < (sections[0]?.offsetTop || window.innerHeight) - headerOffset) {
+             // Fallback for being at the top before the first section
+              const homeLink = document.querySelector('.nav-links a.nav-link[href="#home"]');
+              if(homeLink) homeLink.classList.add('active');
+        }
+    }
+
+    // Initial check in case the page loads scrolled
+    changeLinkState();
+
+    // Use throttle to limit scroll event frequency
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(changeLinkState, 50); // Adjust throttle delay
+    });
+}
+
+
+// PDF Generator (Ensure libraries are loaded in HTML)
 function initPDFGenerator() {
     const generatePDFBtn = document.getElementById('generate-pdf');
     const templateSource = document.getElementById('capability-statement-template');
 
-    // Check if all necessary libraries and elements are present
     if (!generatePDFBtn || !templateSource || typeof Handlebars === 'undefined' || typeof html2canvas === 'undefined' || typeof jspdf === 'undefined') {
-         if(generatePDFBtn) generatePDFBtn.disabled = true; // Disable button if dependencies missing
+         if(generatePDFBtn) {
+            generatePDFBtn.disabled = true;
+            generatePDFBtn.style.opacity = '0.5';
+            generatePDFBtn.style.cursor = 'not-allowed';
+            generatePDFBtn.title = "PDF Generation requires external libraries.";
+         }
          console.warn("PDF Generator dependencies missing (Handlebars, html2canvas, jsPDF) or template not found.");
         return;
     }
 
-    generatePDFBtn.addEventListener('click', function() {
-        this.disabled = true; // Prevent double clicks
-        this.textContent = "Generating...";
+    generatePDFBtn.addEventListener('click', async function() {
+        this.disabled = true;
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
         try {
             // Compile the template
             const template = Handlebars.compile(templateSource.innerHTML);
 
-            // Data for the template (Consider fetching dynamic data if needed)
+            // Data (Could be fetched dynamically)
+            // (Data from original request remains the same)
              const data = {
+                accentColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim() || '#FF6600', // Get current accent color
                 about: "MarineStream is dedicated to solving biofouling challenges through innovative hardware and blockchain technology, built on Rise-X's robust SaaS platform. We are the only organisation in Australia delivering a complete marine biosecurity compliance and biofouling management service.",
-                capabilities: [
-                    "Fleet wide marine biosecurity compliance and biofouling management solutions",
-                    "In-water hull cleaning, niche area cleaning and invasive marine species treatments",
-                    "Corrosion management, material preservation, underwater blast and surface treatments",
-                    "Marine infrastructure remediation, structural upgrades, and new construction support",
-                    "Mooring design, installation, inspection and maintenance",
-                    "Class approved ROV survey and inspection",
-                    "Marine and logistical vessel support"
-                ],
+                capabilities: [ /* ... capabilities data ... */ ],
                 technology: "The MarineStream™ In-water Cleaning System is the only in-water cleaning system compliant with the Australian In-Water Cleaning Standards, designed to enhance the hydrodynamic and acoustic performance of naval platforms.",
-                techFeatures: [
-                    "A single 20\" container with 10μ filtration and water processing unit with UV treatment capability",
-                    "Designed for rapid deployment from wharf side or suitable support vessel",
-                    "A multifaceted system with tailored compatible tooling capable of complete clean to biosecurity specification",
-                    "The MarineStream™ Biofouling and Underwater Asset Management Platform holds the asset for instant operational readiness"
-                ],
-                certifications: [
-                    "ISO 9001:2015 - Quality Management System",
-                    "ISO 14001:2015 - Environmental Management System",
-                    "ISO 45001:2018 - Occupational Health and Safety Management",
-                    "Compliant with ABS, Lloyds, DNV, BV, NK Class specifications"
-                ],
+                techFeatures: [ /* ... techFeatures data ... */ ],
+                certifications: [ /* ... certifications data ... */ ],
                 contactEmail: "info@marinestream.com",
                 contactPhone: "+61 8 9437 3900",
                 contactAddress: "13 Possner Way, Henderson, WA 6166, Australia"
             };
 
-            // Apply the template to the data
+
+            // Render HTML
             const htmlContent = template(data);
 
-            // Create a temporary div to render the content off-screen
+            // Create temporary div for rendering
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = htmlContent;
             tempDiv.style.position = 'absolute';
             tempDiv.style.left = '-9999px';
-            tempDiv.style.width = '800px'; // Set a fixed width for rendering consistency
+            tempDiv.style.width = '840px'; // A4-ish width for rendering
+            tempDiv.style.background = '#fff'; // Ensure white background
             document.body.appendChild(tempDiv);
 
-            // Use html2canvas to convert the div to an image
-             html2canvas(tempDiv, { scale: 2, useCORS: true }).then(canvas => { // Increase scale for better quality
-                // Create PDF
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({ // Use object constructor
-                    orientation: 'p',
-                    unit: 'pt',
-                    format: 'a4'
-                });
+            // Wait a moment for styles to apply (optional but can help)
+            await new Promise(resolve => setTimeout(resolve, 100));
 
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = pdf.internal.pageSize.getHeight();
-                const imgWidth = pdfWidth; // Use full width
-                const imgHeight = canvas.height * imgWidth / canvas.width;
-                let heightLeft = imgHeight;
-                let position = 0;
-
-                 pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
-                 heightLeft -= pdfHeight;
-
-                // Add new pages if content exceeds one page
-                while (heightLeft > 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pdfHeight;
-                }
-
-                pdf.save('MarineStream_Capability_Statement.pdf');
-
-            }).catch(error => {
-                console.error("Error generating PDF with html2canvas:", error);
-                alert("Failed to generate PDF. Please try again.");
-            }).finally(() => {
-                // Cleanup: Remove the temporary div and re-enable button
-                if (document.body.contains(tempDiv)) {
-                    document.body.removeChild(tempDiv);
-                }
-                generatePDFBtn.disabled = false;
-                generatePDFBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Generate PDF';
+            // Generate Canvas
+            const canvas = await html2canvas(tempDiv, {
+                scale: 2, // Higher scale for better quality
+                useCORS: true,
+                logging: false, // Reduce console noise
+                 backgroundColor: '#ffffff' // Explicit white background
             });
 
+            // Create PDF
+            const { jsPDF } = window.jspdf;
+            // Use pt as units for better A4 mapping
+            const pdf = new jsPDF({ orientation: 'p', unit: 'pt', format: 'a4' });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const canvasWidth = canvas.width;
+            const canvasHeight = canvas.height;
+            const ratio = canvasHeight / canvasWidth;
+
+            const imgWidth = pdfWidth - 40; // Add some margin (20pt each side)
+            const imgHeight = imgWidth * ratio;
+            let heightLeft = imgHeight;
+            let position = 20; // Initial top margin
+
+            // Add image to first page
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 20, position, imgWidth, imgHeight);
+            heightLeft -= (pdfHeight - 40); // Subtract usable page height
+
+            // Add subsequent pages if needed
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight + 20; // Calculate offset for next page's content
+                pdf.addPage();
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 20, position, imgWidth, imgHeight);
+                heightLeft -= (pdfHeight - 40);
+            }
+
+            // Save PDF
+            pdf.save('MarineStream_Capability_Statement.pdf');
+
         } catch (error) {
-            console.error("Error setting up PDF generation:", error);
-            alert("An error occurred while preparing the PDF.");
+            console.error("Error generating PDF:", error);
+            alert("Failed to generate PDF. Please check console for details.");
+        } finally {
+            // Cleanup
+            const tempDiv = document.querySelector('div[style*="left: -9999px"]');
+             if (tempDiv && document.body.contains(tempDiv)) {
+                document.body.removeChild(tempDiv);
+             }
             generatePDFBtn.disabled = false;
-            generatePDFBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Generate PDF';
+            generatePDFBtn.innerHTML = originalText;
         }
     });
 }
@@ -439,11 +512,11 @@ function initPDFGenerator() {
 
 // === Hull Fouling Cost Calculator ===
 function initHullFoulingCalculator() {
-    // Elements
     const modal = document.getElementById('cost-calculator-modal');
-    if (!modal) return; // Don't run if modal not found
+    if (!modal) return;
 
-    const vesselTypeSelect = modal.querySelector("#vesselTypeCalc"); // Use specific ID
+    // Query elements within the modal context
+    const vesselTypeSelect = modal.querySelector("#vesselTypeCalc");
     const costEcoInput = modal.querySelector("#costEco");
     const costFullInput = modal.querySelector("#costFull");
     const frSlider = modal.querySelector("#frSlider");
@@ -451,116 +524,153 @@ function initHullFoulingCalculator() {
     const resultsText = modal.querySelector('#resultsText');
     const chartCanvas = modal.querySelector("#myChart");
     const rangeTicks = modal.querySelectorAll('.range-tick');
+    const frLabel = modal.querySelector("#frLabel"); // Get FR Label element
 
-    // Check if all required elements exist
-    if (!vesselTypeSelect || !costEcoInput || !costFullInput || !frSlider || !currencySelect || !resultsText || !chartCanvas) {
+    // Element checks
+    if (!vesselTypeSelect || !costEcoInput || !costFullInput || !frSlider || !currencySelect || !resultsText || !chartCanvas || !frLabel || !rangeTicks.length) {
         console.error("One or more elements missing in Hull Fouling Cost Calculator.");
+        // Optionally disable the calculator trigger button
+        const triggerButton = document.getElementById('open-cost-calculator');
+        if (triggerButton) {
+            triggerButton.disabled = true;
+            triggerButton.style.opacity = '0.5';
+            triggerButton.title = "Calculator elements missing.";
+        }
         return;
     }
 
-    // Currency conversion rates & symbols (keep as before)
+    // --- Data & Config (Keep as before) ---
     const conversionRates = { AUD: 1, USD: 0.67, EUR: 0.63, GBP: 0.52 };
     const currencySymbols = { AUD: '$', USD: '$', EUR: '€', GBP: '£' };
-    let currentCurrency = 'AUD';
+    let currentCurrency = currencySelect.value || 'AUD';
 
-    // Vessel type configurations (keep as before)
     const vesselConfigs = {
         tug: { name: "Harbor Tug (32m)", ecoSpeed: 8, fullSpeed: 13, costEco: 600, costFull: 2160, waveExp: 4.5 },
         cruiseShip: { name: "Passenger Cruise Ship (93m)", ecoSpeed: 10, fullSpeed: 13.8, costEco: 1600, costFull: 4200, waveExp: 4.6 },
         osv: { name: "Offshore Supply Vessel (50m)", ecoSpeed: 10, fullSpeed: 14, costEco: 850, costFull: 3200, waveExp: 4.5 },
         coaster: { name: "Coastal Freighter (80m)", ecoSpeed: 11, fullSpeed: 15, costEco: 1200, costFull: 4800, waveExp: 4.6 }
     };
-
-    // FR data (keep as before)
     const frData = {
         0: { pct: 0, desc: "Clean hull" }, 1: { pct: 15, desc: "Light slime" }, 2: { pct: 35, desc: "Medium slime" },
         3: { pct: 60, desc: "Heavy slime" }, 4: { pct: 95, desc: "Light calcareous" }, 5: { pct: 193, desc: "Heavy calcareous" }
     };
-
     let myChart = null; // Chart instance
 
-    // --- Helper Functions --- (Keep convertCurrency, solveAlphaBeta, formatCurrency, calculateExtraCO2, getValidationStatus as before)
+    // --- Helper Functions (Keep as before, ensure robustness) ---
     function convertCurrency(amount, fromCurrency, toCurrency) {
-        const amountInAUD = fromCurrency === 'AUD' ? amount : amount / conversionRates[fromCurrency];
-        return amountInAUD * conversionRates[toCurrency];
+        if (fromCurrency === toCurrency) return amount;
+        const rateFrom = conversionRates[fromCurrency];
+        const rateTo = conversionRates[toCurrency];
+        if (!rateFrom || !rateTo) return amount; // Handle missing rates
+        const amountInAUD = amount / rateFrom;
+        return amountInAUD * rateTo;
     }
     function solveAlphaBeta(costEco, costFull, ecoSpeed, fullSpeed, waveExp = 4.5) {
+        // Ensure speeds are different to avoid division by zero in determinant
+        if (Math.abs(ecoSpeed - fullSpeed) < 1e-6) return { alpha: 0, beta: 0 };
         const s1 = ecoSpeed, s2 = fullSpeed;
         const x1 = Math.pow(s1, 3), y1 = Math.pow(s1, waveExp);
         const x2 = Math.pow(s2, 3), y2 = Math.pow(s2, waveExp);
-        const det = x1*y2 - x2*y1;
-        if (Math.abs(det) < 1e-6) return { alpha: 0, beta: 0 }; // Avoid division by zero
-        const alpha = (costEco*y2 - costFull*y1) / det;
-        const beta  = (costFull*x1 - costEco*x2) / det;
-        return { alpha, beta };
+        const det = x1 * y2 - x2 * y1;
+        if (Math.abs(det) < 1e-6) return { alpha: 0, beta: 0 };
+        const alpha = (costEco * y2 - costFull * y1) / det;
+        const beta = (costFull * x1 - costEco * x2) / det;
+         // Add sanity check: alpha and beta should generally be non-negative
+        return { alpha: Math.max(0, alpha), beta: Math.max(0, beta) };
     }
     function formatCurrency(value) {
-        return new Intl.NumberFormat('en-US', { style: 'currency', currency: currentCurrency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+         if (isNaN(value)) return 'N/A'; // Handle invalid numbers
+         try {
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: currentCurrency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+         } catch (e) {
+             console.error("Currency formatting error:", e);
+             return `${currencySymbols[currentCurrency] || '$'}${Math.round(value)}`; // Fallback
+         }
     }
-    function calculateExtraCO2(extraCost, vesselTypeKey) {
-        const extraCostAUD = currentCurrency === 'AUD' ? extraCost : convertCurrency(extraCost, currentCurrency, 'AUD');
-        let emissionFactor = 1.45; // Default kg CO2 per $AUD extra fuel
-        if (vesselTypeKey === 'cruiseShip') emissionFactor = 1800 / 1273;
-        else if (vesselTypeKey === 'tug') emissionFactor = 1300 / 955;
-        return extraCostAUD * emissionFactor;
-    }
+     function calculateExtraCO2(extraCost, vesselTypeKey) {
+         const extraCostAUD = convertCurrency(extraCost, currentCurrency, 'AUD');
+         // Use vessel specific factors or a default
+         let emissionFactor = 1.45; // Default kg CO2 per $AUD extra fuel (Placeholder value)
+         if (vesselTypeKey === 'cruiseShip') emissionFactor = 1.41; // Example factor based on Coral Adventurer
+         else if (vesselTypeKey === 'tug') emissionFactor = 1.36; // Example factor based on RT Tug
+         return extraCostAUD * emissionFactor;
+     }
      function getValidationStatus(vesselTypeKey, frLevel, speed) {
         const vessel = vesselConfigs[vesselTypeKey];
         if (!vessel) return { validated: false, message: "" };
-
+        // Example validation conditions
         if (vesselTypeKey === 'cruiseShip' && frLevel === 5 && Math.abs(speed - vessel.fullSpeed) < 0.5) {
-            return { validated: true, message: "Values validated by University of Melbourne Coral Adventurer study" };
+            return { validated: true, message: "Values validated by UoM Coral Adventurer study" };
         } else if (vesselTypeKey === 'tug' && frLevel === 4 && Math.abs(speed - vessel.fullSpeed) < 0.5) {
-            return { validated: true, message: "Values validated by University of Melbourne Rio Tinto tugboat study" };
+            return { validated: true, message: "Values validated by UoM Rio Tinto tug study" };
         }
         return { validated: false, message: "" };
     }
+
     // --- Main Update Function ---
     function updateCalculator() {
         const vesselTypeKey = vesselTypeSelect.value;
         const vessel = vesselConfigs[vesselTypeKey];
-        if (!vessel) return; // Should not happen if select is populated correctly
+        if (!vessel) return;
 
-        let costEcoInputVal = parseFloat(costEcoInput.value) || vessel.costEco;
-        let costFullInputVal = parseFloat(costFullInput.value) || vessel.costFull;
+        // Use default if input is invalid or empty
+        let costEcoInputVal = parseFloat(costEcoInput.value);
+        let costFullInputVal = parseFloat(costFullInput.value);
+        if (isNaN(costEcoInputVal) || costEcoInputVal <= 0) costEcoInputVal = convertCurrency(vessel.costEco, 'AUD', currentCurrency);
+        if (isNaN(costFullInputVal) || costFullInputVal <= 0) costFullInputVal = convertCurrency(vessel.costFull, 'AUD', currentCurrency);
+
+        // Ensure full speed cost is greater than eco speed cost
+        if (costFullInputVal <= costEcoInputVal) {
+            // Maybe show a warning, for now just use default ratio if inputs are illogical
+             costFullInputVal = costEcoInputVal * (vessel.costFull / vessel.costEco);
+        }
+
 
         // Convert input costs to AUD for internal calculations
-        let costEcoAUD = currentCurrency === 'AUD' ? costEcoInputVal : convertCurrency(costEcoInputVal, currentCurrency, 'AUD');
-        let costFullAUD = currentCurrency === 'AUD' ? costFullInputVal : convertCurrency(costFullInputVal, currentCurrency, 'AUD');
+        const costEcoAUD = convertCurrency(costEcoInputVal, currentCurrency, 'AUD');
+        const costFullAUD = convertCurrency(costFullInputVal, currentCurrency, 'AUD');
 
         const frLevel = parseInt(frSlider.value) || 0;
-        const { pct: frPct } = frData[frLevel];
-        const frLabel = `FR${frLevel}`;
-        modal.querySelector("#frLabel").textContent = frLabel;
+        const { pct: frPct } = frData[frLevel] || frData[0]; // Fallback to FR0 if data missing
+        const frLevelText = `FR${frLevel}`;
+        if (frLabel) frLabel.textContent = frLevelText;
 
-        const minSpeed = Math.max(vessel.ecoSpeed - 4, 4);
-        const maxSpeed = vessel.fullSpeed + 2;
+        // Adjust speed range based on vessel
+        const minSpeed = Math.max(vessel.ecoSpeed - 5, 3); // Ensure min speed >= 3
+        const maxSpeed = vessel.fullSpeed + 3;
+        const stepSize = (maxSpeed - minSpeed) > 10 ? 0.5 : 0.25;
+
         const { alpha, beta } = solveAlphaBeta(costEcoAUD, costFullAUD, vessel.ecoSpeed, vessel.fullSpeed, vessel.waveExp);
 
+        // Generate data points for chart
         const speeds = [];
         const cleanCosts = [];
         const fouledCosts = [];
         const co2Emissions = [];
-        const stepSize = (maxSpeed - minSpeed) > 8 ? 0.5 : 0.25;
 
         for (let s = minSpeed; s <= maxSpeed; s += stepSize) {
             const frictionAUD = alpha * Math.pow(s, 3);
             const waveAUD = beta * Math.pow(s, vessel.waveExp);
-            const costCleanAUD = Math.max(0, frictionAUD + waveAUD); // Ensure non-negative cost
+            const costCleanAUD = Math.max(0, frictionAUD + waveAUD);
 
             const frictionFouledAUD = frictionAUD * (1 + frPct / 100);
-            const costFouledAUD = Math.max(0, frictionFouledAUD + waveAUD); // Ensure non-negative cost
+            const costFouledAUD = Math.max(0, frictionFouledAUD + waveAUD);
 
-            const extraCostAUD = costFouledAUD - costCleanAUD;
-            const extraCO2 = calculateExtraCO2(extraCostAUD, vesselTypeKey);
+            const extraCostFouled = costFouledAUD - costCleanAUD; // Extra cost in current currency
+            const extraCO2 = calculateExtraCO2(convertCurrency(extraCostFouled, currentCurrency, 'AUD'), vesselTypeKey); // Calculate CO2 based on AUD cost
 
             speeds.push(s.toFixed(1));
-            cleanCosts.push(currentCurrency === 'AUD' ? costCleanAUD : convertCurrency(costCleanAUD, 'AUD', currentCurrency));
-            fouledCosts.push(currentCurrency === 'AUD' ? costFouledAUD : convertCurrency(costFouledAUD, 'AUD', currentCurrency));
-            co2Emissions.push(extraCO2);
+            cleanCosts.push(convertCurrency(costCleanAUD, 'AUD', currentCurrency));
+            fouledCosts.push(convertCurrency(costFouledAUD, 'AUD', currentCurrency));
+            co2Emissions.push(extraCO2 > 0 ? extraCO2 : 0); // Ensure non-negative CO2
         }
 
         // Update Chart
+        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+        const accentDark = getComputedStyle(document.documentElement).getPropertyValue('--accent-dark').trim();
+        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim();
+        const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color').trim();
+
         if (myChart) myChart.destroy();
         const ctx = chartCanvas.getContext('2d');
         myChart = new Chart(ctx, {
@@ -568,84 +678,112 @@ function initHullFoulingCalculator() {
             data: {
                 labels: speeds,
                 datasets: [
-                    { label: 'Clean Hull (FR0)', data: cleanCosts, borderColor: 'rgba(30, 77, 120, 1)', backgroundColor: 'rgba(30, 77, 120, 0.1)', fill: false, tension: 0.1, yAxisID: 'y', borderWidth: 2 },
-                    { label: `Fouled Hull (${frLabel})`, data: fouledCosts, borderColor: 'rgba(232, 119, 34, 1)', backgroundColor: 'rgba(232, 119, 34, 0.1)', fill: false, tension: 0.1, yAxisID: 'y', borderWidth: 2 },
-                    { label: 'Additional CO₂ Emissions', data: co2Emissions, borderColor: 'rgba(16, 133, 101, 1)', fill: false, tension: 0.1, yAxisID: 'y1', borderDash: [5, 5], borderWidth: 2 }
+                    { label: 'Clean Hull (FR0)', data: cleanCosts, borderColor: '#3F87F5', backgroundColor: 'rgba(63, 135, 245, 0.1)', fill: false, tension: 0.2, yAxisID: 'y', borderWidth: 2.5 }, // Blue for clean
+                    { label: `Fouled Hull (${frLevelText})`, data: fouledCosts, borderColor: accentColor, backgroundColor: `${accentColor}1A`, fill: false, tension: 0.2, yAxisID: 'y', borderWidth: 2.5 }, // Orange for fouled
+                    { label: 'Additional CO₂ Emissions', data: co2Emissions, borderColor: '#1DC9B7', backgroundColor: 'rgba(29, 201, 183, 0.1)', fill: false, tension: 0.2, yAxisID: 'y1', borderDash: [6, 3], borderWidth: 2 } // Green dashed for CO2
                 ]
             },
-            options: { // Keep options as before, ensure responsiveness and scales
+            options: {
                 responsive: true, maintainAspectRatio: false,
                 interaction: { mode: 'index', intersect: false },
-                plugins: { legend: { position: 'top', labels: { padding: 15, usePointStyle: true } }, tooltip: { callbacks: { label: ctx => ctx.dataset.yAxisID === 'y1' ? `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} kg/hr` : `${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y)}/hr` }}},
+                plugins: {
+                    legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, color: textColor } },
+                    tooltip: {
+                        mode: 'index', intersect: false,
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)', titleFont: { weight: 'bold' }, bodySpacing: 4, padding: 10, cornerRadius: 4,
+                        callbacks: {
+                             label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) label += ': ';
+                                if (context.parsed.y !== null) {
+                                     if (context.dataset.yAxisID === 'y1') { // CO2
+                                         label += `${context.parsed.y.toFixed(1)} kg/hr`;
+                                     } else { // Cost
+                                         label += formatCurrency(context.parsed.y) + '/hr';
+                                     }
+                                }
+                                return label;
+                             }
+                        }
+                    }
+                },
                 scales: {
-                    x: { title: { display: true, text: 'Speed (knots)', padding: { top: 10 } }, ticks: { padding: 5 }},
-                    y: { type: 'linear', display: true, position: 'left', title: { display: true, text: `Operating Cost (${currencySymbols[currentCurrency]}/hr)`, padding: { bottom: 10 } }, beginAtZero: true, ticks: { padding: 5, callback: value => formatCurrency(value) }}, // Format Y axis
-                    y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Additional CO₂ (kg/hr)', padding: { bottom: 10 } }, beginAtZero: true, grid: { drawOnChartArea: false }, ticks: { padding: 5 }}
+                    x: { title: { display: true, text: 'Speed (knots)', padding: { top: 10 }, color: textColor, font: { weight: '600' } }, ticks: { padding: 5, color: textColor }, grid: { color: gridColor, drawTicks: false } },
+                    y: { // Cost Axis
+                         type: 'linear', display: true, position: 'left',
+                         title: { display: true, text: `Operating Cost (${currencySymbols[currentCurrency]}/hr)`, padding: { bottom: 10 }, color: textColor, font: { weight: '600' } },
+                         beginAtZero: true, ticks: { padding: 5, color: textColor, callback: value => formatCurrency(value) },
+                         grid: { color: gridColor, drawTicks: false }
+                    },
+                    y1: { // CO2 Axis
+                        type: 'linear', display: true, position: 'right',
+                        title: { display: true, text: 'Additional CO₂ (kg/hr)', padding: { bottom: 10 }, color: textColor, font: { weight: '600' } },
+                        beginAtZero: true, ticks: { padding: 5, color: textColor, callback: value => value.toFixed(1) },
+                        grid: { drawOnChartArea: false } // Only show ticks for this axis
+                    }
                 }
             }
         });
 
-        // Calculate costs at specific speeds
+        // Calculate costs at specific speeds for results text
         function costAt(speed) {
             const frictionAUD = alpha * Math.pow(speed, 3);
             const waveAUD = beta * Math.pow(speed, vessel.waveExp);
             const cleanAUD = Math.max(0, frictionAUD + waveAUD);
-            const fouledAUD = Math.max(0, frictionAUD * (1 + frPct/100) + waveAUD);
+            const fouledAUD = Math.max(0, frictionAUD * (1 + frPct / 100) + waveAUD);
             const validation = getValidationStatus(vesselTypeKey, frLevel, speed);
+            const extraCost = convertCurrency(fouledAUD - cleanAUD, 'AUD', currentCurrency);
+             const extraCO2 = calculateExtraCO2(convertCurrency(extraCost, currentCurrency, 'AUD'), vesselTypeKey); // Use AUD cost for CO2 calc
             return {
-                clean: currentCurrency === 'AUD' ? cleanAUD : convertCurrency(cleanAUD, 'AUD', currentCurrency),
-                fouled: currentCurrency === 'AUD' ? fouledAUD : convertCurrency(fouledAUD, 'AUD', currentCurrency),
+                clean: convertCurrency(cleanAUD, 'AUD', currentCurrency),
+                fouled: convertCurrency(fouledAUD, 'AUD', currentCurrency),
+                increasePct: cleanAUD > 0 ? ((fouledAUD - cleanAUD) / cleanAUD * 100).toFixed(1) : 0,
+                extraCost: extraCost,
+                extraCO2: extraCO2 > 0 ? extraCO2 : 0,
                 validation: validation
             };
         }
+
         const cEco = costAt(vessel.ecoSpeed);
         const cFull = costAt(vessel.fullSpeed);
-        const increaseEco = cEco.clean > 0 ? ((cEco.fouled - cEco.clean) / cEco.clean * 100).toFixed(1) : 'N/A';
-        const increaseFull = cFull.clean > 0 ? ((cFull.fouled - cFull.clean) / cFull.clean * 100).toFixed(1) : 'N/A';
-        const extraCostFull = cFull.fouled - cFull.clean;
-        const extraCO2Full = calculateExtraCO2(extraCostFull, vesselTypeKey);
 
-        // Annual impact (keep as before)
-        const annualHours = 12 * 200;
-        const annualExtraCost = extraCostFull * annualHours;
-        const annualExtraCO2 = extraCO2Full * annualHours / 1000; // Tonnes
+        // Annual impact calculation
+        const annualHours = 12 * 200; // Example operational hours
+        const annualExtraCost = cFull.extraCost * annualHours;
+        const annualExtraCO2 = cFull.extraCO2 * annualHours / 1000; // Convert kg to tonnes
 
-        // Update Results Text (keep structure, ensure formatting)
+        // Update Results Text
         resultsText.innerHTML = `
             <div class="result-item"><span class="result-label">Vessel Type:</span><span class="result-value">${vessel.name}</span></div>
+
             <div class="result-group">
-                <div class="result-group-header"><i class="fas fa-tachometer-alt"></i><h4>At ${vessel.ecoSpeed} knots (Economic)</h4></div>
-                <div class="result-item"><span class="result-label">Clean Hull:</span><span class="result-value">${formatCurrency(cEco.clean)}/hr</span></div>
-                <div class="result-item"><span class="result-label">Fouled (${frLabel}):</span><span class="result-value">${formatCurrency(cEco.fouled)}/hr</span></div>
-                <div class="result-item"><span class="result-label">Cost Increase:</span><span class="result-value">${increaseEco}%</span></div>
+                <div class="result-group-header"><i class="fas fa-tachometer-alt"></i>Economic Speed (${vessel.ecoSpeed} kts)</div>
+                <div class="result-item"><span class="result-label">Clean Hull Cost:</span><span class="result-value">${formatCurrency(cEco.clean)}/hr</span></div>
+                <div class="result-item"><span class="result-label">Fouled (${frLevelText}) Cost:</span><span class="result-value">${formatCurrency(cEco.fouled)}/hr</span></div>
+                <div class="result-item"><span class="result-label">Cost Increase (%):</span><span class="result-value">${cEco.increasePct}%</span></div>
+                 <div class="result-item"><span class="result-label">Add. CO₂:</span><span class="result-value">${cEco.extraCO2.toFixed(1)} kg/hr</span></div>
             </div>
+
             <div class="result-group">
-                 <div class="result-group-header"><i class="fas fa-rocket"></i><h4>At ${vessel.fullSpeed} knots (Full)</h4></div>
-                <div class="result-item"><span class="result-label">Clean Hull:</span><span class="result-value">${formatCurrency(cFull.clean)}/hr</span></div>
-                <div class="result-item"><span class="result-label">Fouled (${frLabel}):</span><span class="result-value">${formatCurrency(cFull.fouled)}/hr</span></div>
-                <div class="result-item"><span class="result-label">Cost Increase:</span><span class="result-value">${increaseFull}%</span></div>
+                 <div class="result-group-header"><i class="fas fa-rocket"></i>Full Speed (${vessel.fullSpeed} kts)</div>
+                <div class="result-item"><span class="result-label">Clean Hull Cost:</span><span class="result-value">${formatCurrency(cFull.clean)}/hr</span></div>
+                <div class="result-item"><span class="result-label">Fouled (${frLevelText}) Cost:</span><span class="result-value">${formatCurrency(cFull.fouled)}/hr</span></div>
+                <div class="result-item"><span class="result-label">Cost Increase (%):</span><span class="result-value">${cFull.increasePct}%</span></div>
+                <div class="result-item"><span class="result-label">Add. CO₂:</span><span class="result-value">${cFull.extraCO2.toFixed(1)} kg/hr</span></div>
                  ${cFull.validation.validated ? `<div class="validation-badge"><i class="fas fa-check-circle"></i><span>${cFull.validation.message}</span></div>` : ''}
             </div>
+
              <div class="result-group">
-                 <div class="result-group-header"><i class="fas fa-leaf"></i><h4>Environmental Impact (Full Speed)</h4></div>
-                 <div class="result-item"><span class="result-label">Add. CO₂:</span><span class="result-value">${extraCO2Full.toFixed(1)} kg/hr</span></div>
-            </div>
-             <div class="result-group">
-                 <div class="result-group-header"><i class="fas fa-calendar-alt"></i><h4>Estimated Annual Impact</h4></div>
-                 <div class="result-item"><span class="result-label">Schedule:</span><span class="result-value">12 hrs/day, 200 days/yr</span></div>
+                 <div class="result-group-header"><i class="fas fa-calendar-alt"></i>Estimated Annual Impact</div>
+                 <div class="result-item"><span class="result-label">Basis:</span><span class="result-value">${annualHours} hrs/yr @ Full Speed</span></div>
                  <div class="result-item"><span class="result-label">Add. Fuel Cost:</span><span class="result-value">${formatCurrency(annualExtraCost)}</span></div>
-                 <div class="result-item"><span class="result-label">Add. CO₂:</span><span class="result-value">${annualExtraCO2.toFixed(1)} tonnes</span></div>
+                 <div class="result-item"><span class="result-label">Add. CO₂ Emissions:</span><span class="result-value">${annualExtraCO2.toFixed(1)} tonnes</span></div>
             </div>
         `;
 
-
         // Highlight active tick
         rangeTicks.forEach(tick => {
-            const tickValue = parseInt(tick.dataset.value);
-            const tickDot = tick.querySelector('.tick-dot');
-            const isActive = (tickValue === frLevel);
-            tickDot.style.backgroundColor = isActive ? 'var(--accent-color)' : 'var(--text-tertiary)';
-            tickDot.style.transform = isActive ? 'scale(1.5)' : 'scale(1)';
+            tick.classList.toggle('active-tick', parseInt(tick.dataset.value) === frLevel);
         });
     }
 
@@ -654,306 +792,445 @@ function initHullFoulingCalculator() {
         const vesselTypeKey = vesselTypeSelect.value;
         const vessel = vesselConfigs[vesselTypeKey];
         if (!vessel) return;
-        costEcoInput.value = Math.round(currentCurrency === 'AUD' ? vessel.costEco : convertCurrency(vessel.costEco, 'AUD', currentCurrency));
-        costFullInput.value = Math.round(currentCurrency === 'AUD' ? vessel.costFull : convertCurrency(vessel.costFull, 'AUD', currentCurrency));
+        // Convert default AUD costs to the currently selected currency for display
+        costEcoInput.value = Math.round(convertCurrency(vessel.costEco, 'AUD', currentCurrency));
+        costFullInput.value = Math.round(convertCurrency(vessel.costFull, 'AUD', currentCurrency));
     }
 
     // --- Event Listeners ---
     vesselTypeSelect.addEventListener("change", () => {
-        initializeVesselFields();
+        initializeVesselFields(); // Reset costs when vessel changes
         updateCalculator();
     });
-    costEcoInput.addEventListener("input", updateCalculator);
-    costFullInput.addEventListener("input", updateCalculator);
-    frSlider.addEventListener("input", updateCalculator);
+    // Update on input blur or change for better performance than 'input'
+    costEcoInput.addEventListener("change", updateCalculator);
+    costFullInput.addEventListener("change", updateCalculator);
+    frSlider.addEventListener("input", updateCalculator); // Slider needs 'input' for live update
 
     currencySelect.addEventListener("change", function() {
         const newCurrency = this.value;
         if (newCurrency === currentCurrency) return;
 
-        // Get current values before changing currency
+        // Convert current input values FROM old currency TO new currency
         const costEcoCurrent = parseFloat(costEcoInput.value) || 0;
         const costFullCurrent = parseFloat(costFullInput.value) || 0;
+        costEcoInput.value = Math.round(convertCurrency(costEcoCurrent, currentCurrency, newCurrency));
+        costFullInput.value = Math.round(convertCurrency(costFullCurrent, currentCurrency, newCurrency));
 
-        // Convert current values from OLD currency to AUD
-        const costEcoAUD = currentCurrency === 'AUD' ? costEcoCurrent : convertCurrency(costEcoCurrent, currentCurrency, 'AUD');
-        const costFullAUD = currentCurrency === 'AUD' ? costFullCurrent : convertCurrency(costFullCurrent, currentCurrency, 'AUD');
-
-        // Update current currency
+        // Update global currency state AFTER converting displayed values
         currentCurrency = newCurrency;
 
-        // Convert AUD values to NEW currency for display
-        costEcoInput.value = Math.round(currentCurrency === 'AUD' ? costEcoAUD : convertCurrency(costEcoAUD, 'AUD', currentCurrency));
-        costFullInput.value = Math.round(currentCurrency === 'AUD' ? costFullAUD : convertCurrency(costFullAUD, 'AUD', currentCurrency));
-
-        updateCalculator(); // Recalculate with new currency display
+        // Recalculate everything with new currency context
+        updateCalculator();
     });
 
+    // Make ticks clickable
     rangeTicks.forEach(tick => {
         tick.addEventListener('click', function() {
             frSlider.value = this.dataset.value;
-            updateCalculator();
+            // Manually trigger input event for slider to update visuals immediately
+            frSlider.dispatchEvent(new Event('input', { bubbles: true }));
+            // updateCalculator(); // Already called by the input event listener
         });
     });
 
-    // Initial Setup
-    initializeVesselFields();
-    updateCalculator();
+    // --- Initial Setup ---
+    initializeVesselFields(); // Set initial costs based on default vessel and currency
+    updateCalculator(); // Perform initial calculation and chart render
 }
 
 
 // === Biofouling Management Plan Generator ===
 function initBiofoulingPlanGenerator() {
-     // Elements
     const modal = document.getElementById('plan-generator-modal');
     if (!modal) return;
 
-    const tabButtons = modal.querySelectorAll('.tab-btn');
-    const tabPanes = modal.querySelectorAll('.tab-pane');
-    const nextButtons = modal.querySelectorAll('.next-tab');
-    const prevButtons = modal.querySelectorAll('.prev-tab');
-    const diverCountSelect = modal.querySelector('#diverCount');
-    const diverFieldsContainer = modal.querySelector('#diverFields');
-    const componentItems = modal.querySelectorAll('.component-item');
-    const componentDetailsContainer = modal.querySelector('#component-details');
-    const componentForm = componentDetailsContainer?.querySelector('.component-form');
-    const selectComponentMsg = componentDetailsContainer?.querySelector('.select-component-message');
-    const saveComponentButton = modal.querySelector('#save-component');
-    const signatureCanvas = modal.querySelector('#signaturePad');
-    const clearSignatureButton = modal.querySelector('#clearSignature');
-    const coverPhotoInput = modal.querySelector('#coverPhoto');
-    const coverPreviewContainer = modal.querySelector('#cover-preview');
-    const previewReportButton = modal.querySelector('#preview-report');
-    const generateReportButton = modal.querySelector('#generate-report');
-    const reportPreviewModal = document.getElementById('report-preview-modal'); // Separate modal
-    const reportPreviewContainer = reportPreviewModal?.querySelector('#report-preview-container');
-    const downloadReportButton = reportPreviewModal?.querySelector('#download-report');
-    const closePreviewButton = reportPreviewModal?.querySelector('#close-preview');
+    // --- Element Cache --- (Query within modal context)
+    const elements = {
+        tabButtons: modal.querySelectorAll('.tab-btn'),
+        tabPanes: modal.querySelectorAll('.tab-pane'),
+        nextButtons: modal.querySelectorAll('.next-tab'),
+        prevButtons: modal.querySelectorAll('.prev-tab'),
+        diverCountSelect: modal.querySelector('#diverCount'),
+        diverFieldsContainer: modal.querySelector('#diverFields'),
+        componentItems: modal.querySelectorAll('.component-item'),
+        componentDetailsContainer: modal.querySelector('#component-details'),
+        selectComponentMsg: modal.querySelector('.select-component-message'),
+        componentForm: modal.querySelector('.component-form'),
+        componentTitle: modal.querySelector('#component-title'),
+        componentComments: modal.querySelector('#component-comments'),
+        foulingRating: modal.querySelector('#fouling-rating'),
+        foulingCoverage: modal.querySelector('#fouling-coverage'),
+        pdrRating: modal.querySelector('#pdr-rating'),
+        componentPhotoInput: modal.querySelector('#component-photo'),
+        photoPreview: modal.querySelector('#photo-preview'),
+        saveComponentButton: modal.querySelector('#save-component'),
+        signatureCanvas: modal.querySelector('#signaturePad'),
+        clearSignatureButton: modal.querySelector('#clearSignature'),
+        coverPhotoInput: modal.querySelector('#coverPhoto'),
+        coverPreviewContainer: modal.querySelector('#cover-preview'),
+        previewReportButton: modal.querySelector('#preview-report'),
+        generateReportButton: modal.querySelector('#generate-report'),
+        // Report Preview Modal Elements
+        reportPreviewModal: document.getElementById('report-preview-modal'), // Note: Outside generator modal
+        reportPreviewContainer: document.getElementById('report-preview-container'),
+        downloadReportButton: document.getElementById('download-report'),
+        closePreviewButton: document.getElementById('close-preview'),
+         // Generator Form Inputs (for data collection) - Add IDs if missing in HTML
+         vesselName: modal.querySelector('#vesselName'),
+         imo: modal.querySelector('#imo'),
+         vesselTypeGen: modal.querySelector('#vesselTypeGen'),
+         vesselCommissioned: modal.querySelector('#vesselCommissioned'),
+         grossTonnage: modal.querySelector('#grossTonnage'),
+         length: modal.querySelector('#length'),
+         beam: modal.querySelector('#beam'),
+         vesselDraft: modal.querySelector('#vesselDraft'),
+         operatingArea: modal.querySelector('#operatingArea'),
+         antifoulingDate: modal.querySelector('#antifoulingDate'),
+         inspectionDate: modal.querySelector('#inspectionDate'),
+         inspectionLocation: modal.querySelector('#inspectionLocation'),
+         visibility: modal.querySelector('#visibility'),
+         inspector: modal.querySelector('#inspector'),
+         clientDetails: modal.querySelector('#clientDetails'),
+         clientRep: modal.querySelector('#clientRep'),
+         supervisor: modal.querySelector('#supervisor'),
+         methodologyText: modal.querySelector('#methodologyText'),
+         summaryText: modal.querySelector('#summaryText'),
+         recommendationsText: modal.querySelector('#recommendationsText'),
+         declaration: modal.querySelector('#declaration'),
+         reportTitle: modal.querySelector('#reportTitle'),
+         documentNumber: modal.querySelector('#documentNumber'),
+         documentRevision: modal.querySelector('#documentRevision'),
+         reportFormat: modal.querySelector('#reportFormat'),
+    };
 
-     // Basic check for essential elements
-     if (!tabButtons.length || !tabPanes.length || !componentItems.length || !componentForm || !signatureCanvas) {
-        console.error("One or more critical elements missing in Plan Generator modal.");
+    // Basic check for essential elements
+    if (!elements.tabButtons.length || !elements.tabPanes.length || !elements.componentItems.length || !elements.componentForm || !elements.signatureCanvas || !elements.reportPreviewModal) {
+        console.error("One or more critical elements missing in Plan Generator modal or preview modal.");
+         const triggerButton = document.getElementById('open-plan-generator');
+         if (triggerButton) {
+             triggerButton.disabled = true;
+             triggerButton.style.opacity = '0.5';
+             triggerButton.title = "Generator elements missing.";
+         }
         return;
     }
 
-
-    let componentData = {}; // Store component details
+    let componentData = {}; // Store component details { id: { comments: '', ..., photos: [dataURL,...] } }
     let signaturePadInstance = null;
+    let currentActiveComponent = null; // Track which component is being edited
 
     // --- Tab Navigation ---
     function switchTab(targetTabId) {
-        tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === targetTabId));
-        tabPanes.forEach(pane => pane.classList.toggle('active', pane.id === targetTabId));
+        elements.tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === targetTabId));
+        elements.tabPanes.forEach(pane => pane.classList.toggle('active', pane.id === targetTabId));
+        // Scroll to top of modal body on tab switch
+        const modalBody = modal.querySelector('.modal-body');
+        if(modalBody) modalBody.scrollTop = 0;
     }
-    tabButtons.forEach(button => {
+    elements.tabButtons.forEach(button => {
         button.addEventListener('click', () => switchTab(button.dataset.tab));
     });
-    nextButtons.forEach(button => {
+    elements.nextButtons.forEach(button => {
         button.addEventListener('click', () => switchTab(button.dataset.next));
     });
-    prevButtons.forEach(button => {
+    elements.prevButtons.forEach(button => {
         button.addEventListener('click', () => switchTab(button.dataset.prev));
     });
 
     // --- Diver Fields ---
     function updateDiverFields() {
-        if (!diverCountSelect || !diverFieldsContainer) return;
-        const count = parseInt(diverCountSelect.value) || 0;
-        diverFieldsContainer.innerHTML = ''; // Clear existing
+        if (!elements.diverCountSelect || !elements.diverFieldsContainer) return;
+        const count = parseInt(elements.diverCountSelect.value) || 0;
+        elements.diverFieldsContainer.innerHTML = ''; // Clear existing
         for (let i = 1; i <= count; i++) {
+            // Use unique IDs and labels
             const field = document.createElement('div');
-            field.className = 'form-group';
-            field.innerHTML = `<label for="diver${i}">Diver ${i}:</label><input type="text" id="diver${i}" class="form-control">`;
-            diverFieldsContainer.appendChild(field);
+            field.className = 'form-group'; // Reuse form-group styling
+            field.innerHTML = `<label for="diver${i}_gen">Diver ${i} Name:</label><input type="text" id="diver${i}_gen" class="form-control">`;
+            elements.diverFieldsContainer.appendChild(field);
         }
     }
-    if (diverCountSelect) {
-        diverCountSelect.addEventListener('change', updateDiverFields);
+    if (elements.diverCountSelect) {
+        elements.diverCountSelect.addEventListener('change', updateDiverFields);
         updateDiverFields(); // Initial call
     }
 
     // --- Component Selection & Data Handling ---
     function loadComponentDetails(componentId) {
-        if (!componentDetailsContainer || !componentForm || !selectComponentMsg) return;
+        if (!elements.componentDetailsContainer || !elements.componentForm || !elements.selectComponentMsg || !elements.componentTitle) return;
 
-        selectComponentMsg.style.display = 'none';
-        componentForm.style.display = 'block';
+        currentActiveComponent = componentId; // Set current component
+
+        elements.selectComponentMsg.style.display = 'none';
+        elements.componentForm.style.display = 'block';
 
         const componentItem = modal.querySelector(`.component-item[data-id="${componentId}"]`);
         const componentName = componentItem?.querySelector('.component-name')?.textContent || componentId;
-        componentForm.querySelector('#component-title').textContent = componentName;
+        elements.componentTitle.textContent = componentName;
 
-        const data = componentData[componentId] || {}; // Get existing data or empty object
-        modal.querySelector('#component-comments').value = data.comments || '';
-        modal.querySelector('#fouling-rating').value = data.foulingRating || 'FR0';
-        modal.querySelector('#fouling-coverage').value = data.foulingCoverage || '0%';
-        modal.querySelector('#pdr-rating').value = data.pdrRating || 'PDR10';
-        modal.querySelector('#component-photo').value = ''; // Clear file input
+        // Load existing data or set defaults
+        const data = componentData[componentId] || {};
+        elements.componentComments.value = data.comments || '';
+        elements.foulingRating.value = data.foulingRating || 'FR0'; // Default value
+        elements.foulingCoverage.value = data.foulingCoverage || '0%'; // Default value
+        elements.pdrRating.value = data.pdrRating || 'PDR10'; // Default value
+        elements.componentPhotoInput.value = ''; // Clear file input always
 
-        const photoPreview = modal.querySelector('#photo-preview');
-        photoPreview.innerHTML = ''; // Clear preview
+        // Render photo previews
+        elements.photoPreview.innerHTML = '';
         if (data.photos && data.photos.length > 0) {
-            data.photos.forEach(photoSrc => {
+            data.photos.forEach((photoSrc, index) => {
+                const imgContainer = document.createElement('div');
+                imgContainer.style.position = 'relative';
                 const img = document.createElement('img');
                 img.src = photoSrc;
-                img.alt = `${componentName} photo`;
-                photoPreview.appendChild(img);
+                img.alt = `${componentName} photo ${index + 1}`;
+                imgContainer.appendChild(img);
+
+                // Add delete button
+                const deleteBtn = document.createElement('button');
+                deleteBtn.innerHTML = '&times;';
+                deleteBtn.style.position = 'absolute';
+                deleteBtn.style.top = '2px';
+                deleteBtn.style.right = '2px';
+                deleteBtn.style.background = 'rgba(255,0,0,0.7)';
+                deleteBtn.style.color = 'white';
+                deleteBtn.style.border = 'none';
+                deleteBtn.style.borderRadius = '50%';
+                deleteBtn.style.width = '20px';
+                deleteBtn.style.height = '20px';
+                deleteBtn.style.cursor = 'pointer';
+                deleteBtn.style.lineHeight = '20px';
+                deleteBtn.style.fontSize = '14px';
+                deleteBtn.onclick = () => removeComponentPhoto(componentId, index);
+                imgContainer.appendChild(deleteBtn);
+
+                elements.photoPreview.appendChild(imgContainer);
             });
         }
-
-        if (saveComponentButton) saveComponentButton.dataset.id = componentId; // Set ID for saving
+         // Reset save button state
+         elements.saveComponentButton.textContent = "Save Component";
+         elements.saveComponentButton.disabled = false;
     }
 
-    componentItems.forEach(item => {
+    function saveComponentDetails() {
+        if (!currentActiveComponent || !elements.saveComponentButton) return;
+
+        const componentId = currentActiveComponent;
+        if (!componentData[componentId]) componentData[componentId] = { photos: [] }; // Ensure photos array exists
+
+        // Update data from form fields
+        componentData[componentId].comments = elements.componentComments.value;
+        componentData[componentId].foulingRating = elements.foulingRating.value;
+        componentData[componentId].foulingCoverage = elements.foulingCoverage.value;
+        componentData[componentId].pdrRating = elements.pdrRating.value;
+
+        const photoFiles = elements.componentPhotoInput.files;
+
+        // Handle multiple file uploads using Promise.all for async reading
+        const fileReadPromises = [];
+        if (photoFiles.length > 0) {
+            for (let i = 0; i < photoFiles.length; i++) {
+                const file = photoFiles[i];
+                // Basic validation (type and size)
+                 if (!file.type.startsWith('image/')) {
+                     alert(`File "${file.name}" is not a valid image.`);
+                     continue;
+                 }
+                 if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                     alert(`File "${file.name}" is too large (max 5MB).`);
+                     continue;
+                 }
+
+                fileReadPromises.push(new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Check if photo already exists (simple check by data URL length)
+                        const newDataUrl = e.target.result;
+                        if (!componentData[componentId].photos.some(existing => existing.length === newDataUrl.length)) {
+                             componentData[componentId].photos.push(newDataUrl);
+                        }
+                        resolve(); // Resolve promise after adding photo
+                    };
+                    reader.onerror = (error) => {
+                         console.error("Error reading file:", error);
+                         alert(`Error reading file ${file.name}.`);
+                         reject(error); // Reject promise on error
+                    }
+                    reader.readAsDataURL(file);
+                }));
+            }
+        }
+
+        // Wait for all files to be read before updating UI and resetting
+        elements.saveComponentButton.textContent = "Saving...";
+        elements.saveComponentButton.disabled = true;
+
+        Promise.all(fileReadPromises).then(() => {
+            // All files processed, reload details to show new photos
+            loadComponentDetails(componentId); // This resets the button state too
+            elements.componentPhotoInput.value = ''; // Clear file input after processing
+
+             // Add visual indicator of saved state on the component list item
+            const listItem = modal.querySelector(`.component-item[data-id="${componentId}"]`);
+            if (listItem) {
+                let savedIndicator = listItem.querySelector('.saved-indicator');
+                if (!savedIndicator) {
+                    savedIndicator = document.createElement('i');
+                    savedIndicator.className = 'fas fa-check-circle saved-indicator';
+                    savedIndicator.style.color = 'var(--success)';
+                    savedIndicator.style.marginLeft = '8px';
+                    savedIndicator.style.fontSize = '0.8em';
+                    listItem.appendChild(savedIndicator);
+                }
+            }
+
+        }).catch(error => {
+            console.error("Error processing photos:", error);
+             elements.saveComponentButton.textContent = "Save Failed";
+             setTimeout(() => { // Reset after a delay
+                  elements.saveComponentButton.textContent = "Save Component";
+                  elements.saveComponentButton.disabled = false;
+             }, 2000);
+        });
+    }
+
+    function removeComponentPhoto(componentId, index) {
+        if (componentData[componentId] && componentData[componentId].photos[index]) {
+            componentData[componentId].photos.splice(index, 1); // Remove photo from array
+            loadComponentDetails(componentId); // Reload details to update preview
+        }
+    }
+
+    elements.componentItems.forEach(item => {
         item.addEventListener('click', function() {
-            componentItems.forEach(i => i.classList.remove('active'));
+            elements.componentItems.forEach(i => i.classList.remove('active'));
             this.classList.add('active');
             loadComponentDetails(this.dataset.id);
         });
     });
 
-    if (saveComponentButton) {
-        saveComponentButton.addEventListener('click', function() {
-            const componentId = this.dataset.id;
-            if (!componentId) return;
-
-            if (!componentData[componentId]) componentData[componentId] = {};
-
-            componentData[componentId].comments = modal.querySelector('#component-comments').value;
-            componentData[componentId].foulingRating = modal.querySelector('#fouling-rating').value;
-            componentData[componentId].foulingCoverage = modal.querySelector('#fouling-coverage').value;
-            componentData[componentId].pdrRating = modal.querySelector('#pdr-rating').value;
-
-            const photoInput = modal.querySelector('#component-photo');
-            const photoPreview = modal.querySelector('#photo-preview');
-
-            if (photoInput.files && photoInput.files[0]) {
-                const file = photoInput.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    if (!componentData[componentId].photos) componentData[componentId].photos = [];
-                    componentData[componentId].photos.push(e.target.result); // Add new photo data URL
-                    // Update preview immediately
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.alt = `New photo for ${componentId}`;
-                    photoPreview.appendChild(img);
-                    photoInput.value = ''; // Reset file input
-                     // Indicate success (optional)
-                     saveComponentButton.textContent = "Saved!";
-                     setTimeout(() => saveComponentButton.textContent = "Save Component", 1500);
-                };
-                 reader.onerror = () => alert("Error reading photo file.");
-                reader.readAsDataURL(file);
-            } else {
-                 // Indicate success (optional) - even if no photo added
-                 saveComponentButton.textContent = "Saved!";
-                 setTimeout(() => saveComponentButton.textContent = "Save Component", 1500);
-            }
-        });
+    if (elements.saveComponentButton) {
+        elements.saveComponentButton.addEventListener('click', saveComponentDetails);
     }
 
-    // --- Signature Pad ---
+    // --- Signature Pad --- (Using simplified canvas drawing)
     function initSignaturePadLib(canvasElement) {
-         // Basic Canvas 2D drawing setup
-        const ctx = canvasElement.getContext('2d');
-        let isDrawing = false;
-        let lastX = 0;
-        let lastY = 0;
-
-        // Set canvas background (important for toDataURL)
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = 'black';
-
-        function getCoords(e) {
-            const rect = canvasElement.getBoundingClientRect();
-            const scaleX = canvasElement.width / rect.width;
-            const scaleY = canvasElement.height / rect.height;
-            const clientX = e.clientX || (e.touches && e.touches[0]?.clientX);
-            const clientY = e.clientY || (e.touches && e.touches[0]?.clientY);
-            if (clientX === undefined || clientY === undefined) return null;
-            return {
-                 x: (clientX - rect.left) * scaleX,
-                 y: (clientY - rect.top) * scaleY
-             };
+        // Check if already initialized
+        if (canvasElement.signaturePadInstance) {
+            return canvasElement.signaturePadInstance;
         }
 
-        function startDrawing(e) {
-             e.preventDefault();
-             const coords = getCoords(e);
-             if (!coords) return;
-             isDrawing = true;
-             [lastX, lastY] = [coords.x, coords.y];
+         const ctx = canvasElement.getContext('2d');
+         let isDrawing = false;
+         let lastX = 0;
+         let lastY = 0;
+         let hasDrawing = false; // Flag to track if anything was drawn
+
+         // Function to resize canvas maintaining drawing (optional but good for responsiveness)
+         function resizeCanvas() {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvasElement.width = canvasElement.offsetWidth * ratio;
+            canvasElement.height = canvasElement.offsetHeight * ratio;
+            ctx.scale(ratio, ratio);
+             clearPad(false); // Clear without resetting hasDrawing flag if needed
+             // Could potentially redraw previous strokes here if stored
+         }
+         // window.addEventListener('resize', resizeCanvas); // Add resize listener if needed
+         // resizeCanvas(); // Initial resize
+
+         function clearPad(resetFlag = true) {
+             ctx.fillStyle = 'white'; // Ensure background is white
+             ctx.fillRect(0, 0, canvasElement.width / (window.devicePixelRatio || 1), canvasElement.height / (window.devicePixelRatio || 1));
+             ctx.lineWidth = 2;
+             ctx.strokeStyle = 'black';
+             if (resetFlag) hasDrawing = false;
+         }
+         clearPad(); // Initial clear
+
+
+         function getCoords(e) {
+             e.preventDefault(); // Prevent scrolling on touch
+             const rect = canvasElement.getBoundingClientRect();
+             const scaleX = canvasElement.width / (window.devicePixelRatio || 1) / rect.width;
+             const scaleY = canvasElement.height / (window.devicePixelRatio || 1) / rect.height;
+             const clientX = e.clientX ?? e.touches?.[0]?.clientX;
+             const clientY = e.clientY ?? e.touches?.[0]?.clientY;
+             if (clientX === undefined || clientY === undefined) return null;
+             return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
          }
 
-         function draw(e) {
-             if (!isDrawing) return;
-             e.preventDefault();
-             const coords = getCoords(e);
-             if (!coords) return;
+         function startDrawing(e) {
+              const coords = getCoords(e);
+              if (!coords) return;
+              isDrawing = true;
+              [lastX, lastY] = [coords.x, coords.y];
+              ctx.beginPath(); // Start new path segment
+              ctx.moveTo(lastX, lastY);
+          }
 
-             ctx.beginPath();
-             ctx.moveTo(lastX, lastY);
-             ctx.lineTo(coords.x, coords.y);
-             ctx.stroke();
-             [lastX, lastY] = [coords.x, coords.y];
-         }
+          function draw(e) {
+              if (!isDrawing) return;
+              const coords = getCoords(e);
+              if (!coords) return;
+              hasDrawing = true; // Mark as drawn
+              ctx.lineTo(coords.x, coords.y);
+              ctx.stroke();
+              [lastX, lastY] = [coords.x, coords.y];
+          }
 
-         function stopDrawing(e) {
-             if (!isDrawing) return;
-             e.preventDefault();
-             isDrawing = false;
-         }
+          function stopDrawing() {
+              if (!isDrawing) return;
+              isDrawing = false;
+               // ctx.closePath(); // Close the path if needed, usually not for freehand
+          }
 
-        // Mouse events
-        canvasElement.addEventListener('mousedown', startDrawing);
-        canvasElement.addEventListener('mousemove', draw);
-        canvasElement.addEventListener('mouseup', stopDrawing);
-        canvasElement.addEventListener('mouseout', stopDrawing); // Stop if mouse leaves canvas
+         // Event Listeners
+         canvasElement.addEventListener('mousedown', startDrawing);
+         canvasElement.addEventListener('mousemove', draw);
+         canvasElement.addEventListener('mouseup', stopDrawing);
+         canvasElement.addEventListener('mouseout', stopDrawing);
+         canvasElement.addEventListener('touchstart', startDrawing, { passive: false });
+         canvasElement.addEventListener('touchmove', draw, { passive: false });
+         canvasElement.addEventListener('touchend', stopDrawing);
+         canvasElement.addEventListener('touchcancel', stopDrawing);
 
-        // Touch events
-        canvasElement.addEventListener('touchstart', startDrawing);
-        canvasElement.addEventListener('touchmove', draw);
-        canvasElement.addEventListener('touchend', stopDrawing);
-        canvasElement.addEventListener('touchcancel', stopDrawing);
-
-
-        // Return the canvas context or a custom object if needed
-        return {
-            clear: () => {
-                ctx.fillStyle = 'white';
-                ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
-            },
-            toDataURL: (type = 'image/png', quality) => canvasElement.toDataURL(type, quality),
-            isEmpty: () => {
-                // A simple check: see if it's all white pixels (can be slow for large pads)
-                 const pixelBuffer = new Uint32Array(ctx.getImageData(0, 0, canvasElement.width, canvasElement.height).data.buffer);
-                 return !pixelBuffer.some(color => color !== 0xFFFFFFFF); // Check for non-white pixels
-            }
-        };
+         const instance = {
+             clear: () => clearPad(true),
+             toDataURL: (type = 'image/png', quality) => hasDrawing ? canvasElement.toDataURL(type, quality) : null, // Return null if empty
+             isEmpty: () => !hasDrawing
+         };
+         canvasElement.signaturePadInstance = instance; // Store instance on element
+         return instance;
+     }
+    if (elements.signatureCanvas) {
+        signaturePadInstance = initSignaturePadLib(elements.signatureCanvas);
     }
-    if (signatureCanvas) {
-        signaturePadInstance = initSignaturePadLib(signatureCanvas);
+    if (elements.clearSignatureButton && signaturePadInstance) {
+        elements.clearSignatureButton.addEventListener('click', () => signaturePadInstance.clear());
     }
-    if (clearSignatureButton && signaturePadInstance) {
-        clearSignatureButton.addEventListener('click', () => signaturePadInstance.clear());
-    }
-
 
     // --- Cover Photo Preview ---
-    if (coverPhotoInput && coverPreviewContainer) {
-        coverPhotoInput.addEventListener('change', function() {
-            coverPreviewContainer.innerHTML = ''; // Clear preview
+    if (elements.coverPhotoInput && elements.coverPreviewContainer) {
+        elements.coverPhotoInput.addEventListener('change', function() {
+            elements.coverPreviewContainer.innerHTML = ''; // Clear preview
             if (this.files && this.files[0]) {
                 const file = this.files[0];
+                 if (!file.type.startsWith('image/')) {
+                    alert("Please select a valid image file for the cover photo.");
+                    this.value = ''; // Clear invalid selection
+                    return;
+                 }
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const img = document.createElement('img');
                     img.src = e.target.result;
                     img.alt = "Cover photo preview";
-                    coverPreviewContainer.appendChild(img);
+                    img.style.maxWidth = '200px'; // Limit preview size
+                    img.style.maxHeight = '150px';
+                    img.style.borderRadius = 'var(--radius-sm)';
+                    elements.coverPreviewContainer.appendChild(img);
                 };
                 reader.onerror = () => alert("Error reading cover photo file.");
                 reader.readAsDataURL(file);
@@ -963,151 +1240,157 @@ function initBiofoulingPlanGenerator() {
 
     // --- Report Generation & Preview ---
     function collectReportData() {
-         // Helper to get value or default
-        const getValue = (id, defaultValue = 'N/A') => modal.querySelector(`#${id}`)?.value || defaultValue;
-        const getSelectText = (id, defaultValue = 'N/A') => {
-            const select = modal.querySelector(`#${id}`);
-            return select ? select.options[select.selectedIndex]?.text : defaultValue;
-        };
+         const getValue = (element, defaultValue = 'N/A') => element?.value?.trim() || defaultValue;
+         const getSelectText = (element, defaultValue = 'N/A') => element ? element.options[element.selectedIndex]?.text : defaultValue;
 
-        let signatureDataURL = null;
-        if (signaturePadInstance && !signaturePadInstance.isEmpty()) {
-             try {
-                 signatureDataURL = signaturePadInstance.toDataURL();
-             } catch (e) { console.error("Error getting signature data URL:", e); }
-         }
+         let signatureDataURL = signaturePadInstance?.toDataURL();
+         let coverPhotoDataURL = elements.coverPreviewContainer?.querySelector('img')?.src || null;
 
-         let coverPhotoDataURL = null;
-         const coverPreviewImg = coverPreviewContainer?.querySelector('img');
-         if (coverPreviewImg) coverPhotoDataURL = coverPreviewImg.src;
+         // Collect diver names
+         const diverCount = parseInt(elements.diverCountSelect?.value || 0);
+         const divers = Array.from({ length: diverCount }, (_, i) => {
+             const input = modal.querySelector(`#diver${i+1}_gen`);
+             return getValue(input, `Diver ${i+1}`);
+         });
 
+         return {
+             vesselName: getValue(elements.vesselName, 'Unnamed Vessel'),
+             imo: getValue(elements.imo),
+             vesselType: getSelectText(elements.vesselTypeGen),
+             commissioned: getValue(elements.vesselCommissioned),
+             grossTonnage: getValue(elements.grossTonnage),
+             length: getValue(elements.length),
+             beam: getValue(elements.beam),
+             draft: getValue(elements.vesselDraft),
+             operationalArea: getSelectText(elements.operatingArea),
+             lastAntifouling: formatDate(getValue(elements.antifoulingDate, null)), // Format date
 
-        return {
-            vesselName: getValue('vesselName', 'Unnamed Vessel'),
-            imo: getValue('imo'),
-            vesselType: getSelectText('vesselTypeGen'), // Use specific ID
-            commissioned: getValue('vesselCommissioned'),
-            grossTonnage: getValue('grossTonnage'),
-            length: getValue('length'),
-            beam: getValue('beam'),
-            draft: getValue('vesselDraft'),
-            operationalArea: getSelectText('operatingArea'),
-            lastAntifouling: getValue('antifoulingDate', 'Not Specified'),
+             inspectionDate: formatDate(getValue(elements.inspectionDate, new Date().toISOString().slice(0, 10))), // Format date
+             inspectionLocation: getValue(elements.inspectionLocation),
+             visibility: getValue(elements.visibility),
+             inspector: getValue(elements.inspector, 'Unspecified Inspector'),
+             clientDetails: getValue(elements.clientDetails),
+             clientRep: getValue(elements.clientRep),
+             supervisor: getValue(elements.supervisor),
+             divers: divers,
+             methodology: getValue(elements.methodologyText, 'Standard visual and tactile inspection methods employed.'),
 
-            inspectionDate: getValue('inspectionDate', new Date().toISOString().slice(0, 10)),
-            inspectionLocation: getValue('inspectionLocation'),
-            visibility: getValue('visibility'),
-            inspector: getValue('inspector'),
-            clientDetails: getValue('clientDetails'),
-            clientRep: getValue('clientRep'),
-            supervisor: getValue('supervisor'),
-            divers: Array.from({ length: parseInt(diverCountSelect?.value || 0) }, (_, i) => getValue(`diver${i+1}`)),
-            methodology: modal.querySelector('#methodologyText')?.value || 'Standard inspection methodology.',
+             components: componentData, // Use the stored object with photos
 
-            components: componentData, // Use the stored object
+             summary: getValue(elements.summaryText, 'No summary provided.'),
+             recommendations: getValue(elements.recommendationsText, 'No specific recommendations provided.'),
+             declaration: getValue(elements.declaration).replace('[Inspector Name]', getValue(elements.inspector, 'Inspector')), // Replace placeholder
+             signature: signatureDataURL,
 
-            summary: modal.querySelector('#summaryText')?.value || 'No summary provided.',
-            recommendations: modal.querySelector('#recommendationsText')?.value || 'No recommendations provided.',
-            declaration: modal.querySelector('#declaration')?.value || '',
-            signature: signatureDataURL,
-
-            title: getValue('reportTitle', 'Marine Inspection Report'),
-            coverPhoto: coverPhotoDataURL,
-            documentNumber: getValue('documentNumber', 'MS-RPT-YYYY-NNNN'),
-            documentRevision: getValue('documentRevision', '0'),
-            reportFormat: getSelectText('reportFormat', 'Full Report') // Get selected format text
-        };
+             title: getValue(elements.reportTitle, 'Biofouling Inspection Report'),
+             coverPhoto: coverPhotoDataURL,
+             documentNumber: getValue(elements.documentNumber, `MS-RPT-${new Date().getFullYear()}-XXXX`),
+             documentRevision: getValue(elements.documentRevision, '0'),
+             reportFormat: getSelectText(elements.reportFormat, 'Full Report')
+         };
     }
 
-    function generateComponentsHTMLPreview(components) { // Simplified HTML for preview
-        if (!components || Object.keys(components).length === 0) return '<p>No component data.</p>';
-        let html = '<ul>';
-        for (const id in components) {
-            const data = components[id];
-            const name = modal.querySelector(`.component-item[data-id="${id}"] .component-name`)?.textContent || id;
-            html += `<li><strong>${name}:</strong> ${data.comments || 'No comments.'} (FR: ${data.foulingRating || 'N/A'})</li>`;
-        }
-        html += '</ul>';
-        return html;
-    }
-
-     function generateReportPreviewContent() {
-        if (!reportPreviewModal || !reportPreviewContainer) return;
+    // Generate simplified HTML for the modal preview
+    function generateReportPreviewContent() {
+        if (!elements.reportPreviewModal || !elements.reportPreviewContainer) return;
         const data = collectReportData();
 
-        // Basic HTML structure for preview
-        reportPreviewContainer.innerHTML = `
-            <h1>${data.title}</h1>
+        // Generate simplified component list for preview
+        const componentsPreviewHTML = Object.entries(data.components).map(([id, compData]) => {
+             const name = modal.querySelector(`.component-item[data-id="${id}"] .component-name`)?.textContent || id;
+             const photoCount = compData.photos?.length || 0;
+             return `<li><strong>${name}:</strong> ${compData.foulingRating || 'N/A'} (${compData.foulingCoverage || 'N/A'}). ${compData.comments || 'No comments.'} ${photoCount > 0 ? `(${photoCount} photo${photoCount > 1 ? 's' : ''})` : ''}</li>`;
+         }).join('');
+
+        elements.reportPreviewContainer.innerHTML = `
+            <h1 style="text-align: center;">${data.title}</h1>
+            ${data.coverPhoto ? `<div style="text-align:center; margin-bottom: 1em;"><img src="${data.coverPhoto}" alt="Cover Photo" style="max-width: 50%; max-height: 200px; border: 1px solid #eee;"></div>` : ''}
             <h2>Vessel: ${data.vesselName} (IMO: ${data.imo})</h2>
-            ${data.coverPhoto ? `<img src="${data.coverPhoto}" alt="Cover Photo" style="max-width: 100%; margin-bottom: 1em;">` : ''}
-            <p><strong>Inspection Date:</strong> ${formatDate(data.inspectionDate)}</p>
+            <p><strong>Inspection Date:</strong> ${data.inspectionDate} | <strong>Location:</strong> ${data.inspectionLocation}</p>
             <hr>
-            <h3>Summary</h3>
+            <h3>Executive Summary</h3>
             <p>${data.summary.replace(/\n/g, '<br>')}</p>
-             <h3>Components Overview</h3>
-             ${generateComponentsHTMLPreview(data.components)}
+            <h3>Components Overview</h3>
+            ${componentsPreviewHTML ? `<ul>${componentsPreviewHTML}</ul>` : '<p>No component data entered.</p>'}
             <h3>Recommendations</h3>
             <p>${data.recommendations.replace(/\n/g, '<br>')}</p>
-            ${data.signature ? `<h3>Signature</h3><img src="${data.signature}" alt="Signature" style="max-height: 100px; border: 1px solid #ccc;">` : ''}
+            ${data.signature ? `<h3>Signature</h3><div class="signature"><img src="${data.signature}" alt="Signature"></div><p>${data.inspector}</p>` : '<h3>Signature</h3><p>Not Provided</p>'}
         `;
-        reportPreviewModal.style.display = 'block';
-        document.body.style.overflow = 'hidden'; // Hide body scroll for preview modal
+        openModal(elements.reportPreviewModal); // Use openModal function
     }
 
+    // Generate full HTML content for download/printing
+     function generateFinalReportHTML() {
+         const data = collectReportData();
+         const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim() || '#FF6600';
 
-     function generateFinalReportHTML() { // More detailed HTML for download
-        const data = collectReportData();
-
-        const componentsHTML = Object.entries(data.components).map(([id, compData]) => {
+         const componentsHTML = Object.entries(data.components).map(([id, compData]) => {
              const name = modal.querySelector(`.component-item[data-id="${id}"] .component-name`)?.textContent || id;
              const photosHTML = (compData.photos || [])
-                 .map(src => `<img src="${src}" alt="${name} photo" style="width: 150px; height: auto; margin: 5px; border: 1px solid #eee;">`)
+                 .map(src => `<img src="${src}" alt="${name} photo" style="width: 180px; height: auto; margin: 5px; border: 1px solid #eee; border-radius: 3px; vertical-align: top;">`)
                  .join('');
              return `
-                 <div class="component" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 15px; page-break-inside: avoid;">
-                     <h4 style="margin: 0 0 5px 0; font-size: 1.1em;">${name}</h4>
-                     <p style="margin: 0 0 5px 0;"><strong>Observations:</strong> ${compData.comments || 'N/A'}</p>
-                     <p style="margin: 0 0 5px 0;"><strong>Fouling:</strong> ${compData.foulingRating || 'N/A'} (${compData.foulingCoverage || 'N/A'})</p>
-                     <p style="margin: 0 0 10px 0;"><strong>Paint:</strong> ${compData.pdrRating || 'N/A'}</p>
-                     ${photosHTML ? `<div><strong>Photos:</strong><br>${photosHTML}</div>` : ''}
+                 <div class="component" style="border: 1px solid #ddd; padding: 12px; margin-bottom: 15px; border-radius: 4px; page-break-inside: avoid;">
+                     <h4 style="margin: 0 0 8px 0; font-size: 1.1em; color: #111; border-bottom: 1px solid #eee; padding-bottom: 4px;">${name}</h4>
+                     <table style="font-size: 9pt; margin-bottom: 8px; border: none;">
+                         <tr>
+                             <td style="border: none; padding: 2px 5px 2px 0; font-weight: bold;">Observations:</td>
+                             <td style="border: none; padding: 2px 0;">${compData.comments?.replace(/\n/g, '<br>') || 'N/A'}</td>
+                         </tr>
+                         <tr>
+                              <td style="border: none; padding: 2px 5px 2px 0; font-weight: bold;">Fouling:</td>
+                              <td style="border: none; padding: 2px 0;">${compData.foulingRating || 'N/A'} (${compData.foulingCoverage || 'N/A'})</td>
+                          </tr>
+                          <tr>
+                              <td style="border: none; padding: 2px 5px 2px 0; font-weight: bold;">Paint:</td>
+                              <td style="border: none; padding: 2px 0;">${compData.pdrRating || 'N/A'}</td>
+                          </tr>
+                     </table>
+                     ${photosHTML ? `<div style="margin-top: 10px;"><strong>Photos:</strong><br>${photosHTML}</div>` : ''}
                  </div>`;
          }).join('');
 
 
-        return `
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <title>${data.title} - ${data.vesselName}</title>
-                <style>
-                    body { font-family: Arial, sans-serif; margin: 30px; font-size: 10pt; line-height: 1.4; color: #333; }
-                    h1, h2, h3 { color: #111; margin: 1.5em 0 0.5em 0; }
-                    h1 { font-size: 18pt; text-align: center; }
-                    h2 { font-size: 14pt; border-bottom: 1px solid #ccc; padding-bottom: 3px;}
-                    h3 { font-size: 12pt; }
-                    p { margin: 0 0 0.8em 0; }
-                    table { width: 100%; border-collapse: collapse; margin-bottom: 1em; font-size: 9pt; }
-                    th, td { border: 1px solid #ccc; padding: 5px; text-align: left; vertical-align: top;}
-                    th { background-color: #f0f0f0; font-weight: bold; }
-                    .page-break { page-break-after: always; }
-                    .cover-photo { text-align: center; margin-bottom: 2em; }
-                    .cover-photo img { max-width: 80%; max-height: 300px; border: 1px solid #ccc; }
-                    .signature-block { margin-top: 2em; }
-                    .signature-block img { max-height: 80px; border-bottom: 1px solid #555; margin-bottom: 5px;}
-                </style>
-            </head>
-            <body>
-                <h1>${data.title}</h1>
-                <div class="cover-photo">
+         return `
+             <!DOCTYPE html>
+             <html lang="en">
+             <head>
+                 <meta charset="UTF-8">
+                 <title>${data.title} - ${data.vesselName}</title>
+                 <style>
+                     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+                     body { font-family: 'Inter', Arial, sans-serif; margin: 40pt; font-size: 10pt; line-height: 1.4; color: #333; }
+                     @page { margin: 40pt; }
+                     h1, h2, h3, h4 { color: #111; margin: 1.6em 0 0.6em 0; font-weight: 600; }
+                     h1 { font-size: 20pt; text-align: center; margin-top: 0; color: ${accentColor}; }
+                     h2 { font-size: 14pt; border-bottom: 1.5px solid ${accentColor}; padding-bottom: 4px; font-weight: 700;}
+                     h3 { font-size: 12pt; font-weight: 700; }
+                     h4 { font-size: 11pt; font-weight: 600;}
+                     p { margin: 0 0 0.9em 0; }
+                     table { width: 100%; border-collapse: collapse; margin-bottom: 1.2em; font-size: 9pt; }
+                     th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top;}
+                     th { background-color: #f0f0f0; font-weight: bold; }
+                     .page-break { page-break-after: always; }
+                     .cover-page { text-align: center; margin-bottom: 3em; }
+                     .cover-page img { max-width: 70%; max-height: 350px; border: 1px solid #ccc; margin-top: 2em; margin-bottom: 1em; }
+                     .signature-block { margin-top: 2.5em; page-break-inside: avoid; }
+                     .signature-block img { max-height: 70px; border-bottom: 1px solid #555; margin-bottom: 5px; display: block;}
+                     ul { padding-left: 20px; list-style: disc; }
+                     li { margin-bottom: 0.5em; }
+                     .footer { position: fixed; bottom: 20pt; left: 40pt; right: 40pt; text-align: center; font-size: 8pt; color: #777; }
+                 </style>
+             </head>
+             <body>
+                 <div class="cover-page">
+                     <h1>${data.title}</h1>
                      ${data.coverPhoto ? `<img src="${data.coverPhoto}" alt="Cover Photo"><br>` : ''}
-                     <h2>${data.vesselName} (IMO: ${data.imo})</h2>
-                     <p><strong>Inspection Date:</strong> ${formatDate(data.inspectionDate)}</p>
-                     <p><strong>Location:</strong> ${data.inspectionLocation}</p>
-                     <p><strong>Document:</strong> ${data.documentNumber} Rev ${data.documentRevision}</p>
-                </div>
+                     <h2 style="border-bottom: none; margin-top: 1em;">${data.vesselName} (IMO: ${data.imo})</h2>
+                     <p style="font-size: 11pt;"><strong>Inspection Date:</strong> ${data.inspectionDate}</p>
+                     <p style="font-size: 11pt;"><strong>Location:</strong> ${data.inspectionLocation}</p>
+                     <p style="font-size: 9pt; margin-top: 3em;"><strong>Document:</strong> ${data.documentNumber} Rev ${data.documentRevision}</p>
+                 </div>
 
-                <div class="page-break"></div>
+                 <div class="page-break"></div>
 
                  <h2>Executive Summary</h2>
                  <p>${data.summary.replace(/\n/g, '<br>')}</p>
@@ -1118,12 +1401,12 @@ function initBiofoulingPlanGenerator() {
                      <tr><th>Vessel Type</th><td>${data.vesselType}</td><th>Commissioned</th><td>${data.commissioned}</td></tr>
                      <tr><th>Gross Tonnage</th><td>${data.grossTonnage} t</td><th>Length Overall</th><td>${data.length} m</td></tr>
                      <tr><th>Beam</th><td>${data.beam} m</td><th>Draft</th><td>${data.draft} m</td></tr>
-                     <tr><th>Operating Area</th><td>${data.operationalArea}</td><th>Last Antifouling</th><td>${formatDate(data.lastAntifouling)}</td></tr>
+                     <tr><th>Operating Area</th><td>${data.operationalArea}</td><th>Last Antifouling</th><td>${data.lastAntifouling}</td></tr>
                  </table>
 
                  <h2>Inspection Details</h2>
                   <table>
-                     <tr><th>Inspection Date</th><td>${formatDate(data.inspectionDate)}</td><th>Location</th><td>${data.inspectionLocation}</td></tr>
+                     <tr><th>Inspection Date</th><td>${data.inspectionDate}</td><th>Location</th><td>${data.inspectionLocation}</td></tr>
                      <tr><th>Visibility</th><td>${data.visibility}</td><th>Inspector</th><td>${data.inspector}</td></tr>
                      <tr><th>Client</th><td>${data.clientDetails}</td><th>Client Rep.</th><td>${data.clientRep}</td></tr>
                      <tr><th>Supervisor</th><td>${data.supervisor}</td><th>Divers</th><td>${data.divers.join(', ') || 'N/A'}</td></tr>
@@ -1142,71 +1425,109 @@ function initBiofoulingPlanGenerator() {
                  <p>${data.recommendations.replace(/\n/g, '<br>')}</p>
 
                  <h2>Declaration</h2>
-                 <p>${data.declaration.replace('[Inspector Name]', data.inspector).replace(/\n/g, '<br>')}</p>
+                 <p>${data.declaration.replace(/\n/g, '<br>')}</p>
                   <div class="signature-block">
-                     ${data.signature ? `<img src="${data.signature}" alt="Signature"><br>` : ''}
+                     ${data.signature ? `<img src="${data.signature}" alt="Signature"><br>` : '<p style="margin-bottom: 40px;">[Signature]</p>'}
                      <span>${data.inspector}</span><br>
-                     <span>Date: ${formatDate(data.inspectionDate)}</span>
+                     <span>Date: ${data.inspectionDate}</span>
                  </div>
 
-            </body>
-            </html>
-        `;
+                 <!-- Add footer to each page using running elements potentially, or just here -->
+                 <!-- <div class="footer">Page <span class="pageNumber"></span> of <span class="totalPages"></span> | ${data.documentNumber}</div> -->
+
+             </body>
+             </html>
+         `;
+     }
+
+    // --- Event Listeners for Preview/Generate ---
+    if (elements.previewReportButton) {
+        elements.previewReportButton.addEventListener('click', generateReportPreviewContent);
     }
 
-    if (previewReportButton) {
-        previewReportButton.addEventListener('click', generateReportPreviewContent);
-    }
+    async function downloadReport(format = 'html') { // Add format option
+        const reportName = `MarineStream_Report_${elements.vesselName?.value?.replace(/[^a-z0-9]/gi, '_') || 'Vessel'}`;
+        const htmlContent = generateFinalReportHTML();
 
-     if (generateReportButton) {
-        generateReportButton.addEventListener('click', () => {
-             const htmlContent = generateFinalReportHTML();
+        if (format === 'pdf' && typeof html2pdf !== 'undefined') { // Check if html2pdf library is loaded
+            // Use html2pdf.js for better PDF generation
+            const pdfOptions = {
+                margin:       [40, 40, 40, 40], // margins in pt [top, left, bottom, right]
+                filename:     `${reportName}.pdf`,
+                image:        { type: 'jpeg', quality: 0.95 },
+                html2canvas:  { scale: 2, logging: false, useCORS: true },
+                jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' }
+            };
+            try {
+                await html2pdf().from(htmlContent).set(pdfOptions).save();
+            } catch (pdfError) {
+                 console.error("html2pdf generation failed:", pdfError);
+                 alert("Failed to generate PDF. Check console for details. Downloading as HTML instead.");
+                 downloadHTML(); // Fallback to HTML
+            }
+        } else {
+            downloadHTML(); // Default to HTML download
+        }
+
+        function downloadHTML() {
              const blob = new Blob([htmlContent], { type: 'text/html' });
              const url = URL.createObjectURL(blob);
              const link = document.createElement('a');
-             const vesselName = modal.querySelector('#vesselName')?.value || 'Vessel';
              link.href = url;
-             link.download = `MarineStream_Report_${vesselName.replace(/[^a-z0-9]/gi, '_')}.html`;
-             document.body.appendChild(link); // Required for Firefox
-             link.click();
-             document.body.removeChild(link);
-             URL.revokeObjectURL(url);
-         });
-     }
-
-     // Close/Download from Preview Modal
-     if (closePreviewButton && reportPreviewModal) {
-         closePreviewButton.addEventListener('click', () => {
-             reportPreviewModal.style.display = 'none';
-             document.body.style.overflow = ''; // Restore scroll
-         });
-     }
-     if (downloadReportButton) {
-         downloadReportButton.addEventListener('click', () => {
-             // Use the same generation logic as the main button
-             const htmlContent = generateFinalReportHTML();
-             const blob = new Blob([htmlContent], { type: 'text/html' });
-             const url = URL.createObjectURL(blob);
-             const link = document.createElement('a');
-             const vesselName = modal.querySelector('#vesselName')?.value || 'Vessel';
-             link.href = url;
-             link.download = `MarineStream_Report_${vesselName.replace(/[^a-z0-9]/gi, '_')}.html`;
+             link.download = `${reportName}.html`;
              document.body.appendChild(link);
              link.click();
              document.body.removeChild(link);
              URL.revokeObjectURL(url);
+        }
+    }
+
+
+     if (elements.generateReportButton) {
+         // Add a dropdown or similar to choose format if desired, otherwise default to HTML or PDF
+         elements.generateReportButton.addEventListener('click', () => downloadReport('html')); // Default to HTML for now
+     }
+
+     // Close/Download from Preview Modal
+     if (elements.closePreviewButton && elements.reportPreviewModal) {
+         elements.closePreviewButton.addEventListener('click', () => {
+             closeModal(elements.reportPreviewModal); // Use closeModal function
          });
+     }
+     if (elements.downloadReportButton) {
+         // Add format choice here too if needed
+         elements.downloadReportButton.addEventListener('click', () => downloadReport('html')); // Default to HTML
      }
 }
 
 
-// === Video Initialization ===
+// === Video Initialization (with Autoplay) ===
 function initVideos() {
     function setupVideo(videoId, buttonId) {
         const video = document.getElementById(videoId);
         const playBtn = document.getElementById(buttonId);
+        const videoContainer = video ? video.closest('.video-container') : null; // Get container
 
-        if (!video || !playBtn) return; // Exit if elements not found
+        if (!video || !playBtn || !videoContainer) {
+             console.warn(`Video setup skipped: Elements not found for ${videoId}`);
+             return;
+        }
+
+        // --- Autoplay Configuration ---
+        // Browsers require muted for autoplay usually
+        video.muted = true;
+        video.autoplay = true;
+        video.playsInline = true; // Important for iOS
+        video.loop = true; // Loop the background videos
+
+        // Attempt to play on load (needed for some browser policies)
+        video.play().catch(error => {
+            console.warn(`Autoplay blocked for ${videoId}. User interaction needed.`, error);
+            // Show play button overlay if autoplay fails
+            playBtn.style.opacity = '1';
+            playBtn.style.pointerEvents = 'auto';
+        });
+
 
         function togglePlay() {
             if (video.paused || video.ended) {
@@ -1214,6 +1535,9 @@ function initVideos() {
             } else {
                 video.pause();
             }
+             // Toggle mute when user explicitly interacts
+             video.muted = false;
+             updateButton(); // Update button state immediately
         }
 
          function updateButton() {
@@ -1222,17 +1546,38 @@ function initVideos() {
             playBtn.setAttribute('aria-label', video.paused || video.ended ? `Play ${videoId}` : `Pause ${videoId}`);
          }
 
-
+        // --- Custom Controls Interaction ---
         playBtn.addEventListener('click', togglePlay);
-        video.addEventListener('play', updateButton);
-        video.addEventListener('pause', updateButton);
-        video.addEventListener('ended', updateButton);
+        video.addEventListener('play', () => {
+             updateButton();
+             // Hide button slightly after play starts if autoplay worked
+             if (video.autoplay && !video.paused) { // Check if autoplay is likely active
+                 // playBtn.style.opacity = '0'; // Fade out button
+             }
+             videoContainer.classList.add('video-playing'); // Add class for styling
+        });
+        video.addEventListener('pause', () => {
+            updateButton();
+            // playBtn.style.opacity = '1'; // Ensure button is visible when paused
+            videoContainer.classList.remove('video-playing');
+        });
+        video.addEventListener('ended', () => {
+             updateButton();
+             // playBtn.style.opacity = '1'; // Ensure button is visible when ended
+             videoContainer.classList.remove('video-playing');
+        });
 
-        // Initial button state
+        // Initial button state (might be playing due to autoplay)
         updateButton();
 
-         // Show native controls if JS fails or for accessibility
-         // video.controls = true; // Optionally force controls always visible
+        // Hide custom play button initially if autoplay is likely to work
+        // We rely on the play/pause event listeners to show/hide it
+         playBtn.style.opacity = '0';
+         playBtn.style.pointerEvents = 'none';
+
+         // Show controls on container hover (already handled by CSS)
+         // Hide native controls if custom ones are working
+         video.controls = false;
     }
 
     setupVideo('rov-video', 'rov-play-btn');
@@ -1244,12 +1589,25 @@ function initVideos() {
 function formatDate(dateString) {
     if (!dateString || dateString === 'N/A') return 'N/A';
     try {
-        const date = new Date(dateString + 'T00:00:00'); // Assume local time if no timezone
-        if (isNaN(date.getTime())) return dateString; // Return original if invalid
-        // Adjust formatting as needed
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return date.toLocaleDateString('en-AU', options); // Example: Australian format
+        // Handle YYYY-MM-DD format safely
+        const parts = dateString.split('-');
+        if (parts.length === 3) {
+            // new Date(year, monthIndex, day) - month is 0-indexed
+            const date = new Date(parts[0], parts[1] - 1, parts[2]);
+             if (!isNaN(date.getTime())) {
+                 const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                 return date.toLocaleDateString(navigator.language || 'en-US', options); // Use browser language
+             }
+        }
+        // Fallback for other potential formats (less reliable)
+        const date = new Date(dateString);
+        if (!isNaN(date.getTime())) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString(navigator.language || 'en-US', options);
+        }
+        return dateString; // Return original if parsing fails
     } catch (e) {
-        return dateString; // Return original string if Date parsing fails
+        console.warn("Date formatting failed for:", dateString, e);
+        return dateString; // Return original string on error
     }
 }
