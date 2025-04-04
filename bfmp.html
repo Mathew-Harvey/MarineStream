@@ -1,0 +1,481 @@
+        <!-- Biofouling Management Plan Generator Modal -->
+        <div id="plan-generator-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Biofouling Management Plan Generator</h2>
+                    <button class="modal-close" data-modal="plan-generator-modal" aria-label="Close Plan Generator">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Progress Indicator -->
+                    <div class="progress-indicator">
+                        <div class="progress-step active" data-step="1">
+                            <span class="step-number">1</span>
+                            <span class="step-label">Vessel & Personnel</span>
+                        </div>
+                        <div class="progress-step" data-step="2">
+                            <span class="step-number">2</span>
+                            <span class="step-label">AFS Details</span>
+                        </div>
+                        <div class="progress-step" data-step="3">
+                            <span class="step-number">3</span>
+                            <span class="step-label">Niche Areas</span>
+                        </div>
+                        <div class="progress-step" data-step="4">
+                            <span class="step-number">4</span>
+                            <span class="step-label">Operating Profile</span>
+                        </div>
+                        <div class="progress-step" data-step="5">
+                            <span class="step-number">5</span>
+                            <span class="step-label">Inspection & BRB</span>
+                        </div>
+                        <div class="progress-step" data-step="6">
+                            <span class="step-number">6</span>
+                            <span class="step-label">Training & Contingency</span>
+                        </div>
+                        <div class="progress-step" data-step="7">
+                            <span class="step-number">7</span>
+                            <span class="step-label">Generate BFMP</span>
+                        </div>
+                    </div>
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="vessel-details">Vessel & Personnel</button>
+                        <button class="tab-btn" data-tab="afs-details">AFS Details</button>
+                        <button class="tab-btn" data-tab="niche-areas">Niche Areas</button>
+                        <button class="tab-btn" data-tab="operating-profile">Operating Profile</button>
+                        <button class="tab-btn" data-tab="inspection-brb">Inspection & BRB</button>
+                        <button class="tab-btn" data-tab="training-contingency">Training & Contingency</button>
+                        <button class="tab-btn" data-tab="generate">Generate BFMP</button>
+                    </div>
+
+                    <!-- 1. Vessel & Personnel Tab -->
+                    <div id="vessel-details" class="tab-pane active">
+                        <h4>Vessel Particulars</h4>
+                        <form class="form-grid">
+                            <div class="form-group">
+                                <label for="vesselName">Vessel Name</label>
+                                <input type="text" id="vesselName" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="imo">IMO Number</label>
+                                <input type="text" id="imo" class="form-control" pattern="[0-9]{7}" required>
+                                <small class="help-text">7-digit unique vessel identifier</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="portRegistry">Port of Registry</label>
+                                <input type="text" id="portRegistry" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="vesselTypeGen">Vessel Type</label>
+                                <select id="vesselTypeGen" class="form-control" required>
+                                    <option value="">Select Type</option>
+                                    <option value="Bulk Carrier">Bulk Carrier</option>
+                                    <option value="Container Ship">Container Ship</option>
+                                    <option value="Tanker">Tanker</option>
+                                    <option value="General Cargo">General Cargo</option>
+                                    <option value="Passenger Ship">Passenger Ship</option>
+                                    <option value="Naval Vessel">Naval Vessel</option>
+                                    <option value="Offshore Vessel">Offshore Vessel</option>
+                                    <option value="Tug">Tug</option>
+                                    <option value="Fishing Vessel">Fishing Vessel</option>
+                                    <option value="Yacht/Recreational">Yacht/Recreational</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="vesselCommissioned">Year Commissioned</label>
+                                <input type="number" id="vesselCommissioned" class="form-control" min="1900" max="2100" placeholder="YYYY" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="grossTonnage">Gross Tonnage (t)</label>
+                                <input type="number" id="grossTonnage" class="form-control" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="length">Length Overall (m)</label>
+                                <input type="number" id="length" class="form-control" min="0" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="beam">Beam (m)</label>
+                                <input type="number" id="beam" class="form-control" min="0" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="operatingArea">Primary Operating Area</label>
+                                <select id="operatingArea" class="form-control" required>
+                                    <option value="">Select Area</option>
+                                    <option value="Global">Global</option>
+                                    <option value="Regional (e.g., SE Asia)">Regional (e.g., SE Asia)</option>
+                                    <option value="Coastal (Australia)">Coastal (Australia)</option>
+                                    <option value="Local (e.g., Port Philip Bay)">Local (e.g., Port Philip Bay)</option>
+                                    <option value="Tropical Waters">Tropical Waters</option>
+                                    <option value="Temperate Waters">Temperate Waters</option>
+                                    <option value="Polar Waters">Polar Waters</option>
+                                </select>
+                            </div>
+                        </form>
+                        
+                        <hr style="margin: var(--space-lg) 0;">
+                        
+                        <h4>Responsible Personnel</h4>
+                        <p class="info-note">Identify personnel responsible for implementing the BFMP both onboard and ashore.</p>
+                        <form class="form-grid">
+                            <div class="form-group">
+                                <label for="responsiblePerson">Onboard Responsible Person</label>
+                                <input type="text" id="responsiblePerson" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="responsiblePosition">Position</label>
+                                <input type="text" id="responsiblePosition" class="form-control" placeholder="e.g., Chief Officer" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="shorePerson">Shore-based Responsible Person</label>
+                                <input type="text" id="shorePerson" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="shoreCompany">Company</label>
+                                <input type="text" id="shoreCompany" class="form-control" required>
+                            </div>
+                        </form>
+                        
+                        <div class="form-actions">
+                            <button class="btn btn-secondary prev-tab" data-prev="vessel-details" disabled>Previous</button>
+                            <button class="btn btn-primary next-tab" data-next="afs-details">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- 2. AFS Details Tab -->
+                    <div id="afs-details" class="tab-pane">
+                        <h4>Antifouling System (AFS) Details</h4>
+                        <p class="info-note">Specify details of the antifouling system applied to the hull and other underwater surfaces.</p>
+                        <form class="form-grid">
+                            <div class="form-group">
+                                <label for="afsType">AFS Type</label>
+                                <input type="text" id="afsType" class="form-control" placeholder="e.g., TBT-free SPC, Foul Release Coating" required>
+                                <small class="help-text">Type of antifouling system used</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="afsManufacturer">Manufacturer/Product</label>
+                                <input type="text" id="afsManufacturer" class="form-control" placeholder="e.g., International Paint Intersleek 1100SR" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="antifoulingDate">Last Application Date</label>
+                                <input type="date" id="antifoulingDate" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="afsLocation">Application Location</label>
+                                <input type="text" id="afsLocation" class="form-control" placeholder="e.g., Singapore Keppel Shipyard" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="afsExpectedLife">Expected Service Life (Years)</label>
+                                <input type="number" id="afsExpectedLife" class="form-control" min="1" max="10" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="afsDocumentation">Documentation References</label>
+                                <textarea id="afsDocumentation" class="form-control" rows="3" placeholder="List relevant documentation (e.g., AFS Certificate No., Specification Document, Drydock Report reference)"></textarea>
+                            </div>
+                        </form>
+                        <div class="form-actions">
+                            <button class="btn btn-secondary prev-tab" data-prev="vessel-details">Previous</button>
+                            <button class="btn btn-primary next-tab" data-next="niche-areas">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- 3. Niche Areas Tab -->
+                    <div id="niche-areas" class="tab-pane">
+                        <h4>Niche Area Management Strategies</h4>
+                        <p class="info-note">Define management strategies for each niche area prone to biofouling on the vessel. This section is critical for Australian compliance.</p>
+                        
+                        <div class="niche-areas-grid">
+                            <div class="niche-list">
+                                <h5><i class="fas fa-ship"></i> Niche Areas</h5>
+                                <div class="niche-items">
+                                    <div class="niche-item" data-id="propeller">
+                                        <span class="niche-name">Propeller System (blades, boss, hub)</span>
+                                    </div>
+                                    <div class="niche-item" data-id="rudder">
+                                        <span class="niche-name">Rudder System (blade, hinges, horn)</span>
+                                    </div>
+                                    <div class="niche-item" data-id="thrusters">
+                                        <span class="niche-name">Thrusters (tunnels, gratings, units)</span>
+                                    </div>
+                                    <div class="niche-item" data-id="sea_chests">
+                                        <span class="niche-name">Sea Chests (grates, internal surfaces)</span>
+                                    </div>
+                                    <div class="niche-item" data-id="anchor_chain">
+                                        <span class="niche-name">Anchor Chains & Chain Lockers</span>
+                                    </div>
+                                    <div class="niche-item" data-id="bilge_keels">
+                                        <span class="niche-name">Bilge Keels</span>
+                                    </div>
+                                    <div class="niche-item" data-id="stabiliser_fins">
+                                        <span class="niche-name">Stabiliser Fins</span>
+                                    </div>
+                                    <div class="niche-item" data-id="docking_blocks">
+                                        <span class="niche-name">Docking Blocks/Support Strips</span>
+                                    </div>
+                                    <div class="niche-item" data-id="sensors">
+                                        <span class="niche-name">Echo Sounders, Speed Logs, Sensors</span>
+                                    </div>
+                                    <div class="niche-item" data-id="anodes">
+                                        <span class="niche-name">Cathodic Protection Anodes</span>
+                                    </div>
+                                    <div class="niche-item" data-id="sea_inlets">
+                                        <span class="niche-name">Sea Inlet/Outlet Pipes</span>
+                                    </div>
+                                    <div class="niche-item" data-id="other">
+                                        <span class="niche-name">Other Hull Appendages/Recesses</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="niche-details">
+                                <div class="select-niche-message">
+                                    <p><i class="fas fa-arrow-left"></i> Please select a niche area to define its management strategy.</p>
+                                </div>
+                                <div class="niche-form" style="display: none;">
+                                    <h5 id="niche-title" style="margin-bottom: var(--space-md);"></h5>
+                                    <div class="form-group" id="other-niche-name-group" style="display: none;">
+                                        <label for="other-niche-name">Specify Other Niche Area:</label>
+                                        <input type="text" id="other-niche-name" class="form-control">
+                                    </div>
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="niche-afs">AFS Applied</label>
+                                            <input type="text" id="niche-afs" class="form-control" placeholder="e.g., Same as hull, Specialized coating, Not applicable">
+                                            <small class="help-text">Specify the antifouling system used for this niche area</small>
+                                        </div>
+                                        <div class="form-group full-width">
+                                            <label for="niche-measures">Other Anti-fouling Measures</label>
+                                            <textarea id="niche-measures" class="form-control" rows="2" placeholder="e.g., MGPS for sea chests, regular polishing, protective covers"></textarea>
+                                            <small class="help-text">Describe any additional measures beyond AFS coating</small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="niche-inspection">Inspection Frequency/Method</label>
+                                            <input type="text" id="niche-inspection" class="form-control" placeholder="e.g., Annual diver inspection, At dry-docking">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="niche-cleaning">Cleaning Frequency/Method</label>
+                                            <input type="text" id="niche-cleaning" class="form-control" placeholder="e.g., As required based on inspection, During dry-docking">
+                                        </div>
+                                        <div class="form-group full-width">
+                                            <label for="niche-notes">Additional Notes</label>
+                                            <textarea id="niche-notes" class="form-control" rows="3" placeholder="Additional details about management strategies for this niche area..."></textarea>
+                                        </div>
+                                        <button type="button" id="save-niche" class="btn btn-primary"><i class="fas fa-save"></i> Save Niche Area Strategy</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr style="margin: var(--space-lg) 0;">
+                        
+                        <h4>General Niche Area Management Strategy</h4>
+                        <form class="form-grid">
+                            <div class="form-group full-width">
+                                <label for="nicheAreaStrategy">Overall Approach to Niche Area Management</label>
+                                <textarea id="nicheAreaStrategy" class="form-control" rows="4" placeholder="Describe the vessel's general approach to managing biofouling in niche areas..." required></textarea>
+                            </div>
+                        </form>
+                        
+                        <div class="form-actions">
+                            <button class="btn btn-secondary prev-tab" data-prev="afs-details">Previous</button>
+                            <button class="btn btn-primary next-tab" data-next="operating-profile">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- 4. Operating Profile Tab -->
+                    <div id="operating-profile" class="tab-pane">
+                        <h4>Vessel Operating Profile</h4>
+                        <p class="info-note">Document the vessel's typical operating conditions and patterns that may influence biofouling risk.</p>
+                        
+                        <form class="form-grid">
+                            <div class="form-group">
+                                <label for="operatingSpeed">Typical Operating Speed (knots)</label>
+                                <input type="number" id="operatingSpeed" class="form-control" min="1" max="50" step="0.1" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="typicalRoutes">Typical Routes/Bioregions</label>
+                                <textarea id="typicalRoutes" class="form-control" rows="3" placeholder="Describe the typical routes, regions, and trade patterns of the vessel..." required></textarea>
+                                <small class="help-text">Include details on different bioregions the vessel traverses</small>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="inactivityPeriods">Periods of Inactivity</label>
+                                <textarea id="inactivityPeriods" class="form-control" rows="3" placeholder="Describe typical periods when the vessel is stationary for more than 10 days (e.g., layups, extended port stays)..." required></textarea>
+                                <small class="help-text">Extended inactivity increases biofouling risk</small>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="foulingFactors">Operational Factors Influencing Fouling Risk</label>
+                                <textarea id="foulingFactors" class="form-control" rows="3" placeholder="Describe any operational factors that might influence biofouling risk (e.g., slow steaming, frequent short voyages)..."></textarea>
+                            </div>
+                        </form>
+                        
+                        <div class="form-actions">
+                            <button class="btn btn-secondary prev-tab" data-prev="niche-areas">Previous</button>
+                            <button class="btn btn-primary next-tab" data-next="inspection-brb">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- 5. Inspection & BRB Tab -->
+                    <div id="inspection-brb" class="tab-pane">
+                        <h4>Inspection and Maintenance Strategy</h4>
+                        <p class="info-note">Define the vessel's approach to regular biofouling inspections and maintenance activities.</p>
+                        
+                        <form class="form-grid">
+                            <div class="form-group full-width">
+                                <label for="plannedInspections">Planned Inspections</label>
+                                <textarea id="plannedInspections" class="form-control" rows="3" placeholder="Describe the vessel's approach to planned biofouling inspections..." required></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="inspectionSchedule">Inspection Schedule</label>
+                                <textarea id="inspectionSchedule" class="form-control" rows="3" placeholder="Detail the timing and frequency of inspections (e.g., annual, before arrival in high-risk areas)..." required></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="inspectionMethods">Inspection Methods</label>
+                                <textarea id="inspectionMethods" class="form-control" rows="3" placeholder="Describe the methods used for biofouling inspections (e.g., diver surveys, ROV, visual inspections)..." required></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="maintenanceActivities">Maintenance Activities</label>
+                                <textarea id="maintenanceActivities" class="form-control" rows="3" placeholder="Describe the biofouling maintenance activities (e.g., hull cleaning, AFS renewal)..." required></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="nonScheduledTriggers">Non-Scheduled Inspection/Maintenance Triggers</label>
+                                <textarea id="nonScheduledTriggers" class="form-control" rows="3" placeholder="List conditions that trigger unplanned inspections or maintenance (e.g., performance loss, extended inactivity)..." required></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="documentationProcedures">Documentation Procedures</label>
+                                <textarea id="documentationProcedures" class="form-control" rows="3" placeholder="Describe how inspection and maintenance activities are documented..." required></textarea>
+                            </div>
+                        </form>
+                        
+                        <hr style="margin: var(--space-lg) 0;">
+                        
+                        <h4>Biofouling Record Book (BRB) Procedures</h4>
+                        <p class="info-note">Document how the Biofouling Record Book is maintained and used.</p>
+                        
+                        <form class="form-grid">
+                            <div class="form-group full-width">
+                                <label for="recordKeeping">Record Keeping</label>
+                                <textarea id="recordKeeping" class="form-control" rows="4" placeholder="Detail the procedures for recording biofouling management activities in the BRB..." required></textarea>
+                            </div>
+                        </form>
+                        
+                        <div class="form-actions">
+                            <button class="btn btn-secondary prev-tab" data-prev="operating-profile">Previous</button>
+                            <button class="btn btn-primary next-tab" data-next="training-contingency">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- 6. Training & Contingency Tab -->
+                    <div id="training-contingency" class="tab-pane">
+                        <h4>Crew Training and Familiarization</h4>
+                        <p class="info-note">Outline how crew members are trained in biofouling management.</p>
+                        
+                        <form class="form-grid">
+                            <div class="form-group full-width">
+                                <label for="trainingProgram">Training Program</label>
+                                <textarea id="trainingProgram" class="form-control" rows="4" placeholder="Describe the training provided to crew members regarding biofouling management..." required></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="newCrewFamiliarization">New Crew Familiarization</label>
+                                <textarea id="newCrewFamiliarization" class="form-control" rows="3" placeholder="Detail how new crew members are familiarized with the BFMP and their responsibilities..."></textarea>
+                            </div>
+                        </form>
+                        
+                        <hr style="margin: var(--space-lg) 0;">
+                        
+                        <h4>Contingency Planning</h4>
+                        <p class="info-note">Outline actions to be taken if excessive fouling is detected or planned maintenance cannot occur.</p>
+                        
+                        <form class="form-grid">
+                            <div class="form-group full-width">
+                                <label for="contingencyPlan">Contingency Measures</label>
+                                <textarea id="contingencyPlan" class="form-control" rows="4" placeholder="Describe contingency measures for unexpected biofouling situations..."></textarea>
+                            </div>
+                        </form>
+                        
+                        <hr style="margin: var(--space-lg) 0;">
+                        
+                        <h4>Declaration</h4>
+                        <form class="form-grid">
+                            <div class="form-group">
+                                <label for="inspectorNameSignOff">Name</label>
+                                <input type="text" id="inspectorNameSignOff" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="signatoryPosition">Position</label>
+                                <input type="text" id="signatoryPosition" class="form-control" placeholder="e.g., Fleet Manager, Vessel Master" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="signaturePad">Signature</label>
+                                <canvas id="signaturePad" class="signature-pad" width="400" height="150"></canvas>
+                                <button type="button" id="clearSignature" class="btn btn-secondary btn-sm"><i class="fas fa-eraser"></i> Clear Signature</button>
+                            </div>
+                        </form>
+                        
+                        <div class="form-actions">
+                            <button class="btn btn-secondary prev-tab" data-prev="inspection-brb">Previous</button>
+                            <button class="btn btn-primary next-tab" data-next="generate">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- 7. Generate BFMP Tab -->
+                    <div id="generate" class="tab-pane">
+                        <h4>Biofouling Management Plan Document Settings</h4>
+                        <form class="form-grid">
+                            <div class="form-group">
+                                <label for="reportTitle">Document Title</label>
+                                <input type="text" id="reportTitle" class="form-control" value="Biofouling Management Plan" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="documentNumber">Document Number</label>
+                                <input type="text" id="documentNumber" class="form-control" placeholder="e.g., BFMP-[VESSEL]-[YEAR]" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="documentRevision">Revision</label>
+                                <input type="text" id="documentRevision" class="form-control" value="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="documentDate">Document Date</label>
+                                <input type="date" id="documentDate" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="reportFormat">Document Type</label>
+                                <select id="reportFormat" class="form-control" required>
+                                    <option value="Full BFMP">Full Biofouling Management Plan</option>
+                                    <option value="BFMP Update">BFMP Update/Revision</option>
+                                </select>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="coverPhoto">Company Logo (Optional)</label>
+                                <input type="file" id="coverPhoto" class="form-control" accept="image/*">
+                                <small class="form-text text-muted">Upload company logo for the document. Max size 2MB.</small>
+                                <div id="cover-preview" class="cover-preview"></div>
+                            </div>
+                        </form>
+                        <div class="form-actions button-group">
+                            <button class="btn btn-secondary prev-tab" data-prev="training-contingency">Previous</button>
+                            <button id="preview-report" class="btn btn-primary"><i class="fas fa-eye"></i> Preview BFMP</button>
+                            <button id="generate-report" class="btn btn-success"><i class="fas fa-file-pdf"></i> Download PDF</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Report Preview Modal -->
+        <div id="report-preview-modal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Biofouling Management Plan Preview</h2>
+                    <button class="modal-close" data-modal="report-preview-modal" aria-label="Close Preview">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="report-preview-container"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="close-preview" class="btn btn-secondary">Close</button>
+                    <button id="download-report" class="btn btn-primary">Download PDF</button>
+                </div>
+            </div>
+        </div>

@@ -9,7 +9,11 @@ document.addEventListener('DOMContentLoaded', function() {
         initHullFoulingCalculator();
     }
     if (document.getElementById('plan-generator-modal')) {
+        console.log('Plan Generator Modal element found');
+        console.log('Initializing Biofouling Plan Generator...');
         initBiofoulingPlanGenerator();
+    } else {
+        console.error('Plan Generator Modal element NOT found');
     }
 
     // Initialize videos with autoplay
@@ -46,6 +50,7 @@ function initWebsiteFunctions() {
 
 // Initialize Tool Modal Buttons & Closing Logic
 function initModalControls() {
+    console.log('Initializing modal controls...');
     const modalButtons = [
         { buttonId: 'open-cost-calculator', modalId: 'cost-calculator-modal' },
         { buttonId: 'open-plan-generator', modalId: 'plan-generator-modal' }
@@ -54,8 +59,17 @@ function initModalControls() {
     modalButtons.forEach(item => {
         const button = document.getElementById(item.buttonId);
         const modal = document.getElementById(item.modalId);
+        console.log(`Setting up modal button: ${item.buttonId} -> ${item.modalId}`);
         if (button && modal) {
-            button.addEventListener('click', () => openModal(modal));
+            console.log(`Found both button and modal for ${item.buttonId}`);
+            button.addEventListener('click', () => {
+                console.log(`Button ${item.buttonId} clicked, opening modal ${item.modalId}`);
+                openModal(modal);
+            });
+        } else {
+            console.error(`Missing button or modal: ${item.buttonId} -> ${item.modalId}`);
+            if (!button) console.error(`Button not found: ${item.buttonId}`);
+            if (!modal) console.error(`Modal not found: ${item.modalId}`);
         }
     });
 
@@ -377,993 +391,671 @@ function initNavLinkHighlighting() {
 // === Hull Fouling Cost Calculator ===
 function initHullFoulingCalculator() {
     const modal = document.getElementById('cost-calculator-modal');
-    if (!modal) return;
-
-    // Query elements within the modal context
-    const vesselTypeSelect = modal.querySelector("#vesselTypeCalc");
-    const costEcoInput = modal.querySelector("#costEco");
-    const costFullInput = modal.querySelector("#costFull");
-    const frSlider = modal.querySelector("#frSlider");
-    const currencySelect = modal.querySelector("#currencySelect");
-    const resultsText = modal.querySelector('#resultsText');
-    const chartCanvas = modal.querySelector("#myChart");
-    const rangeTicks = modal.querySelectorAll('.range-tick');
-    const frLabel = modal.querySelector("#frLabel"); // Get FR Label element
-
-    // Element checks
-    if (!vesselTypeSelect || !costEcoInput || !costFullInput || !frSlider || !currencySelect || !resultsText || !chartCanvas || !frLabel || !rangeTicks.length) {
-        console.error("One or more elements missing in Hull Fouling Cost Calculator.");
-        // Optionally disable the calculator trigger button
-        const triggerButton = document.getElementById('open-cost-calculator');
-        if (triggerButton) {
-            triggerButton.disabled = true;
-            triggerButton.style.opacity = '0.5';
-            triggerButton.title = "Calculator elements missing.";
-        }
+    if (!modal) {
+        console.error('Hull Fouling Calculator Modal not found');
         return;
     }
+    
+    // Initialize window.myChart to null
+    window.myChart = null;
 
-    // --- Data & Config (Keep as before) ---
-    const conversionRates = { AUD: 1, USD: 0.67, EUR: 0.63, GBP: 0.52 };
-    const currencySymbols = { AUD: '$', USD: '$', EUR: '€', GBP: '£' };
-    let currentCurrency = currencySelect.value || 'AUD';
+    console.log('Initializing Hull Fouling Calculator...');
 
-    const vesselConfigs = {
-        tug: { name: "Harbor Tug (32m)", ecoSpeed: 8, fullSpeed: 13, costEco: 600, costFull: 2160, waveExp: 4.5 },
-        cruiseShip: { name: "Passenger Cruise Ship (93m)", ecoSpeed: 10, fullSpeed: 13.8, costEco: 1600, costFull: 4200, waveExp: 4.6 },
-        osv: { name: "Offshore Supply Vessel (50m)", ecoSpeed: 10, fullSpeed: 14, costEco: 850, costFull: 3200, waveExp: 4.5 },
-        coaster: { name: "Coastal Freighter (80m)", ecoSpeed: 11, fullSpeed: 15, costEco: 1200, costFull: 4800, waveExp: 4.6 }
-    };
-    const frData = {
-        0: { pct: 0, desc: "Clean hull" }, 1: { pct: 15, desc: "Light slime" }, 2: { pct: 35, desc: "Medium slime" },
-        3: { pct: 60, desc: "Heavy slime" }, 4: { pct: 95, desc: "Light calcareous" }, 5: { pct: 193, desc: "Heavy calcareous" }
-    };
-    let myChart = null; // Chart instance
+    // Set default values
+    loadVesselDefaults('tug'); // Default to tug
 
-    // --- Helper Functions (Keep as before, ensure robustness) ---
-    function convertCurrency(amount, fromCurrency, toCurrency) {
-        if (fromCurrency === toCurrency) return amount;
-        const rateFrom = conversionRates[fromCurrency];
-        const rateTo = conversionRates[toCurrency];
-        if (!rateFrom || !rateTo) return amount; // Handle missing rates
-        const amountInAUD = amount / rateFrom;
-        return amountInAUD * rateTo;
+    // Initialize the slider
+    const frSlider = document.getElementById('frSlider');
+    const frLabel = document.getElementById('frLabel');
+    
+    if (frSlider && frLabel) {
+        frSlider.addEventListener('input', function() {
+            frLabel.textContent = 'FR' + this.value;
+            updateActiveTick(this.value);
+            try {
+                updateCalculator();
+            } catch (error) {
+                console.error("Error updating calculator:", error);
+            }
+        });
+        
+        // Initialize ticks
+        const rangeTicks = document.querySelectorAll('.range-tick');
+        rangeTicks.forEach(tick => {
+            tick.addEventListener('click', function() {
+                const value = this.getAttribute('data-value');
+                frSlider.value = value;
+                frLabel.textContent = 'FR' + value;
+                updateActiveTick(value);
+                try {
+                    updateCalculator();
+                } catch (error) {
+                    console.error("Error updating calculator:", error);
+                }
+            });
+        });
+        
+        // Set initial active tick
+        updateActiveTick(frSlider.value);
     }
-    function solveAlphaBeta(costEco, costFull, ecoSpeed, fullSpeed, waveExp = 4.5) {
-        // Ensure speeds are different to avoid division by zero in determinant
-        if (Math.abs(ecoSpeed - fullSpeed) < 1e-6) return { alpha: 0, beta: 0 };
-        const s1 = ecoSpeed, s2 = fullSpeed;
-        const x1 = Math.pow(s1, 3), y1 = Math.pow(s1, waveExp);
-        const x2 = Math.pow(s2, 3), y2 = Math.pow(s2, waveExp);
-        const det = x1 * y2 - x2 * y1;
-        if (Math.abs(det) < 1e-6) return { alpha: 0, beta: 0 };
-        const alpha = (costEco * y2 - costFull * y1) / det;
-        const beta = (costFull * x1 - costEco * x2) / det;
-         // Add sanity check: alpha and beta should generally be non-negative
-        return { alpha: Math.max(0, alpha), beta: Math.max(0, beta) };
+
+    // Set up event listeners
+    const vesselTypeSelect = document.getElementById('vesselTypeCalc');
+    if (vesselTypeSelect) {
+        vesselTypeSelect.addEventListener('change', function() {
+            loadVesselDefaults(this.value);
+            try {
+                updateCalculator();
+            } catch (error) {
+                console.error("Error updating calculator:", error);
+            }
+        });
     }
-    function formatCurrency(value) {
-         if (isNaN(value)) return 'N/A'; // Handle invalid numbers
-         try {
-            return new Intl.NumberFormat('en-US', { style: 'currency', currency: currentCurrency, minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
-         } catch (e) {
-             console.error("Currency formatting error:", e);
-             return `${currencySymbols[currentCurrency] || '$'}${Math.round(value)}`; // Fallback
-         }
+
+    // Add event listeners to form inputs
+    const costInputs = modal.querySelectorAll('input[type="number"]');
+    costInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            try {
+                updateCalculator();
+            } catch (error) {
+                console.error("Error updating calculator:", error);
+            }
+        });
+    });
+
+    // Add event listener to currency select
+    const currencySelect = document.getElementById('currencySelect');
+    if (currencySelect) {
+        currencySelect.addEventListener('change', function() {
+            try {
+                updateCalculator();
+            } catch (error) {
+                console.error("Error updating calculator:", error);
+            }
+        });
     }
-     function calculateExtraCO2(extraCost, vesselTypeKey) {
-         const extraCostAUD = convertCurrency(extraCost, currentCurrency, 'AUD');
-         // Use vessel specific factors or a default
-         let emissionFactor = 1.45; // Default kg CO2 per $AUD extra fuel (Placeholder value)
-         if (vesselTypeKey === 'cruiseShip') emissionFactor = 1.41; // Example factor based on Coral Adventurer
-         else if (vesselTypeKey === 'tug') emissionFactor = 1.36; // Example factor based on RT Tug
-         return extraCostAUD * emissionFactor;
-     }
-     function getValidationStatus(vesselTypeKey, frLevel, speed) {
-        const vessel = vesselConfigs[vesselTypeKey];
-        if (!vessel) return { validated: false, message: "" };
-        // Example validation conditions
-        if (vesselTypeKey === 'cruiseShip' && frLevel === 5 && Math.abs(speed - vessel.fullSpeed) < 0.5) {
-            return { validated: true, message: "Values validated by UoM Coral Adventurer study" };
-        } else if (vesselTypeKey === 'tug' && frLevel === 4 && Math.abs(speed - vessel.fullSpeed) < 0.5) {
-            return { validated: true, message: "Values validated by UoM Rio Tinto tug study" };
+
+    // Initialize the calculator with default values
+    // Defer this slightly to ensure all elements are properly loaded
+    setTimeout(() => {
+        try {
+            updateCalculator();
+        } catch (error) {
+            console.error("Error initializing calculator:", error);
         }
-        return { validated: false, message: "" };
-    }
+    }, 100);
+}
 
-    // --- Main Update Function ---
-    function updateCalculator() {
-        const vesselTypeKey = vesselTypeSelect.value;
-        const vessel = vesselConfigs[vesselTypeKey];
-        if (!vessel) return;
-
-        // Use default if input is invalid or empty
-        let costEcoInputVal = parseFloat(costEcoInput.value);
-        let costFullInputVal = parseFloat(costFullInput.value);
-        if (isNaN(costEcoInputVal) || costEcoInputVal <= 0) costEcoInputVal = convertCurrency(vessel.costEco, 'AUD', currentCurrency);
-        if (isNaN(costFullInputVal) || costFullInputVal <= 0) costFullInputVal = convertCurrency(vessel.costFull, 'AUD', currentCurrency);
-
-        // Ensure full speed cost is greater than eco speed cost
-        if (costFullInputVal <= costEcoInputVal) {
-            // Maybe show a warning, for now just use default ratio if inputs are illogical
-             costFullInputVal = costEcoInputVal * (vessel.costFull / vessel.costEco);
+// Hull Fouling Cost Calculator Functions
+function updateCalculator() {
+    try {
+        // Get form values
+        const vesselType = document.getElementById('vesselTypeCalc').value;
+        const costEco = parseFloat(document.getElementById('costEco').value) || 0;
+        const costFull = parseFloat(document.getElementById('costFull').value) || 0;
+        const frValue = parseInt(document.getElementById('frSlider').value) || 0;
+        const currencySymbol = getCurrencySymbol();
+        
+        // Calculate fouling impact based on FR value
+        const frImpacts = [0, 0.15, 0.35, 0.6, 0.95, 1.93]; // Impact percentages for FR0-FR5
+        const frImpact = frImpacts[frValue];
+        
+        // Calculate costs at different speeds
+        const cleanEco = costEco;
+        const cleanCruise = (costEco + costFull) / 2;
+        const cleanFull = costFull;
+        
+        const fouledEco = cleanEco * (1 + frImpact);
+        const fouledCruise = cleanCruise * (1 + frImpact);
+        const fouledFull = cleanFull * (1 + frImpact);
+        
+        // Update results text
+        const resultsText = document.getElementById('resultsText');
+        if (resultsText) {
+            resultsText.innerHTML = `
+                <p>At <strong>FR${frValue}</strong>, your vessel experiences a <strong>${(frImpact * 100).toFixed(0)}%</strong> increase in friction resistance.</p>
+                <p>This translates to:</p>
+                <ul>
+                    <li>Economic speed: <strong>${formatCurrency(cleanEco)}</strong> → <strong>${formatCurrency(fouledEco)}</strong> per hour (${formatCurrency(fouledEco - cleanEco)} extra)</li>
+                    <li>Cruising speed: <strong>${formatCurrency(cleanCruise)}</strong> → <strong>${formatCurrency(fouledCruise)}</strong> per hour (${formatCurrency(fouledCruise - cleanCruise)} extra)</li>
+                    <li>Full speed: <strong>${formatCurrency(cleanFull)}</strong> → <strong>${formatCurrency(fouledFull)}</strong> per hour (${formatCurrency(fouledFull - cleanFull)} extra)</li>
+                </ul>
+                <p>Annual cost impact at 70% utilization: <strong>${formatCurrency((fouledEco - cleanEco) * 24 * 365 * 0.7)}</strong></p>
+            `;
         }
-
-
-        // Convert input costs to AUD for internal calculations
-        const costEcoAUD = convertCurrency(costEcoInputVal, currentCurrency, 'AUD');
-        const costFullAUD = convertCurrency(costFullInputVal, currentCurrency, 'AUD');
-
-        const frLevel = parseInt(frSlider.value) || 0;
-        const { pct: frPct } = frData[frLevel] || frData[0]; // Fallback to FR0 if data missing
-        const frLevelText = `FR${frLevel}`;
-        if (frLabel) frLabel.textContent = frLevelText;
-
-        // Adjust speed range based on vessel
-        const minSpeed = Math.max(vessel.ecoSpeed - 5, 3); // Ensure min speed >= 3
-        const maxSpeed = vessel.fullSpeed + 3;
-        const stepSize = (maxSpeed - minSpeed) > 10 ? 0.5 : 0.25;
-
-        const { alpha, beta } = solveAlphaBeta(costEcoAUD, costFullAUD, vessel.ecoSpeed, vessel.fullSpeed, vessel.waveExp);
-
-        // Generate data points for chart
-        const speeds = [];
-        const cleanCosts = [];
-        const fouledCosts = [];
-        const co2Emissions = [];
-
-        for (let s = minSpeed; s <= maxSpeed; s += stepSize) {
-            const frictionAUD = alpha * Math.pow(s, 3);
-            const waveAUD = beta * Math.pow(s, vessel.waveExp);
-            const costCleanAUD = Math.max(0, frictionAUD + waveAUD);
-
-            const frictionFouledAUD = frictionAUD * (1 + frPct / 100);
-            const costFouledAUD = Math.max(0, frictionFouledAUD + waveAUD);
-
-            const extraCostFouled = costFouledAUD - costCleanAUD; // Extra cost in current currency
-            const extraCO2 = calculateExtraCO2(convertCurrency(extraCostFouled, currentCurrency, 'AUD'), vesselTypeKey); // Calculate CO2 based on AUD cost
-
-            speeds.push(s.toFixed(1));
-            cleanCosts.push(convertCurrency(costCleanAUD, 'AUD', currentCurrency));
-            fouledCosts.push(convertCurrency(costFouledAUD, 'AUD', currentCurrency));
-            co2Emissions.push(extraCO2 > 0 ? extraCO2 : 0); // Ensure non-negative CO2
+        
+        // Update chart
+        const chartCanvas = document.getElementById('myChart');
+        if (!chartCanvas) return;
+        
+        // Check if chart instance already exists and destroy it
+        if (window.myChart instanceof Chart) {
+            window.myChart.destroy();
         }
-
-        // Update Chart
-        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
-        const accentDark = getComputedStyle(document.documentElement).getPropertyValue('--accent-dark').trim();
-        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim();
-        const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color').trim();
-
-        if (myChart) myChart.destroy();
-        const ctx = chartCanvas.getContext('2d');
-        myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: speeds,
-                datasets: [
-                    { label: 'Clean Hull (FR0)', data: cleanCosts, borderColor: '#3F87F5', backgroundColor: 'rgba(63, 135, 245, 0.1)', fill: false, tension: 0.2, yAxisID: 'y', borderWidth: 2.5 }, // Blue for clean
-                    { label: `Fouled Hull (${frLevelText})`, data: fouledCosts, borderColor: accentColor, backgroundColor: `${accentColor}1A`, fill: false, tension: 0.2, yAxisID: 'y', borderWidth: 2.5 }, // Orange for fouled
-                    { label: 'Additional CO₂ Emissions', data: co2Emissions, borderColor: '#1DC9B7', backgroundColor: 'rgba(29, 201, 183, 0.1)', fill: false, tension: 0.2, yAxisID: 'y1', borderDash: [6, 3], borderWidth: 2 } // Green dashed for CO2
-                ]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
-                plugins: {
-                    legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, color: textColor } },
-                    tooltip: {
-                        mode: 'index', intersect: false,
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)', titleFont: { weight: 'bold' }, bodySpacing: 4, padding: 10, cornerRadius: 4,
-                        callbacks: {
-                             label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) label += ': ';
-                                if (context.parsed.y !== null) {
-                                     if (context.dataset.yAxisID === 'y1') { // CO2
-                                         label += `${context.parsed.y.toFixed(1)} kg/hr`;
-                                     } else { // Cost
-                                         label += formatCurrency(context.parsed.y) + '/hr';
-                                     }
-                                }
-                                return label;
-                             }
+        
+        // Create chart data
+        const chartData = {
+            labels: ['Economic Speed', 'Cruising Speed', 'Full Speed'],
+            datasets: [
+                {
+                    label: 'Clean Hull',
+                    data: [cleanEco, cleanCruise, cleanFull],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    tension: 0.3
+                },
+                {
+                    label: `Fouled Hull (FR${frValue})`,
+                    data: [fouledEco, fouledCruise, fouledFull],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2,
+                    tension: 0.3
+                }
+            ]
+        };
+        
+        // Chart options
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: `Operating Cost (${currencySymbol})`
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return formatCurrency(value, false);
                         }
                     }
                 },
-                scales: {
-                    x: { title: { display: true, text: 'Speed (knots)', padding: { top: 10 }, color: textColor, font: { weight: '600' } }, ticks: { padding: 5, color: textColor }, grid: { color: gridColor, drawTicks: false } },
-                    y: { // Cost Axis
-                         type: 'linear', display: true, position: 'left',
-                         title: { display: true, text: `Operating Cost (${currencySymbols[currentCurrency]}/hr)`, padding: { bottom: 10 }, color: textColor, font: { weight: '600' } },
-                         beginAtZero: true, ticks: { padding: 5, color: textColor, callback: value => formatCurrency(value) },
-                         grid: { color: gridColor, drawTicks: false }
-                    },
-                    y1: { // CO2 Axis
-                        type: 'linear', display: true, position: 'right',
-                        title: { display: true, text: 'Additional CO₂ (kg/hr)', padding: { bottom: 10 }, color: textColor, font: { weight: '600' } },
-                        beginAtZero: true, ticks: { padding: 5, color: textColor, callback: value => value.toFixed(1) },
-                        grid: { drawOnChartArea: false } // Only show ticks for this axis
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Vessel Speed'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += formatCurrency(context.parsed.y);
+                            }
+                            return label;
+                        }
                     }
                 }
             }
+        };
+        
+        // Create new chart
+        const ctx = chartCanvas.getContext('2d');
+        window.myChart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: chartOptions
         });
-
-        // Calculate costs at specific speeds for results text
-        function costAt(speed) {
-            const frictionAUD = alpha * Math.pow(speed, 3);
-            const waveAUD = beta * Math.pow(speed, vessel.waveExp);
-            const cleanAUD = Math.max(0, frictionAUD + waveAUD);
-            const fouledAUD = Math.max(0, frictionAUD * (1 + frPct / 100) + waveAUD);
-            const validation = getValidationStatus(vesselTypeKey, frLevel, speed);
-            const extraCost = convertCurrency(fouledAUD - cleanAUD, 'AUD', currentCurrency);
-             const extraCO2 = calculateExtraCO2(convertCurrency(extraCost, currentCurrency, 'AUD'), vesselTypeKey); // Use AUD cost for CO2 calc
-            return {
-                clean: convertCurrency(cleanAUD, 'AUD', currentCurrency),
-                fouled: convertCurrency(fouledAUD, 'AUD', currentCurrency),
-                increasePct: cleanAUD > 0 ? ((fouledAUD - cleanAUD) / cleanAUD * 100).toFixed(1) : 0,
-                extraCost: extraCost,
-                extraCO2: extraCO2 > 0 ? extraCO2 : 0,
-                validation: validation
-            };
-        }
-
-        const cEco = costAt(vessel.ecoSpeed);
-        const cFull = costAt(vessel.fullSpeed);
-
-        // Annual impact calculation
-        const annualHours = 12 * 200; // Example operational hours
-        const annualExtraCost = cFull.extraCost * annualHours;
-        const annualExtraCO2 = cFull.extraCO2 * annualHours / 1000; // Convert kg to tonnes
-
-        // Update Results Text
-        resultsText.innerHTML = `
-            <div class="result-item"><span class="result-label">Vessel Type:</span><span class="result-value">${vessel.name}</span></div>
-
-            <div class="result-group">
-                <div class="result-group-header"><i class="fas fa-tachometer-alt"></i>Economic Speed (${vessel.ecoSpeed} kts)</div>
-                <div class="result-item"><span class="result-label">Clean Hull Cost:</span><span class="result-value">${formatCurrency(cEco.clean)}/hr</span></div>
-                <div class="result-item"><span class="result-label">Fouled (${frLevelText}) Cost:</span><span class="result-value">${formatCurrency(cEco.fouled)}/hr</span></div>
-                <div class="result-item"><span class="result-label">Cost Increase (%):</span><span class="result-value">${cEco.increasePct}%</span></div>
-                 <div class="result-item"><span class="result-label">Add. CO₂:</span><span class="result-value">${cEco.extraCO2.toFixed(1)} kg/hr</span></div>
-            </div>
-
-            <div class="result-group">
-                 <div class="result-group-header"><i class="fas fa-rocket"></i>Full Speed (${vessel.fullSpeed} kts)</div>
-                <div class="result-item"><span class="result-label">Clean Hull Cost:</span><span class="result-value">${formatCurrency(cFull.clean)}/hr</span></div>
-                <div class="result-item"><span class="result-label">Fouled (${frLevelText}) Cost:</span><span class="result-value">${formatCurrency(cFull.fouled)}/hr</span></div>
-                <div class="result-item"><span class="result-label">Cost Increase (%):</span><span class="result-value">${cFull.increasePct}%</span></div>
-                <div class="result-item"><span class="result-label">Add. CO₂:</span><span class="result-value">${cFull.extraCO2.toFixed(1)} kg/hr</span></div>
-                 ${cFull.validation.validated ? `<div class="validation-badge"><i class="fas fa-check-circle"></i><span>${cFull.validation.message}</span></div>` : ''}
-            </div>
-
-             <div class="result-group">
-                 <div class="result-group-header"><i class="fas fa-calendar-alt"></i>Estimated Annual Impact</div>
-                 <div class="result-item"><span class="result-label">Basis:</span><span class="result-value">${annualHours} hrs/yr @ Full Speed</span></div>
-                 <div class="result-item"><span class="result-label">Add. Fuel Cost:</span><span class="result-value">${formatCurrency(annualExtraCost)}</span></div>
-                 <div class="result-item"><span class="result-label">Add. CO₂ Emissions:</span><span class="result-value">${annualExtraCO2.toFixed(1)} tonnes</span></div>
-            </div>
-        `;
-
-        // Highlight active tick
-        rangeTicks.forEach(tick => {
-            tick.classList.toggle('active-tick', parseInt(tick.dataset.value) === frLevel);
-        });
+    } catch (error) {
+        console.error("Error updating calculator:", error);
     }
-
-    // Initialize vessel fields based on selection and currency
-    function initializeVesselFields() {
-        const vesselTypeKey = vesselTypeSelect.value;
-        const vessel = vesselConfigs[vesselTypeKey];
-        if (!vessel) return;
-        // Convert default AUD costs to the currently selected currency for display
-        costEcoInput.value = Math.round(convertCurrency(vessel.costEco, 'AUD', currentCurrency));
-        costFullInput.value = Math.round(convertCurrency(vessel.costFull, 'AUD', currentCurrency));
-    }
-
-    // --- Event Listeners ---
-    vesselTypeSelect.addEventListener("change", () => {
-        initializeVesselFields(); // Reset costs when vessel changes
-        updateCalculator();
-    });
-    // Update on input blur or change for better performance than 'input'
-    costEcoInput.addEventListener("change", updateCalculator);
-    costFullInput.addEventListener("change", updateCalculator);
-    frSlider.addEventListener("input", updateCalculator); // Slider needs 'input' for live update
-
-    currencySelect.addEventListener("change", function() {
-        const newCurrency = this.value;
-        if (newCurrency === currentCurrency) return;
-
-        // Convert current input values FROM old currency TO new currency
-        const costEcoCurrent = parseFloat(costEcoInput.value) || 0;
-        const costFullCurrent = parseFloat(costFullInput.value) || 0;
-        costEcoInput.value = Math.round(convertCurrency(costEcoCurrent, currentCurrency, newCurrency));
-        costFullInput.value = Math.round(convertCurrency(costFullCurrent, currentCurrency, newCurrency));
-
-        // Update global currency state AFTER converting displayed values
-        currentCurrency = newCurrency;
-
-        // Recalculate everything with new currency context
-        updateCalculator();
-    });
-
-    // Make ticks clickable
-    rangeTicks.forEach(tick => {
-        tick.addEventListener('click', function() {
-            frSlider.value = this.dataset.value;
-            // Manually trigger input event for slider to update visuals immediately
-            frSlider.dispatchEvent(new Event('input', { bubbles: true }));
-            // updateCalculator(); // Already called by the input event listener
-        });
-    });
-
-    // --- Initial Setup ---
-    initializeVesselFields(); // Set initial costs based on default vessel and currency
-    updateCalculator(); // Perform initial calculation and chart render
 }
 
+// Get currency symbol based on selected currency
+function getCurrencySymbol() {
+    const currencySelect = document.getElementById('currencySelect');
+    if (!currencySelect) return '$'; // Default to $ if element not found
+    
+    const currency = currencySelect.value;
+    const symbols = {
+        'USD': '$',
+        'EUR': '€',
+        'GBP': '£',
+        'AUD': 'A$'
+    };
+    
+    return symbols[currency] || '$';
+}
+
+// Format currency with appropriate symbol
+function formatCurrency(value, includeSymbol = true) {
+    const currencySymbol = getCurrencySymbol();
+    value = parseFloat(value).toFixed(0);
+    
+    // Format with thousand separators
+    value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    
+    return includeSymbol ? `${currencySymbol}${value}` : value;
+}
+
+// Load vessel defaults
+function loadVesselDefaults(vesselType) {
+    // Default values for different vessel types
+    const defaults = {
+        tug: {
+            costEco: 150,
+            costFull: 450
+        },
+        cruiseShip: {
+            costEco: 850,
+            costFull: 2500
+        },
+        osv: {
+            costEco: 300,
+            costFull: 900
+        },
+        coaster: {
+            costEco: 500,
+            costFull: 1500
+        }
+    };
+    
+    // If no vessel type provided, get it from the select
+    if (!vesselType) {
+        const vesselSelect = document.getElementById('vesselTypeCalc');
+        if (vesselSelect) {
+            vesselType = vesselSelect.value;
+        } else {
+            vesselType = 'tug'; // Default
+        }
+    }
+    
+    // Get default values for selected vessel
+    const vesselDefaults = defaults[vesselType] || defaults.tug;
+    
+    // Update form inputs
+    const costEcoInput = document.getElementById('costEco');
+    const costFullInput = document.getElementById('costFull');
+    
+    if (costEcoInput) costEcoInput.value = vesselDefaults.costEco;
+    if (costFullInput) costFullInput.value = vesselDefaults.costFull;
+}
 
 // === Biofouling Management Plan Generator ===
 function initBiofoulingPlanGenerator() {
     const modal = document.getElementById('plan-generator-modal');
-    if (!modal) return;
-
-    // --- Element Cache --- (Query within modal context)
-    const elements = {
-        tabButtons: modal.querySelectorAll('.tab-btn'),
-        tabPanes: modal.querySelectorAll('.tab-pane'),
-        nextButtons: modal.querySelectorAll('.next-tab'),
-        prevButtons: modal.querySelectorAll('.prev-tab'),
-        diverCountSelect: modal.querySelector('#diverCount'),
-        diverFieldsContainer: modal.querySelector('#diverFields'),
-        componentItems: modal.querySelectorAll('.component-item'),
-        componentDetailsContainer: modal.querySelector('#component-details'),
-        selectComponentMsg: modal.querySelector('.select-component-message'),
-        componentForm: modal.querySelector('.component-form'),
-        componentTitle: modal.querySelector('#component-title'),
-        componentComments: modal.querySelector('#component-comments'),
-        foulingRating: modal.querySelector('#fouling-rating'),
-        foulingCoverage: modal.querySelector('#fouling-coverage'),
-        pdrRating: modal.querySelector('#pdr-rating'),
-        componentPhotoInput: modal.querySelector('#component-photo'),
-        photoPreview: modal.querySelector('#photo-preview'),
-        saveComponentButton: modal.querySelector('#save-component'),
-        signatureCanvas: modal.querySelector('#signaturePad'),
-        clearSignatureButton: modal.querySelector('#clearSignature'),
-        coverPhotoInput: modal.querySelector('#coverPhoto'),
-        coverPreviewContainer: modal.querySelector('#cover-preview'),
-        previewReportButton: modal.querySelector('#preview-report'),
-        generateReportButton: modal.querySelector('#generate-report'),
-        // Report Preview Modal Elements
-        reportPreviewModal: document.getElementById('report-preview-modal'), // Note: Outside generator modal
-        reportPreviewContainer: document.getElementById('report-preview-container'),
-        downloadReportButton: document.getElementById('download-report'),
-        closePreviewButton: document.getElementById('close-preview'),
-         // Generator Form Inputs (for data collection) - Add IDs if missing in HTML
-         vesselName: modal.querySelector('#vesselName'),
-         imo: modal.querySelector('#imo'),
-         vesselTypeGen: modal.querySelector('#vesselTypeGen'),
-         vesselCommissioned: modal.querySelector('#vesselCommissioned'),
-         grossTonnage: modal.querySelector('#grossTonnage'),
-         length: modal.querySelector('#length'),
-         beam: modal.querySelector('#beam'),
-         vesselDraft: modal.querySelector('#vesselDraft'),
-         operatingArea: modal.querySelector('#operatingArea'),
-         antifoulingDate: modal.querySelector('#antifoulingDate'),
-         inspectionDate: modal.querySelector('#inspectionDate'),
-         inspectionLocation: modal.querySelector('#inspectionLocation'),
-         visibility: modal.querySelector('#visibility'),
-         inspector: modal.querySelector('#inspector'),
-         clientDetails: modal.querySelector('#clientDetails'),
-         clientRep: modal.querySelector('#clientRep'),
-         supervisor: modal.querySelector('#supervisor'),
-         methodologyText: modal.querySelector('#methodologyText'),
-         summaryText: modal.querySelector('#summaryText'),
-         recommendationsText: modal.querySelector('#recommendationsText'),
-         declaration: modal.querySelector('#declaration'),
-         reportTitle: modal.querySelector('#reportTitle'),
-         documentNumber: modal.querySelector('#documentNumber'),
-         documentRevision: modal.querySelector('#documentRevision'),
-         reportFormat: modal.querySelector('#reportFormat'),
-    };
-
-    // Basic check for essential elements
-    if (!elements.tabButtons.length || !elements.tabPanes.length || !elements.componentItems.length || !elements.componentForm || !elements.signatureCanvas || !elements.reportPreviewModal) {
-        console.error("One or more critical elements missing in Plan Generator modal or preview modal.");
-         const triggerButton = document.getElementById('open-plan-generator');
-         if (triggerButton) {
-             triggerButton.disabled = true;
-             triggerButton.style.opacity = '0.5';
-             triggerButton.title = "Generator elements missing.";
-         }
+    if (!modal) {
+        console.error('Plan Generator Modal not found');
         return;
     }
+    console.log('Initializing Biofouling Plan Generator...');
 
-    let componentData = {}; // Store component details { id: { comments: '', ..., photos: [dataURL,...] } }
-    let signaturePadInstance = null;
-    let currentActiveComponent = null; // Track which component is being edited
-
-    // --- Tab Navigation ---
-    function switchTab(targetTabId) {
-        elements.tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === targetTabId));
-        elements.tabPanes.forEach(pane => pane.classList.toggle('active', pane.id === targetTabId));
-        // Scroll to top of modal body on tab switch
-        const modalBody = modal.querySelector('.modal-body');
-        if(modalBody) modalBody.scrollTop = 0;
-    }
-    elements.tabButtons.forEach(button => {
-        button.addEventListener('click', () => switchTab(button.dataset.tab));
-    });
-    elements.nextButtons.forEach(button => {
-        button.addEventListener('click', () => switchTab(button.dataset.next));
-    });
-    elements.prevButtons.forEach(button => {
-        button.addEventListener('click', () => switchTab(button.dataset.prev));
-    });
-
-    // --- Diver Fields ---
-    function updateDiverFields() {
-        if (!elements.diverCountSelect || !elements.diverFieldsContainer) return;
-        const count = parseInt(elements.diverCountSelect.value) || 0;
-        elements.diverFieldsContainer.innerHTML = ''; // Clear existing
-        for (let i = 1; i <= count; i++) {
-            // Use unique IDs and labels
-            const field = document.createElement('div');
-            field.className = 'form-group'; // Reuse form-group styling
-            field.innerHTML = `<label for="diver${i}_gen">Diver ${i} Name:</label><input type="text" id="diver${i}_gen" class="form-control">`;
-            elements.diverFieldsContainer.appendChild(field);
-        }
-    }
-    if (elements.diverCountSelect) {
-        elements.diverCountSelect.addEventListener('change', updateDiverFields);
-        updateDiverFields(); // Initial call
-    }
-
-    // --- Component Selection & Data Handling ---
-    function loadComponentDetails(componentId) {
-        if (!elements.componentDetailsContainer || !elements.componentForm || !elements.selectComponentMsg || !elements.componentTitle) return;
-
-        currentActiveComponent = componentId; // Set current component
-
-        elements.selectComponentMsg.style.display = 'none';
-        elements.componentForm.style.display = 'block';
-
-        const componentItem = modal.querySelector(`.component-item[data-id="${componentId}"]`);
-        const componentName = componentItem?.querySelector('.component-name')?.textContent || componentId;
-        elements.componentTitle.textContent = componentName;
-
-        // Load existing data or set defaults
-        const data = componentData[componentId] || {};
-        elements.componentComments.value = data.comments || '';
-        elements.foulingRating.value = data.foulingRating || 'FR0'; // Default value
-        elements.foulingCoverage.value = data.foulingCoverage || '0%'; // Default value
-        elements.pdrRating.value = data.pdrRating || 'PDR10'; // Default value
-        elements.componentPhotoInput.value = ''; // Clear file input always
-
-        // Render photo previews
-        elements.photoPreview.innerHTML = '';
-        if (data.photos && data.photos.length > 0) {
-            data.photos.forEach((photoSrc, index) => {
-                const imgContainer = document.createElement('div');
-                imgContainer.style.position = 'relative';
-                const img = document.createElement('img');
-                img.src = photoSrc;
-                img.alt = `${componentName} photo ${index + 1}`;
-                imgContainer.appendChild(img);
-
-                // Add delete button
-                const deleteBtn = document.createElement('button');
-                deleteBtn.innerHTML = '&times;';
-                deleteBtn.style.position = 'absolute';
-                deleteBtn.style.top = '2px';
-                deleteBtn.style.right = '2px';
-                deleteBtn.style.background = 'rgba(255,0,0,0.7)';
-                deleteBtn.style.color = 'white';
-                deleteBtn.style.border = 'none';
-                deleteBtn.style.borderRadius = '50%';
-                deleteBtn.style.width = '20px';
-                deleteBtn.style.height = '20px';
-                deleteBtn.style.cursor = 'pointer';
-                deleteBtn.style.lineHeight = '20px';
-                deleteBtn.style.fontSize = '14px';
-                deleteBtn.onclick = () => removeComponentPhoto(componentId, index);
-                imgContainer.appendChild(deleteBtn);
-
-                elements.photoPreview.appendChild(imgContainer);
-            });
-        }
-         // Reset save button state
-         elements.saveComponentButton.textContent = "Save Component";
-         elements.saveComponentButton.disabled = false;
-    }
-
-    function saveComponentDetails() {
-        if (!currentActiveComponent || !elements.saveComponentButton) return;
-
-        const componentId = currentActiveComponent;
-        if (!componentData[componentId]) componentData[componentId] = { photos: [] }; // Ensure photos array exists
-
-        // Update data from form fields
-        componentData[componentId].comments = elements.componentComments.value;
-        componentData[componentId].foulingRating = elements.foulingRating.value;
-        componentData[componentId].foulingCoverage = elements.foulingCoverage.value;
-        componentData[componentId].pdrRating = elements.pdrRating.value;
-
-        const photoFiles = elements.componentPhotoInput.files;
-
-        // Handle multiple file uploads using Promise.all for async reading
-        const fileReadPromises = [];
-        if (photoFiles.length > 0) {
-            for (let i = 0; i < photoFiles.length; i++) {
-                const file = photoFiles[i];
-                // Basic validation (type and size)
-                 if (!file.type.startsWith('image/')) {
-                     alert(`File "${file.name}" is not a valid image.`);
-                     continue;
-                 }
-                 if (file.size > 5 * 1024 * 1024) { // 5MB limit
-                     alert(`File "${file.name}" is too large (max 5MB).`);
-                     continue;
-                 }
-
-                fileReadPromises.push(new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        // Check if photo already exists (simple check by data URL length)
-                        const newDataUrl = e.target.result;
-                        if (!componentData[componentId].photos.some(existing => existing.length === newDataUrl.length)) {
-                             componentData[componentId].photos.push(newDataUrl);
-                        }
-                        resolve(); // Resolve promise after adding photo
-                    };
-                    reader.onerror = (error) => {
-                         console.error("Error reading file:", error);
-                         alert(`Error reading file ${file.name}.`);
-                         reject(error); // Reject promise on error
-                    }
-                    reader.readAsDataURL(file);
-                }));
+    // Initialize progress indicator
+    function updateProgressIndicator() {
+        const tabs = modal.querySelectorAll('.tab-btn');
+        const progressSteps = modal.querySelectorAll('.progress-step');
+        
+        // Find the active tab
+        const activeTab = modal.querySelector('.tab-btn.active');
+        if (!activeTab) return;
+        
+        // Calculate the active tab index (1-based)
+        let activeIndex = 1;
+        tabs.forEach((tab, index) => {
+            if (tab === activeTab) {
+                activeIndex = index + 1;
             }
-        }
-
-        // Wait for all files to be read before updating UI and resetting
-        elements.saveComponentButton.textContent = "Saving...";
-        elements.saveComponentButton.disabled = true;
-
-        Promise.all(fileReadPromises).then(() => {
-            // All files processed, reload details to show new photos
-            loadComponentDetails(componentId); // This resets the button state too
-            elements.componentPhotoInput.value = ''; // Clear file input after processing
-
-             // Add visual indicator of saved state on the component list item
-            const listItem = modal.querySelector(`.component-item[data-id="${componentId}"]`);
-            if (listItem) {
-                let savedIndicator = listItem.querySelector('.saved-indicator');
-                if (!savedIndicator) {
-                    savedIndicator = document.createElement('i');
-                    savedIndicator.className = 'fas fa-check-circle saved-indicator';
-                    savedIndicator.style.color = 'var(--success)';
-                    savedIndicator.style.marginLeft = '8px';
-                    savedIndicator.style.fontSize = '0.8em';
-                    listItem.appendChild(savedIndicator);
-                }
+        });
+        
+        // Update progress steps
+        progressSteps.forEach((step, index) => {
+            const stepIndex = parseInt(step.dataset.step);
+            
+            if (stepIndex < activeIndex) {
+                step.classList.add('completed');
+                step.classList.remove('active');
+            } else if (stepIndex === activeIndex) {
+                step.classList.add('active');
+                step.classList.remove('completed');
+            } else {
+                step.classList.remove('active', 'completed');
             }
-
-        }).catch(error => {
-            console.error("Error processing photos:", error);
-             elements.saveComponentButton.textContent = "Save Failed";
-             setTimeout(() => { // Reset after a delay
-                  elements.saveComponentButton.textContent = "Save Component";
-                  elements.saveComponentButton.disabled = false;
-             }, 2000);
         });
     }
 
-    function removeComponentPhoto(componentId, index) {
-        if (componentData[componentId] && componentData[componentId].photos[index]) {
-            componentData[componentId].photos.splice(index, 1); // Remove photo from array
-            loadComponentDetails(componentId); // Reload details to update preview
-        }
-    }
-
-    elements.componentItems.forEach(item => {
-        item.addEventListener('click', function() {
-            elements.componentItems.forEach(i => i.classList.remove('active'));
+    // Get all tabs and tab panes
+    const tabButtons = modal.querySelectorAll('.tab-btn');
+    const tabPanes = modal.querySelectorAll('.tab-pane');
+    
+    // Add click event to tabs
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetTab = this.dataset.tab;
+            
+            // Remove active class from all tabs and panes
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabPanes.forEach(pane => pane.classList.remove('active'));
+            
+            // Add active class to target tab and pane
             this.classList.add('active');
-            loadComponentDetails(this.dataset.id);
+            document.getElementById(targetTab).classList.add('active');
+            
+            // Update progress indicator
+            updateProgressIndicator();
         });
     });
-
-    if (elements.saveComponentButton) {
-        elements.saveComponentButton.addEventListener('click', saveComponentDetails);
-    }
-
-    // --- Signature Pad --- (Using simplified canvas drawing)
-    function initSignaturePadLib(canvasElement) {
-        // Check if already initialized
-        if (canvasElement.signaturePadInstance) {
-            return canvasElement.signaturePadInstance;
-        }
-
-         const ctx = canvasElement.getContext('2d');
-         let isDrawing = false;
-         let lastX = 0;
-         let lastY = 0;
-         let hasDrawing = false; // Flag to track if anything was drawn
-
-         // Function to resize canvas maintaining drawing (optional but good for responsiveness)
-         function resizeCanvas() {
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-            canvasElement.width = canvasElement.offsetWidth * ratio;
-            canvasElement.height = canvasElement.offsetHeight * ratio;
-            ctx.scale(ratio, ratio);
-             clearPad(false); // Clear without resetting hasDrawing flag if needed
-             // Could potentially redraw previous strokes here if stored
-         }
-         // window.addEventListener('resize', resizeCanvas); // Add resize listener if needed
-         // resizeCanvas(); // Initial resize
-
-         function clearPad(resetFlag = true) {
-             ctx.fillStyle = 'white'; // Ensure background is white
-             ctx.fillRect(0, 0, canvasElement.width / (window.devicePixelRatio || 1), canvasElement.height / (window.devicePixelRatio || 1));
-             ctx.lineWidth = 2;
-             ctx.strokeStyle = 'black';
-             if (resetFlag) hasDrawing = false;
-         }
-         clearPad(); // Initial clear
-
-
-         function getCoords(e) {
-             e.preventDefault(); // Prevent scrolling on touch
-             const rect = canvasElement.getBoundingClientRect();
-             const scaleX = canvasElement.width / (window.devicePixelRatio || 1) / rect.width;
-             const scaleY = canvasElement.height / (window.devicePixelRatio || 1) / rect.height;
-             const clientX = e.clientX ?? e.touches?.[0]?.clientX;
-             const clientY = e.clientY ?? e.touches?.[0]?.clientY;
-             if (clientX === undefined || clientY === undefined) return null;
-             return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
-         }
-
-         function startDrawing(e) {
-              const coords = getCoords(e);
-              if (!coords) return;
-              isDrawing = true;
-              [lastX, lastY] = [coords.x, coords.y];
-              ctx.beginPath(); // Start new path segment
-              ctx.moveTo(lastX, lastY);
-          }
-
-          function draw(e) {
-              if (!isDrawing) return;
-              const coords = getCoords(e);
-              if (!coords) return;
-              hasDrawing = true; // Mark as drawn
-              ctx.lineTo(coords.x, coords.y);
-              ctx.stroke();
-              [lastX, lastY] = [coords.x, coords.y];
-          }
-
-          function stopDrawing() {
-              if (!isDrawing) return;
-              isDrawing = false;
-               // ctx.closePath(); // Close the path if needed, usually not for freehand
-          }
-
-         // Event Listeners
-         canvasElement.addEventListener('mousedown', startDrawing);
-         canvasElement.addEventListener('mousemove', draw);
-         canvasElement.addEventListener('mouseup', stopDrawing);
-         canvasElement.addEventListener('mouseout', stopDrawing);
-         canvasElement.addEventListener('touchstart', startDrawing, { passive: false });
-         canvasElement.addEventListener('touchmove', draw, { passive: false });
-         canvasElement.addEventListener('touchend', stopDrawing);
-         canvasElement.addEventListener('touchcancel', stopDrawing);
-
-         const instance = {
-             clear: () => clearPad(true),
-             toDataURL: (type = 'image/png', quality) => hasDrawing ? canvasElement.toDataURL(type, quality) : null, // Return null if empty
-             isEmpty: () => !hasDrawing
-         };
-         canvasElement.signaturePadInstance = instance; // Store instance on element
-         return instance;
-     }
-    if (elements.signatureCanvas) {
-        signaturePadInstance = initSignaturePadLib(elements.signatureCanvas);
-    }
-    if (elements.clearSignatureButton && signaturePadInstance) {
-        elements.clearSignatureButton.addEventListener('click', () => signaturePadInstance.clear());
-    }
-
-    // --- Cover Photo Preview ---
-    if (elements.coverPhotoInput && elements.coverPreviewContainer) {
-        elements.coverPhotoInput.addEventListener('change', function() {
-            elements.coverPreviewContainer.innerHTML = ''; // Clear preview
-            if (this.files && this.files[0]) {
-                const file = this.files[0];
-                 if (!file.type.startsWith('image/')) {
-                    alert("Please select a valid image file for the cover photo.");
-                    this.value = ''; // Clear invalid selection
-                    return;
-                 }
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.alt = "Cover photo preview";
-                    img.style.maxWidth = '200px'; // Limit preview size
-                    img.style.maxHeight = '150px';
-                    img.style.borderRadius = 'var(--radius-sm)';
-                    elements.coverPreviewContainer.appendChild(img);
-                };
-                reader.onerror = () => alert("Error reading cover photo file.");
-                reader.readAsDataURL(file);
+    
+    // Next/Previous buttons functionality
+    const nextButtons = modal.querySelectorAll('.next-tab');
+    const prevButtons = modal.querySelectorAll('.prev-tab');
+    
+    nextButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const nextTabId = this.dataset.next;
+            const nextTab = modal.querySelector(`.tab-btn[data-tab="${nextTabId}"]`);
+            
+            if (nextTab) {
+                nextTab.click();
             }
         });
+    });
+    
+    prevButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const prevTabId = this.dataset.prev;
+            const prevTab = modal.querySelector(`.tab-btn[data-tab="${prevTabId}"]`);
+            
+            if (prevTab) {
+                prevTab.click();
+            }
+        });
+    });
+    
+    // Component selection functionality
+    const componentItems = modal.querySelectorAll('.component-item');
+    const componentForm = modal.querySelector('.component-form');
+    const componentTitle = modal.querySelector('#component-title');
+    const selectComponentMessage = modal.querySelector('.select-component-message');
+    const otherComponentNameGroup = modal.querySelector('#other-component-name-group');
+    
+    componentItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const componentId = this.dataset.id;
+            const componentName = this.querySelector('.component-name').textContent;
+            
+            // Remove active class from all items
+            componentItems.forEach(item => item.classList.remove('active'));
+            
+            // Add active class to clicked item
+            this.classList.add('active');
+            
+            // Show component form and hide message
+            if (componentForm) {
+                componentForm.style.display = 'block';
+                if (selectComponentMessage) selectComponentMessage.style.display = 'none';
+                
+                // Set component title
+                if (componentTitle) {
+                    componentTitle.textContent = componentName;
+                }
+                
+                // Show "Other" field if needed
+                if (otherComponentNameGroup) {
+                    otherComponentNameGroup.style.display = componentId === 'other' ? 'block' : 'none';
+                }
+                
+                // Load component data if it exists
+                loadComponentData(componentId);
+            }
+        });
+    });
+    
+    // Save component data
+    const saveComponentButton = modal.querySelector('#save-component');
+    if (saveComponentButton) {
+        saveComponentButton.addEventListener('click', function() {
+            saveComponentData();
+        });
     }
-
-    // --- Report Generation & Preview ---
-    function collectReportData() {
-         const getValue = (element, defaultValue = 'N/A') => element?.value?.trim() || defaultValue;
-         const getSelectText = (element, defaultValue = 'N/A') => element ? element.options[element.selectedIndex]?.text : defaultValue;
-
-         let signatureDataURL = signaturePadInstance?.toDataURL();
-         let coverPhotoDataURL = elements.coverPreviewContainer?.querySelector('img')?.src || null;
-
-         // Collect diver names
-         const diverCount = parseInt(elements.diverCountSelect?.value || 0);
-         const divers = Array.from({ length: diverCount }, (_, i) => {
-             const input = modal.querySelector(`#diver${i+1}_gen`);
-             return getValue(input, `Diver ${i+1}`);
-         });
-
-         return {
-             vesselName: getValue(elements.vesselName, 'Unnamed Vessel'),
-             imo: getValue(elements.imo),
-             vesselType: getSelectText(elements.vesselTypeGen),
-             commissioned: getValue(elements.vesselCommissioned),
-             grossTonnage: getValue(elements.grossTonnage),
-             length: getValue(elements.length),
-             beam: getValue(elements.beam),
-             draft: getValue(elements.vesselDraft),
-             operationalArea: getSelectText(elements.operatingArea),
-             lastAntifouling: formatDate(getValue(elements.antifoulingDate, null)), // Format date
-
-             inspectionDate: formatDate(getValue(elements.inspectionDate, new Date().toISOString().slice(0, 10))), // Format date
-             inspectionLocation: getValue(elements.inspectionLocation),
-             visibility: getValue(elements.visibility),
-             inspector: getValue(elements.inspector, 'Unspecified Inspector'),
-             clientDetails: getValue(elements.clientDetails),
-             clientRep: getValue(elements.clientRep),
-             supervisor: getValue(elements.supervisor),
-             divers: divers,
-             methodology: getValue(elements.methodologyText, 'Standard visual and tactile inspection methods employed.'),
-
-             components: componentData, // Use the stored object with photos
-
-             summary: getValue(elements.summaryText, 'No summary provided.'),
-             recommendations: getValue(elements.recommendationsText, 'No specific recommendations provided.'),
-             declaration: getValue(elements.declaration).replace('[Inspector Name]', getValue(elements.inspector, 'Inspector')), // Replace placeholder
-             signature: signatureDataURL,
-
-             title: getValue(elements.reportTitle, 'Biofouling Inspection Report'),
-             coverPhoto: coverPhotoDataURL,
-             documentNumber: getValue(elements.documentNumber, `MS-RPT-${new Date().getFullYear()}-XXXX`),
-             documentRevision: getValue(elements.documentRevision, '0'),
-             reportFormat: getSelectText(elements.reportFormat, 'Full Report')
-         };
-    }
-
-    // Generate simplified HTML for the modal preview
-    function generateReportPreviewContent() {
-        if (!elements.reportPreviewModal || !elements.reportPreviewContainer) return;
-        const data = collectReportData();
-
-        // Generate simplified component list for preview
-        const componentsPreviewHTML = Object.entries(data.components).map(([id, compData]) => {
-             const name = modal.querySelector(`.component-item[data-id="${id}"] .component-name`)?.textContent || id;
-             const photoCount = compData.photos?.length || 0;
-             return `<li><strong>${name}:</strong> ${compData.foulingRating || 'N/A'} (${compData.foulingCoverage || 'N/A'}). ${compData.comments || 'No comments.'} ${photoCount > 0 ? `(${photoCount} photo${photoCount > 1 ? 's' : ''})` : ''}</li>`;
-         }).join('');
-
-        elements.reportPreviewContainer.innerHTML = `
-            <h1 style="text-align: center;">${data.title}</h1>
-            ${data.coverPhoto ? `<div style="text-align:center; margin-bottom: 1em;"><img src="${data.coverPhoto}" alt="Cover Photo" style="max-width: 50%; max-height: 200px; border: 1px solid #eee;"></div>` : ''}
-            <h2>Vessel: ${data.vesselName} (IMO: ${data.imo})</h2>
-            <p><strong>Inspection Date:</strong> ${data.inspectionDate} | <strong>Location:</strong> ${data.inspectionLocation}</p>
-            <hr>
-            <h3>Executive Summary</h3>
-            <p>${data.summary.replace(/\n/g, '<br>')}</p>
-            <h3>Components Overview</h3>
-            ${componentsPreviewHTML ? `<ul>${componentsPreviewHTML}</ul>` : '<p>No component data entered.</p>'}
-            <h3>Recommendations</h3>
-            <p>${data.recommendations.replace(/\n/g, '<br>')}</p>
-            ${data.signature ? `<h3>Signature</h3><div class="signature"><img src="${data.signature}" alt="Signature"></div><p>${data.inspector}</p>` : '<h3>Signature</h3><p>Not Provided</p>'}
-        `;
-        openModal(elements.reportPreviewModal); // Use openModal function
-    }
-
-    // Generate full HTML content for download/printing
-     function generateFinalReportHTML() {
-         const data = collectReportData();
-         const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim() || '#FF6600';
-
-         const componentsHTML = Object.entries(data.components).map(([id, compData]) => {
-             const name = modal.querySelector(`.component-item[data-id="${id}"] .component-name`)?.textContent || id;
-             const photosHTML = (compData.photos || [])
-                 .map(src => `<img src="${src}" alt="${name} photo" style="width: 180px; height: auto; margin: 5px; border: 1px solid #eee; border-radius: 3px; vertical-align: top;">`)
-                 .join('');
-             return `
-                 <div class="component" style="border: 1px solid #ddd; padding: 12px; margin-bottom: 15px; border-radius: 4px; page-break-inside: avoid;">
-                     <h4 style="margin: 0 0 8px 0; font-size: 1.1em; color: #111; border-bottom: 1px solid #eee; padding-bottom: 4px;">${name}</h4>
-                     <table style="font-size: 9pt; margin-bottom: 8px; border: none;">
-                         <tr>
-                             <td style="border: none; padding: 2px 5px 2px 0; font-weight: bold;">Observations:</td>
-                             <td style="border: none; padding: 2px 0;">${compData.comments?.replace(/\n/g, '<br>') || 'N/A'}</td>
-                         </tr>
-                         <tr>
-                              <td style="border: none; padding: 2px 5px 2px 0; font-weight: bold;">Fouling:</td>
-                              <td style="border: none; padding: 2px 0;">${compData.foulingRating || 'N/A'} (${compData.foulingCoverage || 'N/A'})</td>
-                          </tr>
-                          <tr>
-                              <td style="border: none; padding: 2px 5px 2px 0; font-weight: bold;">Paint:</td>
-                              <td style="border: none; padding: 2px 0;">${compData.pdrRating || 'N/A'}</td>
-                          </tr>
-                     </table>
-                     ${photosHTML ? `<div style="margin-top: 10px;"><strong>Photos:</strong><br>${photosHTML}</div>` : ''}
-                 </div>`;
-         }).join('');
-
-
-         return `
-             <!DOCTYPE html>
-             <html lang="en">
-             <head>
-                 <meta charset="UTF-8">
-                 <title>${data.title} - ${data.vesselName}</title>
-                 <style>
-                     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-                     body { font-family: 'Inter', Arial, sans-serif; margin: 40pt; font-size: 10pt; line-height: 1.4; color: #333; }
-                     @page { margin: 40pt; }
-                     h1, h2, h3, h4 { color: #111; margin: 1.6em 0 0.6em 0; font-weight: 600; }
-                     h1 { font-size: 20pt; text-align: center; margin-top: 0; color: ${accentColor}; }
-                     h2 { font-size: 14pt; border-bottom: 1.5px solid ${accentColor}; padding-bottom: 4px; font-weight: 700;}
-                     h3 { font-size: 12pt; font-weight: 700; }
-                     h4 { font-size: 11pt; font-weight: 600;}
-                     p { margin: 0 0 0.9em 0; }
-                     table { width: 100%; border-collapse: collapse; margin-bottom: 1.2em; font-size: 9pt; }
-                     th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top;}
-                     th { background-color: #f0f0f0; font-weight: bold; }
-                     .page-break { page-break-after: always; }
-                     .cover-page { text-align: center; margin-bottom: 3em; }
-                     .cover-page img { max-width: 70%; max-height: 350px; border: 1px solid #ccc; margin-top: 2em; margin-bottom: 1em; }
-                     .signature-block { margin-top: 2.5em; page-break-inside: avoid; }
-                     .signature-block img { max-height: 70px; border-bottom: 1px solid #555; margin-bottom: 5px; display: block;}
-                     ul { padding-left: 20px; list-style: disc; }
-                     li { margin-bottom: 0.5em; }
-                     .footer { position: fixed; bottom: 20pt; left: 40pt; right: 40pt; text-align: center; font-size: 8pt; color: #777; }
-                 </style>
-             </head>
-             <body>
-                 <div class="cover-page">
-                     <h1>${data.title}</h1>
-                     ${data.coverPhoto ? `<img src="${data.coverPhoto}" alt="Cover Photo"><br>` : ''}
-                     <h2 style="border-bottom: none; margin-top: 1em;">${data.vesselName} (IMO: ${data.imo})</h2>
-                     <p style="font-size: 11pt;"><strong>Inspection Date:</strong> ${data.inspectionDate}</p>
-                     <p style="font-size: 11pt;"><strong>Location:</strong> ${data.inspectionLocation}</p>
-                     <p style="font-size: 9pt; margin-top: 3em;"><strong>Document:</strong> ${data.documentNumber} Rev ${data.documentRevision}</p>
-                 </div>
-
-                 <div class="page-break"></div>
-
-                 <h2>Executive Summary</h2>
-                 <p>${data.summary.replace(/\n/g, '<br>')}</p>
-
-                 <h2>Vessel Details</h2>
-                 <table>
-                     <tr><th>Vessel Name</th><td>${data.vesselName}</td><th>IMO Number</th><td>${data.imo}</td></tr>
-                     <tr><th>Vessel Type</th><td>${data.vesselType}</td><th>Commissioned</th><td>${data.commissioned}</td></tr>
-                     <tr><th>Gross Tonnage</th><td>${data.grossTonnage} t</td><th>Length Overall</th><td>${data.length} m</td></tr>
-                     <tr><th>Beam</th><td>${data.beam} m</td><th>Draft</th><td>${data.draft} m</td></tr>
-                     <tr><th>Operating Area</th><td>${data.operationalArea}</td><th>Last Antifouling</th><td>${data.lastAntifouling}</td></tr>
-                 </table>
-
-                 <h2>Inspection Details</h2>
-                  <table>
-                     <tr><th>Inspection Date</th><td>${data.inspectionDate}</td><th>Location</th><td>${data.inspectionLocation}</td></tr>
-                     <tr><th>Visibility</th><td>${data.visibility}</td><th>Inspector</th><td>${data.inspector}</td></tr>
-                     <tr><th>Client</th><td>${data.clientDetails}</td><th>Client Rep.</th><td>${data.clientRep}</td></tr>
-                     <tr><th>Supervisor</th><td>${data.supervisor}</td><th>Divers</th><td>${data.divers.join(', ') || 'N/A'}</td></tr>
-                     <tr><th colspan="4">Methodology</th></tr>
-                     <tr><td colspan="4">${data.methodology.replace(/\n/g, '<br>')}</td></tr>
-                 </table>
-
-                 <div class="page-break"></div>
-
-                 <h2>Component Assessment</h2>
-                 ${componentsHTML}
-
-                 <div class="page-break"></div>
-
-                 <h2>Recommendations</h2>
-                 <p>${data.recommendations.replace(/\n/g, '<br>')}</p>
-
-                 <h2>Declaration</h2>
-                 <p>${data.declaration.replace(/\n/g, '<br>')}</p>
-                  <div class="signature-block">
-                     ${data.signature ? `<img src="${data.signature}" alt="Signature"><br>` : '<p style="margin-bottom: 40px;">[Signature]</p>'}
-                     <span>${data.inspector}</span><br>
-                     <span>Date: ${data.inspectionDate}</span>
-                 </div>
-
-                 <!-- Add footer to each page using running elements potentially, or just here -->
-                 <!-- <div class="footer">Page <span class="pageNumber"></span> of <span class="totalPages"></span> | ${data.documentNumber}</div> -->
-
-             </body>
-             </html>
-         `;
-     }
-
-    // --- Event Listeners for Preview/Generate ---
-    if (elements.previewReportButton) {
-        elements.previewReportButton.addEventListener('click', generateReportPreviewContent);
-    }
-
-    async function downloadReport(format = 'html') { // Add format option
-        const reportName = `MarineStream_Report_${elements.vesselName?.value?.replace(/[^a-z0-9]/gi, '_') || 'Vessel'}`;
-        const htmlContent = generateFinalReportHTML();
-
-        if (format === 'pdf' && typeof html2pdf !== 'undefined') { // Check if html2pdf library is loaded
-            // Use html2pdf.js for better PDF generation
-            const pdfOptions = {
-                margin:       [40, 40, 40, 40], // margins in pt [top, left, bottom, right]
-                filename:     `${reportName}.pdf`,
-                image:        { type: 'jpeg', quality: 0.95 },
-                html2canvas:  { scale: 2, logging: false, useCORS: true },
-                jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' }
-            };
-            try {
-                await html2pdf().from(htmlContent).set(pdfOptions).save();
-            } catch (pdfError) {
-                 console.error("html2pdf generation failed:", pdfError);
-                 alert("Failed to generate PDF. Check console for details. Downloading as HTML instead.");
-                 downloadHTML(); // Fallback to HTML
+    
+    // Load component data function
+    function loadComponentData(componentId) {
+        // Get the active component item
+        const componentItem = modal.querySelector(`.component-item[data-id="${componentId}"]`);
+        if (!componentItem) return;
+        
+        // Check if component has saved data
+        if (componentItem.dataset.saved === 'true') {
+            // Fill form with saved data
+            modal.querySelector('#fouling-rating').value = componentItem.dataset.foulingRating || 'FR0';
+            modal.querySelector('#fouling-coverage').value = componentItem.dataset.foulingCoverage || '0%';
+            modal.querySelector('#pdr-rating').value = componentItem.dataset.pdrRating || 'PDR0';
+            modal.querySelector('#management-action').value = componentItem.dataset.managementAction || 'None';
+            modal.querySelector('#component-comments').value = componentItem.dataset.comments || '';
+            
+            if (componentId === 'other' && modal.querySelector('#other-component-name')) {
+                modal.querySelector('#other-component-name').value = componentItem.dataset.otherName || '';
             }
         } else {
-            downloadHTML(); // Default to HTML download
-        }
-
-        function downloadHTML() {
-             const blob = new Blob([htmlContent], { type: 'text/html' });
-             const url = URL.createObjectURL(blob);
-             const link = document.createElement('a');
-             link.href = url;
-             link.download = `${reportName}.html`;
-             document.body.appendChild(link);
-             link.click();
-             document.body.removeChild(link);
-             URL.revokeObjectURL(url);
+            // Reset form for new component
+            modal.querySelector('#fouling-rating').value = 'FR0';
+            modal.querySelector('#fouling-coverage').value = '0%';
+            modal.querySelector('#pdr-rating').value = 'PDR0';
+            modal.querySelector('#management-action').value = 'None';
+            modal.querySelector('#component-comments').value = '';
+            
+            if (componentId === 'other' && modal.querySelector('#other-component-name')) {
+                modal.querySelector('#other-component-name').value = '';
+            }
         }
     }
+    
+    // Save component data function
+    function saveComponentData() {
+        // Get the active component
+        const activeComponent = modal.querySelector('.component-item.active');
+        if (!activeComponent) return;
+        
+        const componentId = activeComponent.dataset.id;
+        
+        // Get form values
+        const foulingRating = modal.querySelector('#fouling-rating').value;
+        const foulingCoverage = modal.querySelector('#fouling-coverage').value;
+        const pdrRating = modal.querySelector('#pdr-rating').value;
+        const managementAction = modal.querySelector('#management-action').value;
+        const comments = modal.querySelector('#component-comments').value;
+        
+        // Save data to component item's dataset
+        activeComponent.dataset.saved = 'true';
+        activeComponent.dataset.foulingRating = foulingRating;
+        activeComponent.dataset.foulingCoverage = foulingCoverage;
+        activeComponent.dataset.pdrRating = pdrRating;
+        activeComponent.dataset.managementAction = managementAction;
+        activeComponent.dataset.comments = comments;
+        
+        // Handle 'other' component name if applicable
+        if (componentId === 'other' && modal.querySelector('#other-component-name')) {
+            const otherName = modal.querySelector('#other-component-name').value;
+            activeComponent.dataset.otherName = otherName;
+            
+            // Update the component name display
+            if (otherName) {
+                const nameElement = activeComponent.querySelector('.component-name');
+                if (nameElement) {
+                    nameElement.textContent = otherName;
+                }
+            }
+        }
+        
+        // Add a visual indicator that the component has been saved
+        if (!activeComponent.querySelector('.saved-indicator')) {
+            const savedIndicator = document.createElement('span');
+            savedIndicator.className = 'saved-indicator';
+            savedIndicator.innerHTML = '<i class="fas fa-check-circle"></i>';
+            activeComponent.appendChild(savedIndicator);
+        }
+        
+        // Show success message
+        alert('Component data saved successfully!');
+    }
 
-
-     if (elements.generateReportButton) {
-         // Add a dropdown or similar to choose format if desired, otherwise default to HTML or PDF
-         elements.generateReportButton.addEventListener('click', () => downloadReport('html')); // Default to HTML for now
-     }
-
-     // Close/Download from Preview Modal
-     if (elements.closePreviewButton && elements.reportPreviewModal) {
-         elements.closePreviewButton.addEventListener('click', () => {
-             closeModal(elements.reportPreviewModal); // Use closeModal function
-         });
-     }
-     if (elements.downloadReportButton) {
-         // Add format choice here too if needed
-         elements.downloadReportButton.addEventListener('click', () => downloadReport('html')); // Default to HTML
-     }
+    // Signature pad initialization
+    const signaturePad = document.getElementById('signaturePad');
+    const clearSignatureBtn = document.getElementById('clearSignature');
+    
+    if (signaturePad && typeof SignaturePad !== 'undefined') {
+        const pad = new SignaturePad(signaturePad);
+        
+        // Clear signature
+        if (clearSignatureBtn) {
+            clearSignatureBtn.addEventListener('click', function() {
+                pad.clear();
+            });
+        }
+    }
+    
+    // Preview and generate report buttons
+    const previewButton = modal.querySelector('#preview-report');
+    const generateButton = modal.querySelector('#generate-report');
+    const reportPreviewContainer = document.getElementById('report-preview-container');
+    const reportPreviewModal = document.getElementById('report-preview-modal');
+    
+    if (previewButton) {
+        previewButton.addEventListener('click', function() {
+            try {
+                const reportData = collectReportData();
+                if (reportData) {
+                    const reportHtml = generateReportHtml(reportData);
+                    
+                    if (reportPreviewContainer) {
+                        reportPreviewContainer.innerHTML = reportHtml;
+                    }
+                    
+                    if (reportPreviewModal) {
+                        // Show the preview modal
+                        reportPreviewModal.style.display = 'flex';
+                    }
+                }
+            } catch (error) {
+                console.error('Error generating preview:', error);
+                alert('An error occurred while generating the preview. Please try again.');
+            }
+        });
+    }
+    
+    if (generateButton) {
+        generateButton.addEventListener('click', function() {
+            try {
+                const reportData = collectReportData();
+                if (reportData) {
+                    const reportHtml = generateReportHtml(reportData);
+                    
+                    // Generate PDF
+                    if (typeof html2pdf !== 'undefined') {
+                        const element = document.createElement('div');
+                        element.innerHTML = reportHtml;
+                        document.body.appendChild(element);
+                        
+                        const options = {
+                            margin: 10,
+                            filename: `${reportData.vesselDetails.name || 'Vessel'}_BFMP_${new Date().toISOString().slice(0, 10)}.pdf`,
+                            image: { type: 'jpeg', quality: 0.98 },
+                            html2canvas: { scale: 2 },
+                            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                        };
+                        
+                        html2pdf().set(options).from(element).save().then(() => {
+                            document.body.removeChild(element);
+                        });
+                    } else {
+                        // Fallback to downloading as HTML
+                        const blob = new Blob([reportHtml], { type: 'text/html' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${reportData.vesselDetails.name || 'Vessel'}_BFMP_${new Date().toISOString().slice(0, 10)}.html`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }
+                }
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('An error occurred while generating the PDF. Please try again.');
+            }
+        });
+    }
+    
+    // Close preview modal button
+    const closePreviewButton = document.getElementById('close-preview');
+    if (closePreviewButton && reportPreviewModal) {
+        closePreviewButton.addEventListener('click', function() {
+            reportPreviewModal.style.display = 'none';
+        });
+    }
+    
+    // Download from preview button
+    const downloadReportButton = document.getElementById('download-report');
+    if (downloadReportButton && reportPreviewContainer) {
+        downloadReportButton.addEventListener('click', function() {
+            try {
+                const reportData = collectReportData();
+                if (reportData) {
+                    // Generate PDF using html2pdf if available
+                    if (typeof html2pdf !== 'undefined') {
+                        const options = {
+                            margin: 10,
+                            filename: `${reportData.vesselDetails.name || 'Vessel'}_BFMP_${new Date().toISOString().slice(0, 10)}.pdf`,
+                            image: { type: 'jpeg', quality: 0.98 },
+                            html2canvas: { scale: 2 },
+                            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                        };
+                        
+                        html2pdf().set(options).from(reportPreviewContainer).save();
+                    } else {
+                        // Fallback to downloading as HTML
+                        const blob = new Blob([reportPreviewContainer.innerHTML], { type: 'text/html' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${reportData.vesselDetails.name || 'Vessel'}_BFMP_${new Date().toISOString().slice(0, 10)}.html`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }
+                }
+            } catch (error) {
+                console.error('Error downloading report:', error);
+                alert('An error occurred while downloading the report. Please try again.');
+            }
+        });
+    }
+    
+    // Close modals when clicking on the overlay
+    const modals = document.querySelectorAll('.modal-overlay');
+    modals.forEach(modal => {
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+    
+    // Initialize first tab
+    updateProgressIndicator();
 }
 
+// Helper function to format dates
+function formatDate(dateString) {
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString();
+    } catch (error) {
+        return dateString;
+    }
+}
 
 // === Video Initialization (with Autoplay) ===
 function initVideos() {
@@ -1474,4 +1166,400 @@ function formatDate(dateString) {
         console.warn("Date formatting failed for:", dateString, e);
         return dateString; // Return original string on error
     }
+}
+
+// Collect all report data
+function collectReportData() {
+    try {
+        const getValue = (id) => {
+            const element = document.getElementById(id);
+            return element ? element.value : '';
+        };
+
+        const getSelectValue = (id) => {
+            const element = document.getElementById(id);
+            return element ? element.value : '';
+        };
+
+        const getTextareaValue = (id) => {
+            const element = document.getElementById(id);
+            return element ? element.value : '';
+        };
+
+        const getSignatureData = () => {
+            const canvas = document.getElementById('signaturePad');
+            if (canvas && typeof SignaturePad !== 'undefined') {
+                const signaturePad = new SignaturePad(canvas);
+                return !signaturePad.isEmpty() ? canvas.toDataURL() : '';
+            }
+            return '';
+        };
+
+        // Collect niche area data
+        const getNicheAreasData = () => {
+            const nicheAreas = [];
+            const nicheItems = document.querySelectorAll('.niche-item');
+            
+            nicheItems.forEach(item => {
+                if (item.classList.contains('saved')) {
+                    const nicheId = item.dataset.id;
+                    const nicheName = item.querySelector('.niche-name').textContent;
+                    const afsApplied = item.dataset.afsApplied || 'Not specified';
+                    const otherMeasures = item.dataset.otherMeasures || 'Not specified';
+                    const inspectionFrequency = item.dataset.inspectionFrequency || 'Not specified';
+                    const cleaningFrequency = item.dataset.cleaningFrequency || 'Not specified';
+                    const notes = item.dataset.notes || '';
+                    
+                    nicheAreas.push({
+                        id: nicheId,
+                        name: nicheName,
+                        afsApplied: afsApplied,
+                        otherMeasures: otherMeasures,
+                        inspectionFrequency: inspectionFrequency,
+                        cleaningFrequency: cleaningFrequency,
+                        notes: notes
+                    });
+                }
+            });
+            
+            return nicheAreas;
+        };
+
+        // Build the report data object
+        const reportData = {
+            // Document metadata
+            title: getValue('reportTitle') || 'Biofouling Management Plan',
+            documentNumber: getValue('documentNumber') || `BFMP-${new Date().getFullYear()}-00X`,
+            revision: getValue('documentRevision') || '0',
+            documentDate: getValue('documentDate') || new Date().toISOString().split('T')[0],
+            
+            // Vessel details
+            vesselDetails: {
+                name: getValue('vesselName') || '[Vessel Name]',
+                imo: getValue('imo') || '[IMO Number]',
+                portRegistry: getValue('portRegistry') || '[Port of Registry]',
+                type: getSelectValue('vesselTypeGen') || 'Not specified',
+                commissioned: getValue('vesselCommissioned') || 'Not specified',
+                grossTonnage: getValue('grossTonnage') || 'Not specified',
+                length: getValue('length') || 'Not specified',
+                beam: getValue('beam') || 'Not specified',
+                operatingArea: getSelectValue('operatingArea') || 'Not specified'
+            },
+            
+            // Responsible personnel
+            personnel: {
+                responsiblePerson: getValue('responsiblePerson') || '[Responsible Person]',
+                responsiblePosition: getValue('responsiblePosition') || 'Not specified',
+                shorePerson: getValue('shorePerson') || '[Shore Contact]',
+                shoreCompany: getValue('shoreCompany') || 'Not specified'
+            },
+            
+            // AFS details
+            afs: {
+                type: getValue('afsType') || 'Not specified',
+                manufacturer: getValue('afsManufacturer') || 'Not specified',
+                applicationDate: getValue('antifoulingDate') || 'Not specified',
+                applicationLocation: getValue('afsLocation') || 'Not specified',
+                expectedLife: getValue('afsExpectedLife') || 'Not specified',
+                documentation: getTextareaValue('afsDocumentation') || 'Not specified'
+            },
+            
+            // Niche areas management
+            nicheAreas: getNicheAreasData(),
+            nicheAreaStrategy: getTextareaValue('nicheAreaStrategy') || 'Not specified',
+            
+            // Operating profile
+            operatingProfile: {
+                operatingSpeed: getValue('operatingSpeed') || 'Not specified',
+                typicalRoutes: getTextareaValue('typicalRoutes') || 'Not specified',
+                inactivityPeriods: getTextareaValue('inactivityPeriods') || 'Not specified',
+                foulingFactors: getTextareaValue('foulingFactors') || 'Not specified'
+            },
+            
+            // Inspection and BRB
+            inspection: {
+                plannedInspections: getTextareaValue('plannedInspections') || 'Not specified',
+                inspectionSchedule: getTextareaValue('inspectionSchedule') || 'Not specified',
+                inspectionMethods: getTextareaValue('inspectionMethods') || 'Not specified',
+                maintenanceActivities: getTextareaValue('maintenanceActivities') || 'Not specified',
+                nonScheduledTriggers: getTextareaValue('nonScheduledTriggers') || 'Not specified',
+                documentationProcedures: getTextareaValue('documentationProcedures') || 'Not specified'
+            },
+            
+            recordKeeping: getTextareaValue('recordKeeping') || 'Not specified',
+            
+            // Training and contingency
+            training: {
+                trainingProgram: getTextareaValue('trainingProgram') || 'Not specified',
+                newCrewFamiliarization: getTextareaValue('newCrewFamiliarization') || 'Not specified'
+            },
+            
+            contingencyPlan: getTextareaValue('contingencyPlan') || 'Not specified',
+            
+            // Declaration
+            declaration: {
+                name: getValue('inspectorNameSignOff') || '[Name]',
+                position: getValue('signatoryPosition') || '[Position]',
+                signature: getSignatureData()
+            }
+        };
+        
+        return reportData;
+    } catch (error) {
+        console.error('Error collecting report data:', error);
+        return null;
+    }
+}
+
+// Generate HTML for report preview
+function generateReportHtml(data) {
+    return `
+        <div class="report-preview">
+            <div class="report-header">
+                <h1>${data.title || 'Biofouling Management Plan'}</h1>
+                <p><strong>Document Number:</strong> ${data.documentNumber || 'N/A'} <span class="rev-marker">Rev ${data.revision || '0'}</span></p>
+                <p><strong>Date:</strong> ${data.documentDate ? new Date(data.documentDate).toLocaleDateString() : new Date().toLocaleDateString()}</p>
+            </div>
+
+            <h2>1. Introduction / Plan Overview</h2>
+            <div class="section">
+                <h3>1.1 Purpose</h3>
+                <p>This Biofouling Management Plan has been developed to comply with the International Maritime Organization's Guidelines for the Control and Management of Ships' Biofouling to Minimize the Transfer of Invasive Aquatic Species (IMO Resolution MEPC.207(62)) and Australian national guidelines based on the Biosecurity Act 2015.</p>
+                
+                <p>The purpose of this plan is to provide guidance on vessel-specific biofouling management measures to minimize the transfer of invasive aquatic species. This plan details operational practices and measures to be implemented to manage biofouling risks for the vessel.</p>
+                
+                <h3>1.2 Vessel Applicability</h3>
+                <p>This Biofouling Management Plan applies specifically to the vessel ${data.vesselDetails.name || '[Vessel Name]'}, IMO ${data.vesselDetails.imo || '[IMO Number]'}.</p>
+                
+                <h3>1.3 Plan Review Schedule</h3>
+                <p>This Biofouling Management Plan shall be reviewed and updated at intervals not exceeding five years, following major modifications to underwater surfaces, or when there is a significant change in the vessel's operational profile. The ${data.personnel.responsiblePosition || 'responsible person'} aboard the vessel and ${data.personnel.shorePerson || 'shore-based personnel'} are responsible for ensuring the plan remains up to date.</p>
+            </div>
+
+            <h2>2. Vessel Particulars</h2>
+            <div class="section">
+                <table>
+                    <tr>
+                        <th>Vessel Name</th>
+                        <td>${data.vesselDetails.name || '[Vessel Name]'}</td>
+                    </tr>
+                    <tr>
+                        <th>IMO Number</th>
+                        <td>${data.vesselDetails.imo || '[IMO Number]'}</td>
+                    </tr>
+                    <tr>
+                        <th>Port of Registry</th>
+                        <td>${data.vesselDetails.portRegistry || '[Port of Registry]'}</td>
+                    </tr>
+                    <tr>
+                        <th>Vessel Type</th>
+                        <td>${data.vesselDetails.type || 'Not specified'}</td>
+                    </tr>
+                    <tr>
+                        <th>Year Built/Commissioned</th>
+                        <td>${data.vesselDetails.commissioned || 'Not specified'}</td>
+                    </tr>
+                    <tr>
+                        <th>Gross Tonnage</th>
+                        <td>${data.vesselDetails.grossTonnage || 'Not specified'} t</td>
+                    </tr>
+                    <tr>
+                        <th>Length Overall (LOA)</th>
+                        <td>${data.vesselDetails.length || 'Not specified'} m</td>
+                    </tr>
+                    <tr>
+                        <th>Beam</th>
+                        <td>${data.vesselDetails.beam || 'Not specified'} m</td>
+                    </tr>
+                </table>
+                
+                <h3>2.1 Responsible Personnel</h3>
+                <table>
+                    <tr>
+                        <th>Onboard Responsible Person</th>
+                        <td>${data.personnel.responsiblePerson || '[Responsible Person]'}</td>
+                    </tr>
+                    <tr>
+                        <th>Position</th>
+                        <td>${data.personnel.responsiblePosition || 'Not specified'}</td>
+                    </tr>
+                    <tr>
+                        <th>Shore-based Responsible Person</th>
+                        <td>${data.personnel.shorePerson || '[Shore Contact]'}</td>
+                    </tr>
+                    <tr>
+                        <th>Company</th>
+                        <td>${data.personnel.shoreCompany || 'Not specified'}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <h2>3. Antifouling System (AFS) Details</h2>
+            <div class="section">
+                <table>
+                    <tr>
+                        <th>AFS Type</th>
+                        <td>${data.afs.type || 'Not specified'}</td>
+                    </tr>
+                    <tr>
+                        <th>Manufacturer/Product</th>
+                        <td>${data.afs.manufacturer || 'Not specified'}</td>
+                    </tr>
+                    <tr>
+                        <th>Last Application Date</th>
+                        <td>${data.afs.applicationDate ? formatDate(data.afs.applicationDate) : 'Not specified'}</td>
+                    </tr>
+                    <tr>
+                        <th>Application Location</th>
+                        <td>${data.afs.applicationLocation || 'Not specified'}</td>
+                    </tr>
+                    <tr>
+                        <th>Expected Service Life</th>
+                        <td>${data.afs.expectedLife || 'Not specified'} years</td>
+                    </tr>
+                </table>
+                
+                <h3>3.1 AFS Documentation</h3>
+                <p>${data.afs.documentation || 'Not specified'}</p>
+            </div>
+
+            <h2>4. Management of Niche Areas</h2>
+            <div class="section">
+                <p>${data.nicheAreaStrategy || 'Not specified'}</p>
+                
+                <h3>4.1 Niche Area Details</h3>
+                ${data.nicheAreas.length > 0 ? 
+                    data.nicheAreas.map(niche => `
+                        <div class="niche-area">
+                            <h4>${niche.name}</h4>
+                            <table>
+                                <tr>
+                                    <th>AFS Applied</th>
+                                    <td>${niche.afsApplied}</td>
+                                </tr>
+                                <tr>
+                                    <th>Other Anti-fouling Measures</th>
+                                    <td>${niche.otherMeasures}</td>
+                                </tr>
+                                <tr>
+                                    <th>Inspection Frequency/Method</th>
+                                    <td>${niche.inspectionFrequency}</td>
+                                </tr>
+                                <tr>
+                                    <th>Cleaning Frequency/Method</th>
+                                    <td>${niche.cleaningFrequency}</td>
+                                </tr>
+                                ${niche.notes ? `
+                                <tr>
+                                    <th>Additional Notes</th>
+                                    <td>${niche.notes}</td>
+                                </tr>` : ''}
+                            </table>
+                        </div>
+                    `).join('') : 
+                    '<p>No specific niche area management strategies defined. Please refer to the general strategy above.</p>'
+                }
+            </div>
+
+            <h2>5. Operating Profile</h2>
+            <div class="section">
+                <table>
+                    <tr>
+                        <th>Typical Operating Speed</th>
+                        <td>${data.operatingProfile.operatingSpeed || 'Not specified'} knots</td>
+                    </tr>
+                </table>
+                
+                <h3>5.1 Typical Routes/Bioregions</h3>
+                <p>${data.operatingProfile.typicalRoutes || 'Not specified'}</p>
+                
+                <h3>5.2 Periods of Inactivity</h3>
+                <p>${data.operatingProfile.inactivityPeriods || 'Not specified'}</p>
+                
+                <h3>5.3 Operational Factors Influencing Fouling Risk</h3>
+                <p>${data.operatingProfile.foulingFactors || 'Not specified'}</p>
+            </div>
+
+            <h2>6. Inspection Strategy</h2>
+            <div class="section">
+                <h3>6.1 Planned Inspections</h3>
+                <p>${data.inspection.plannedInspections || 'Not specified'}</p>
+                
+                <h3>6.2 Inspection Schedule</h3>
+                <p>${data.inspection.inspectionSchedule || 'Not specified'}</p>
+                
+                <h3>6.3 Inspection Methods</h3>
+                <p>${data.inspection.inspectionMethods || 'Not specified'}</p>
+                
+                <h3>6.4 Maintenance Activities</h3>
+                <p>${data.inspection.maintenanceActivities || 'Not specified'}</p>
+                
+                <h3>6.5 Non-Scheduled Inspection/Maintenance Triggers</h3>
+                <p>${data.inspection.nonScheduledTriggers || 'Not specified'}</p>
+                
+                <h3>6.6 Documentation Procedures</h3>
+                <p>${data.inspection.documentationProcedures || 'Not specified'}</p>
+            </div>
+
+            <h2>7. Biofouling Record Book Procedures</h2>
+            <div class="section">
+                <p>${data.recordKeeping || 'Not specified'}</p>
+            </div>
+
+            <h2>8. Crew Training & Familiarization</h2>
+            <div class="section">
+                <h3>8.1 Training Program</h3>
+                <p>${data.training.trainingProgram || 'Not specified'}</p>
+                
+                <h3>8.2 New Crew Familiarization</h3>
+                <p>${data.training.newCrewFamiliarization || 'Not specified'}</p>
+            </div>
+
+            <h2>9. Contingency Planning</h2>
+            <div class="section">
+                <p>${data.contingencyPlan || 'Not specified'}</p>
+            </div>
+
+            <div class="declaration">
+                <h2>Declaration</h2>
+                <p>I confirm that this Biofouling Management Plan has been developed in accordance with the IMO Guidelines for the Control and Management of Ships' Biofouling to Minimize the Transfer of Invasive Aquatic Species (Resolution MEPC.207(62)) and Australian national requirements.</p>
+                
+                <table class="signature-table">
+                    <tr>
+                        <th>Name:</th>
+                        <td>${data.declaration.name || '[Name]'}</td>
+                    </tr>
+                    <tr>
+                        <th>Position:</th>
+                        <td>${data.declaration.position || '[Position]'}</td>
+                    </tr>
+                    <tr>
+                        <th>Signature:</th>
+                        <td class="signature">
+                            ${data.declaration.signature ? `<img src="${data.declaration.signature}" alt="Signature">` : '[Signature]'}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Date:</th>
+                        <td>${new Date().toLocaleDateString()}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// Helper function to update active tick on the slider
+function updateActiveTick(value) {
+    const ticks = document.querySelectorAll('.range-tick');
+    if (!ticks || ticks.length === 0) return;
+    
+    value = parseInt(value);
+    ticks.forEach(tick => {
+        const tickValue = parseInt(tick.getAttribute('data-value'));
+        if (tickValue === value) {
+            tick.classList.add('active-tick');
+        } else {
+            tick.classList.remove('active-tick');
+        }
+    });
 }

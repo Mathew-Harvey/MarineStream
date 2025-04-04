@@ -2624,3 +2624,402 @@ canvas#signaturePad {
     --accent-dark: #FF9900;
     --accent-light: #FFD700;
 }
+
+/* Biofouling Management Plan Generator Styles */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.form-group {
+    margin-bottom: var(--space-sm);
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-color);
+}
+
+/* Components Grid */
+.components-grid {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: var(--space-lg);
+    min-height: 400px;
+}
+
+.components-list {
+    border-right: 1px solid var(--border-color);
+    padding-right: var(--space-md);
+}
+
+.component-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.component-item {
+    padding: var(--space-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.component-item:hover {
+    background-color: var(--bg-secondary);
+    border-color: var(--accent-color);
+}
+
+.component-item.active {
+    background-color: var(--accent-light);
+    border-color: var(--accent-color);
+}
+
+.component-details {
+    padding: var(--space-md);
+}
+
+.select-component-message {
+    text-align: center;
+    color: var(--text-tertiary);
+    padding: var(--space-lg);
+}
+
+/* Photo Previews */
+.photo-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+}
+
+.photo-preview-grid img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+.cover-preview {
+    margin-top: var(--space-sm);
+    text-align: center;
+}
+
+.cover-preview img {
+    max-width: 200px;
+    max-height: 150px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+/* Signature Pad */
+.signature-pad {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-sm);
+}
+
+/* Report Preview */
+#report-preview-container {
+    padding: var(--space-md);
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-md);
+}
+
+#report-preview-container h1,
+#report-preview-container h2,
+#report-preview-container h3 {
+    color: var(--text-primary);
+    margin-bottom: var(--space-md);
+}
+
+#report-preview-container p {
+    margin-bottom: var(--space-sm);
+}
+
+#report-preview-container .signature {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-color);
+}
+
+#report-preview-container .signature img {
+    max-height: 70px;
+    margin-bottom: var(--space-sm);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .components-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .components-list {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding-right: 0;
+        padding-bottom: var(--space-md);
+    }
+}
+
+/* Input Error Styling */
+.input-error {
+    border-color: var(--error, #e53e3e) !important;
+    background-color: rgba(229, 62, 62, 0.05);
+}
+
+/* Label Error Styling */
+.label-error {
+    color: var(--error, #e53e3e) !important;
+    font-weight: bold;
+}
+
+/* Improve Component List Item Style */
+.component-item {
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid transparent;
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 0;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.component-item:last-child {
+    border-bottom: none;
+}
+
+.component-item:hover {
+    background-color: var(--bg-tertiary);
+    border-left: 3px solid var(--accent-light);
+    color: var(--text-primary);
+}
+
+.component-item.active {
+    background-color: var(--accent-light);
+    border-left: 3px solid var(--accent-dark);
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.component-item.active .saved-indicator {
+    color: var(--text-dark);
+}
+
+.saved-indicator {
+    color: var(--success);
+    margin-left: 8px;
+    font-size: 0.9em;
+    transition: color 0.3s ease;
+}
+
+/* Photo Preview Grid */
+.photo-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+}
+
+.photo-preview-item {
+    position: relative;
+    display: inline-block;
+    background-color: var(--bg-secondary);
+    padding: var(--space-xs);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+.photo-preview-item img {
+    display: block;
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: var(--radius-xs);
+    margin-bottom: 4px;
+}
+
+.photo-delete-btn {
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.photo-delete-btn:hover {
+    opacity: 1;
+    background-color: rgba(255, 0, 0, 0.9);
+}
+
+/* Signature Pad Container */
+.form-group canvas#signaturePad {
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-sm);
+    cursor: crosshair;
+    background-color: #ffffff;
+    max-width: 100%;
+    height: 150px;
+    display: block;
+}
+
+/* Button Group for consistent spacing */
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+    justify-content: space-between;
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-color);
+}
+
+.button-group .btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+}
+
+/* Small help text */
+.help-text {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+}
+
+/* Style headings within tabs */
+#vessel-details h4,
+#inspection-details h4,
+#components h4,
+#recommendations h4,
+#generate h4 {
+    font-size: 1.2rem;
+    color: var(--accent-color);
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--border-color);
+}
+
+#vessel-details h4:first-of-type,
+#inspection-details h4:first-of-type,
+#components h4:first-of-type,
+#recommendations h4:first-of-type,
+#generate h4:first-of-type {
+    margin-top: 0;
+}
+
+#components h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+    color: var(--text-primary);
+}
+
+/* Adjust modal body padding */
+.modal-body {
+    padding: var(--space-lg);
+    padding-bottom: calc(var(--space-lg) + 60px);
+}
+
+/* BFMP Generator Styles */
+.info-note {
+    background-color: rgba(255, 102, 0, 0.1);
+    border-left: 3px solid var(--accent-color);
+    padding: var(--space-sm) var(--space-md);
+    margin-bottom: var(--space-md);
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* Progress indicator improvements */
+.progress-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--space-lg);
+    position: relative;
+    padding: 0 var(--space-sm);
+}
+
+.progress-indicator::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 30px;
+    right: 30px;
+    height: 2px;
+    background-color: var(--border-color);
+    z-index: 1;
+}
+
+.progress-step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+}
+
+.step-number {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+    color: var(--text-secondary);
+    transition: all var(--transition-normal);
+}
+
+.step-label {
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    text-align: center;
+    max-width: 100px;
+    transition: all var(--transition-normal);
+}
+
+.progress-step.active .step-number {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+.progress-step.active .step-label {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.progress-step.completed .step-number {
+    background-color: var(--success);
+    border-color: var(--success);
+    color: white;
+}
+
+.progress-step.completed .step-label {
+    color: var(--success);
+}
+
+/* Niche Area Management Styles */
+.niche-areas-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: var(--space-lg);
+    min-height: 450px;
+    margin-bottom: var(--space-lg);
