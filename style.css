@@ -252,36 +252,34 @@ img, video { /* Apply to video as well */
 }
 
 .hero .btn-outline {
-    background-color: transparent;
-    color: white;
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-    font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: var(--radius-md);
-    border: 2px solid white;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-    margin-left: 1rem;
-    z-index: 100;
+    font-weight: 600;
+    padding: 0.8rem 1.8rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .hero .btn-outline:hover {
-    background-color: white;
-    color: var(--accent-color);
+    background-color: var(--accent-color);
+    color: var(--text-on-accent);
+    border-color: var(--accent-color);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.hero .btn-outline i {
+    margin-right: 0.5rem;
 }
 
 .hero-cta {
     display: flex;
     gap: 1rem;
-    margin-top: 2rem;
-    z-index: 100;
-    position: relative;
+    flex-wrap: wrap;
 }
 
 /* Header Styles - Refined */
@@ -433,11 +431,55 @@ img, video { /* Apply to video as well */
 /* Hero Section */
 .hero {
     position: relative;
-    padding: var(--space-xxl) 0;
-    background-color: var(--bg-dark);
-    overflow: hidden;
     min-height: 100vh;
-    display: flex;
+    color: var(--text-on-accent);
+    padding: 120px 0 80px;
+    overflow: hidden;
+    background-color: #000; /* Fallback */
+}
+
+/* Add grain texture */
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        url('data:image/svg+xml;charset=utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.1 0"/></filter><rect width="100%" height="100%" filter="url(%23noise)"/></svg>'),
+        url('./assets/heroBackGround.JPG');
+    background-size: 200px, cover;
+    background-position: center;
+    background-repeat: repeat, no-repeat;
+    opacity: 0.65;
+    z-index: 0;
+    filter: blur(2px);
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.85) 0%,
+        rgba(0, 0, 0, 0.65) 50%,
+        rgba(0, 0, 0, 0.45) 100%
+    );
+    z-index: 1;
+}
+
+.hero .container {
+    position: relative;
+    z-index: 2; /* Above the background image and overlay */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+    height: 100%;
     align-items: center;
 }
 
@@ -461,17 +503,29 @@ img, video { /* Apply to video as well */
 .hero-title {
     font-size: clamp(2.8rem, 6vw, 4.5rem);
     font-weight: 800;
-    line-height: 1.2;
+    color: #fff;
+    line-height: 1.1;
     margin-bottom: 1.5rem;
-    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.hero-title::after {
+    content: "";
+    position: absolute;
+    bottom: -0.75rem;
+    left: 0;
+    width: 80px;
+    height: 4px;
+    background: var(--accent-color);
 }
 
 .hero-subtitle {
-    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-    line-height: 1.4;
-    margin-bottom: 2rem;
-    color: #ffffff;
-    opacity: 0.95;
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    line-height: 1.5;
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 [data-theme-mode="light"] .hero-title {
@@ -501,8 +555,7 @@ img, video { /* Apply to video as well */
 .hero-cta {
     display: flex;
     gap: 1rem;
-    margin-top: 2rem;
-    z-index: 2;
+    flex-wrap: wrap;
 }
 
 .hero-image {
@@ -3023,3 +3076,199 @@ canvas#signaturePad {
     gap: var(--space-lg);
     min-height: 450px;
     margin-bottom: var(--space-lg);
+}
+
+/* Hero Carousel Styles */
+.hero-carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 450px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 12px;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.carousel-slide {
+    flex: 0 0 100%; /* Each slide takes full width */
+    min-width: 100%; /* Ensure slides don't shrink */
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.carousel-slide::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.3)
+    );
+    z-index: 1;
+}
+
+.carousel-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: all 0.25s ease;
+}
+
+.carousel-control:hover {
+    background-color: var(--accent-color);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-control.prev {
+    left: 20px;
+}
+
+.carousel-control.next {
+    right: 20px;
+}
+
+.carousel-indicators {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 2;
+}
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.indicator:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.2);
+}
+
+.indicator.active {
+    background: white;
+    transform: scale(1.2);
+}
+
+/* Hero Section Layout Update */
+.hero {
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.hero-content {
+    padding-right: 2rem;
+}
+
+.hero-carousel {
+    height: 500px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+    .hero .container {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .hero-content {
+        padding-right: 0;
+        margin-bottom: 2rem;
+    }
+
+    .hero-carousel {
+        height: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-carousel {
+        height: 300px;
+    }
+
+    .carousel-control {
+        width: 32px;
+        height: 32px;
+    }
+
+    .indicator {
+        width: 8px;
+        height: 8px;
+    }
+}
+
+.carousel-track {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s ease-in-out;
+}
+
+/* Setting background images for each slide - CRITICAL PART */
+.carousel-slide:nth-child(1) {
+    background-image: url('assets/hero1.jpg');
+}
+.carousel-slide:nth-child(2) {
+    background-image: url('assets/hero2.jpg');
+}
+.carousel-slide:nth-child(3) {
+    background-image: url('assets/hero3.jpg');
+}
+.carousel-slide:nth-child(4) {
+    background-image: url('assets/hero4.png');
+}
+.carousel-slide:nth-child(5) {
+    background-image: url('assets/hero5.jpg');
+}
+.carousel-slide:nth-child(6) {
+    background-image: url('assets/hero6.jpg');
+}
