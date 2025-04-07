@@ -26,7 +26,163 @@
     <link rel="stylesheet" href="./style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="./hullCalc.js"></script>
     <script src="./script.js"></script>
+    
+    <style>
+        /* Calculator specific styles from the example */
+        .validation-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--accent-color);
+            color: white;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-top: var(--space-md);
+            gap: var(--space-xs);
+            max-width: fit-content;
+        }
+        
+        .result-group {
+            margin-bottom: var(--space-md);
+        }
+        
+        .result-group-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            margin-bottom: var(--space-sm);
+            padding-bottom: var(--space-xs);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .result-group-header h4 {
+            margin: 0;
+            color: var(--accent-color);
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-sm);
+            margin-bottom: var(--space-xs);
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-fast);
+        }
+        
+        .result-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .result-label {
+            color: var(--text-secondary);
+        }
+        
+        .result-value {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .results-section {
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-top: var(--space-md);
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .results-section h3 {
+            color: var(--accent-color);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .results-section h3 i {
+            color: var(--accent-light);
+        }
+        
+        .information-note {
+            background-color: rgba(255, 102, 0, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin: var(--space-md) 0;
+        }
+        
+        .information-note h4 {
+            color: var(--accent-dark);
+            margin-bottom: var(--space-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .information-note h4 i {
+            color: var(--accent-color);
+        }
+        
+        .research-section {
+            margin-top: var(--space-lg);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .research-highlights {
+            background-color: var(--accent-light);
+            color: white;
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .highlight h4 {
+            color: white;
+            margin-bottom: var(--space-md);
+        }
+        
+        .highlight ul {
+            margin-bottom: var(--space-sm);
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .highlight li {
+            margin-bottom: var(--space-xs);
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 0;
+            padding-bottom: 65%;
+            position: relative;
+            margin-bottom: var(--space-md);
+        }
+        
+        .chart-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        
+        .range-tick.active .tick-dot {
+            background-color: var(--accent-color);
+            transform: scale(1.5);
+        }
+        
+        .range-tick.active .tick-label {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+    </style>
 </head>
 
 <body>
@@ -295,69 +451,79 @@
         <section id="tools" class="tools-section">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">Interactive Tools</h2>
-                    <p class="section-description">Utilize our specialized tools to enhance your biofouling management capabilities</p>
+                    <h2 class="section-title">Practical Tools</h2>
+                    <p class="section-description">Explore our range of specialized tools designed to assist mariners in making informed decisions about biofouling management.</p>
                 </div>
-
+                
                 <div class="tools-grid">
-                    <!-- Hull Fouling Cost Calculator -->
-                    <div id="fouling-calculator-card" class="tool-card">
+                    <!-- Hull Fouling Calculator -->
+                    <div class="tool-card">
                         <div class="tool-header">
                             <div class="tool-icon">
                                 <i class="fas fa-calculator"></i>
                             </div>
-                            <h3 class="tool-title">Hull Fouling Cost Calculator</h3>
+                            <h3 class="tool-title">Hull Fouling Calculator</h3>
                         </div>
-                        <p class="tool-description">Calculate the economic and environmental impact of biofouling on vessel performance and fuel consumption based on research data.</p>
-                        <button id="open-cost-calculator" class="btn btn-primary">
-                            <i class="fas fa-external-link-alt"></i>
-                            Open Calculator
-                        </button>
+                        <p class="tool-description">Calculate the economic and environmental impact of biofouling on vessel performance and fuel consumption based on research data from the University of Melbourne.</p>
+                        <button id="open-cost-calculator" class="btn btn-primary">Open Calculator</button>
                     </div>
-
+                    
                     <!-- Biofouling Management Plan Generator -->
-                    <div id="management-plan-card" class="tool-card">
+                    <div class="tool-card">
                         <div class="tool-header">
                             <div class="tool-icon">
                                 <i class="fas fa-file-alt"></i>
                             </div>
-                            <h3 class="tool-title">Management Plan Generator</h3>
+                            <h3 class="tool-title">Biofouling Management Plan</h3>
                         </div>
-                        <p class="tool-description">Generate a customized biofouling management plan and inspection report compliant with international standards.</p>
-                        <button id="open-plan-generator" class="btn btn-primary">
-                            <i class="fas fa-external-link-alt"></i>
-                            Open Generator
-                        </button>
+                        <p class="tool-description">Generate a comprehensive biofouling management plan tailored to your vessel, compliant with IMO guidelines and international biosecurity regulations.</p>
+                        <button id="open-bfmp-generator" class="btn btn-primary">Generate Plan</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Hull Fouling Cost Calculator Tool Modal -->
-        <div id="cost-calculator-modal" class="modal-overlay">
+        <!-- Load the Hull Fouling Calculator Modal -->
+        <div id="cost-calculator-modal" class="modal-overlay" style="display: none;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>Hull Fouling Cost Calculator</h2>
-                    <button class="modal-close" data-modal="cost-calculator-modal" aria-label="Close Cost Calculator">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <h2><i class="fas fa-calculator"></i> Hull Fouling Cost Calculator</h2>
+                    <button class="modal-close" aria-label="Close modal"><i class="fas fa-times"></i></button>
                 </div>
                 <div class="modal-body">
+                    <p>Calculate the economic and environmental impact of biofouling on vessel performance and fuel consumption based on research data from the University of Melbourne.</p>
+                    
                     <!-- Currency Selector -->
                     <div class="currency-selector-container">
                         <div class="currency-selector">
                             <label for="currencySelect"><i class="fas fa-money-bill-wave"></i> Currency:</label>
                             <select id="currencySelect">
                                 <option value="AUD">AUD</option>
-                                <option value="USD">USD</option>
                                 <option value="GBP">GBP</option>
-                                <option value="EUR">EUR</option>
                             </select>
                         </div>
                     </div>
 
+                    <!-- Chart Card - Moved to top -->
+                    <div class="calculator-chart">
+                        <div class="card-header">
+                            <h3 class="card-header-title">Cost & Emissions vs. Speed</h3>
+                            <div class="card-header-icon">
+                                <i class="fas fa-chart-area"></i>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <div class="chart-wrapper">
+                                    <canvas id="myChart" width="600" height="400"></canvas>
+                                </div>
+                            </div>
+                            <p>This chart shows how operating costs and emissions increase with speed for both clean and fouled hulls. The difference between the two cost lines represents your potential savings from hull maintenance.</p>
+                        </div>
+                    </div>
+
                     <!-- Calculator Grid -->
-                    <div class="calculator-grid">
+                    <div class="calculator-grid" id="hull-calculator-container">
                         <!-- Controls Card -->
                         <div class="calculator-controls">
                             <div class="card-header">
@@ -369,18 +535,18 @@
                             <div class="card-body">
                                 <!-- Vessel Selection -->
                                 <div class="form-group">
-                                    <label for="vesselTypeCalc">Vessel Type</label> <!-- Renamed ID -->
+                                    <label for="vesselType">Vessel Type</label>
                                     <div class="input-wrapper">
-                                        <select id="vesselTypeCalc"> <!-- Renamed ID -->
+                                        <select id="vesselType">
                                             <option value="tug">Harbor Tug (32m)</option>
                                             <option value="cruiseShip">Passenger Cruise Ship (93m)</option>
                                             <option value="osv">Offshore Supply Vessel (50m)</option>
                                             <option value="coaster">Coastal Freighter (80m)</option>
                                         </select>
                                     </div>
-                                    <span class="help-text">Select vessel to load parameters measured in research</span>
+                                    <span class="help-text">Select vessel to load parameters measured in UoM research</span>
                                 </div>
-
+                                
                                 <!-- Cost Inputs -->
                                 <div class="form-group">
                                     <label for="costEco">Operating Cost @ Economic Speed</label>
@@ -390,7 +556,7 @@
                                     </div>
                                     <span class="help-text">Base fuel cost at economic speed ($/hr with clean hull)</span>
                                 </div>
-
+                                
                                 <div class="form-group">
                                     <label for="costFull">Operating Cost @ Full Speed</label>
                                     <div class="input-wrapper">
@@ -399,7 +565,7 @@
                                     </div>
                                     <span class="help-text">Base fuel cost at full speed ($/hr with clean hull)</span>
                                 </div>
-
+                                
                                 <!-- Fouling Rating Slider -->
                                 <div class="slider-container">
                                     <div class="slider-header">
@@ -433,57 +599,53 @@
                                             <div class="tick-label">FR5</div>
                                         </div>
                                     </div>
-
+                                    
                                     <table class="fouling-rating-table">
-                                         <thead>
-                                            <tr>
-                                                <th>Rating</th>
-                                                <th>Description</th>
-                                                <th>Impact</th>
-                                                <th>Validation</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>FR0</td>
-                                                <td>Clean hull</td>
-                                                <td>+0%</td>
-                                                <td>Baseline</td>
-                                            </tr>
-                                            <tr>
-                                                <td>FR1</td>
-                                                <td>Light slime</td>
-                                                <td>+15%</td>
-                                                <td>Research calibrated</td>
-                                            </tr>
-                                            <tr>
-                                                <td>FR2</td>
-                                                <td>Medium slime</td>
-                                                <td>+35%</td>
-                                                <td>Research calibrated</td>
-                                            </tr>
-                                            <tr>
-                                                <td>FR3</td>
-                                                <td>Heavy slime</td>
-                                                <td>+60%</td>
-                                                <td>Research calibrated</td>
-                                            </tr>
-                                            <tr>
-                                                <td>FR4</td>
-                                                <td>Light calcareous</td>
-                                                <td>+95%</td>
-                                                <td>Research calibrated</td>
-                                            </tr>
-                                            <tr>
-                                                <td>FR5</td>
-                                                <td>Heavy calcareous</td>
-                                                <td>+193%</td>
-                                                <td>Directly measured</td>
-                                            </tr>
-                                        </tbody>
+                                        <tr>
+                                            <th>Rating</th>
+                                            <th>Description</th>
+                                            <th>Impact</th>
+                                            <th>Validation</th>
+                                        </tr>
+                                        <tr>
+                                            <td>FR0</td>
+                                            <td>Clean hull</td>
+                                            <td>+0%</td>
+                                            <td>Baseline</td>
+                                        </tr>
+                                        <tr>
+                                            <td>FR1</td>
+                                            <td>Light slime</td>
+                                            <td>+15%</td>
+                                            <td>Research calibrated</td>
+                                        </tr>
+                                        <tr>
+                                            <td>FR2</td>
+                                            <td>Medium slime</td>
+                                            <td>+35%</td>
+                                            <td>Research calibrated</td>
+                                        </tr>
+                                        <tr>
+                                            <td>FR3</td>
+                                            <td>Heavy slime</td>
+                                            <td>+60%</td>
+                                            <td>Research calibrated</td>
+                                        </tr>
+                                        <tr>
+                                            <td>FR4</td>
+                                            <td>Light calcareous</td>
+                                            <td>+95%</td>
+                                            <td>Research calibrated</td>
+                                        </tr>
+                                        <tr>
+                                            <td>FR5</td>
+                                            <td>Heavy calcareous</td>
+                                            <td>+193%</td>
+                                            <td>Directly measured (UoM)</td>
+                                        </tr>
                                     </table>
                                 </div>
-
+                                
                                 <!-- Results Section -->
                                 <div class="results-section">
                                     <h3><i class="fas fa-chart-line"></i> Cost Impact Analysis</h3>
@@ -491,29 +653,11 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Chart Card -->
-                        <div class="calculator-chart">
-                            <div class="card-header">
-                                <h3 class="card-header-title">Cost & Emissions vs. Speed</h3>
-                                <div class="card-header-icon">
-                                    <i class="fas fa-chart-area"></i>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="chart-container">
-                                    <div class="chart-wrapper">
-                                        <canvas id="myChart" height="400"></canvas>
-                                    </div>
-                                </div>
-                                <p>This chart shows how operating costs and emissions increase with speed for both clean and fouled hulls. The difference between the two cost lines represents your potential savings from hull maintenance.</p>
-
-                                <div class="information-note">
-                                    <h4><i class="fas fa-lightbulb"></i> Understanding The Model</h4>
-                                    <p>The calculator uses a physics-based model that accounts for both frictional resistance (affected by fouling) and wave-making resistance (primarily affected by speed). The fouling impact values at FR5 (193% increase in friction) are directly measured from research, with intermediate values derived from fluid dynamics modeling.</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="info-section">
+                        <h4><i class="fas fa-lightbulb"></i> Understanding The Model</h4>
+                        <p>The calculator uses a physics-based model that accounts for both frictional resistance (affected by fouling) and wave-making resistance (primarily affected by speed). The fouling impact values at FR5 (193% increase in friction) are directly measured from University of Melbourne research on the Coral Adventurer, with intermediate values derived from fluid dynamics modeling.</p>
                     </div>
 
                     <div class="research-section">
@@ -533,6 +677,7 @@
                 </div>
             </div>
         </div>
+        <!-- End of Hull Fouling Calculator Modal -->
 
         <!-- About Section -->
         <section id="about" class="about">
@@ -642,448 +787,6 @@
             </div>
         </section>
     </main>
-
-    <!-- Biofouling Management Plan Generator Modal -->
-    <div id="plan-generator-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Biofouling Management Plan & Inspection Report Generator</h2>
-                <button class="modal-close" data-modal="plan-generator-modal" aria-label="Close Plan Generator">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Progress Indicator -->
-                <div class="progress-indicator">
-                    <div class="progress-step active" data-step="1">
-                        <span class="step-number">1</span>
-                        <span class="step-label">Vessel & BFMP</span>
-                    </div>
-                    <div class="progress-step" data-step="2">
-                        <span class="step-number">2</span>
-                        <span class="step-label">Inspection Details</span>
-                    </div>
-                    <div class="progress-step" data-step="3">
-                        <span class="step-number">3</span>
-                        <span class="step-label">Component Assessment</span>
-                    </div>
-                    <div class="progress-step" data-step="4">
-                        <span class="step-number">4</span>
-                        <span class="step-label">Summary & Recommendations</span>
-                    </div>
-                    <div class="progress-step" data-step="5">
-                        <span class="step-number">5</span>
-                        <span class="step-label">Generate Report</span>
-                    </div>
-                </div>
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="vessel-details">Vessel & BFMP</button>
-                    <button class="tab-btn" data-tab="inspection-details">Inspection Details</button>
-                    <button class="tab-btn" data-tab="components">Component Assessment</button>
-                    <button class="tab-btn" data-tab="recommendations">Summary & Recommendations</button>
-                    <button class="tab-btn" data-tab="generate">Generate Report</button>
-                </div>
-
-                <!-- Vessel Details Tab -->
-                <div id="vessel-details" class="tab-pane active">
-                    <h4>Vessel Particulars</h4>
-                    <form class="form-grid">
-                        <div class="form-group">
-                            <label for="vesselName">Vessel Name</label>
-                            <input type="text" id="vesselName" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="imo">IMO Number</label>
-                            <input type="text" id="imo" class="form-control" pattern="[0-9]{7}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="vesselTypeGen">Vessel Type</label>
-                            <select id="vesselTypeGen" class="form-control" required>
-                                <option value="">Select Type</option>
-                                <option value="Bulk Carrier">Bulk Carrier</option>
-                                <option value="Container Ship">Container Ship</option>
-                                <option value="Tanker">Tanker</option>
-                                <option value="General Cargo">General Cargo</option>
-                                <option value="Passenger Ship">Passenger Ship</option>
-                                <option value="Naval Vessel">Naval Vessel</option>
-                                <option value="Offshore Vessel">Offshore Vessel</option>
-                                <option value="Tug">Tug</option>
-                                <option value="Fishing Vessel">Fishing Vessel</option>
-                                <option value="Yacht/Recreational">Yacht/Recreational</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="vesselCommissioned">Year Commissioned</label>
-                            <input type="number" id="vesselCommissioned" class="form-control" min="1900" max="2100" placeholder="YYYY" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="grossTonnage">Gross Tonnage (t)</label>
-                            <input type="number" id="grossTonnage" class="form-control" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="length">Length Overall (m)</label>
-                            <input type="number" id="length" class="form-control" min="0" step="0.1" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="beam">Beam (m)</label>
-                            <input type="number" id="beam" class="form-control" min="0" step="0.1" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="vesselDraft">Draft at Inspection (m)</label>
-                            <input type="number" id="vesselDraft" class="form-control" min="0" step="0.1" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="operatingArea">Primary Operating Area</label>
-                            <select id="operatingArea" class="form-control" required>
-                                <option value="">Select Area</option>
-                                <option value="Global">Global</option>
-                                <option value="Regional (e.g., SE Asia)">Regional (e.g., SE Asia)</option>
-                                <option value="Coastal (Australia)">Coastal (Australia)</option>
-                                <option value="Local (e.g., Port Philip Bay)">Local (e.g., Port Philip Bay)</option>
-                                <option value="Tropical Waters">Tropical Waters</option>
-                                <option value="Temperate Waters">Temperate Waters</option>
-                                <option value="Polar Waters">Polar Waters</option>
-                            </select>
-                        </div>
-                    </form>
-                    <hr style="margin: var(--space-lg) 0;">
-                    <h4>Biofouling Management Details</h4>
-                    <form class="form-grid">
-                        <div class="form-group">
-                            <label for="bfmpReference">BFMP Document Reference</label>
-                            <input type="text" id="bfmpReference" class="form-control" placeholder="e.g., VSL-BFMP-001 Rev 2">
-                        </div>
-                        <div class="form-group">
-                            <label for="afsType">Antifouling System (AFS) Type</label>
-                            <input type="text" id="afsType" class="form-control" placeholder="e.g., TBT-free SPC, Foul Release" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="antifoulingDate">AFS Last Applied Date</label>
-                            <input type="date" id="antifoulingDate" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="afsExpectedLife">AFS Expected Life (Years)</label>
-                            <input type="number" id="afsExpectedLife" class="form-control" min="1" max="10" placeholder="e.g., 5">
-                        </div>
-                        <div class="form-group full-width">
-                            <label for="nicheAreaStrategy">Niche Area Management Strategy</label>
-                            <textarea id="nicheAreaStrategy" class="form-control" rows="3" placeholder="Briefly describe general strategy for niche areas (e.g., MGPS for sea chests, regular cleaning for thrusters)..."></textarea>
-                        </div>
-                    </form>
-                    <div class="form-actions">
-                        <button class="btn btn-secondary prev-tab" data-prev="vessel-details" disabled>Previous</button>
-                        <button class="btn btn-primary next-tab" data-next="inspection-details">Next</button>
-                    </div>
-                </div>
-
-                <!-- Inspection Details Tab -->
-                <div id="inspection-details" class="tab-pane">
-                    <form class="form-grid">
-                        <div class="form-group">
-                            <label for="inspectionDate">Inspection Date</label>
-                            <input type="date" id="inspectionDate" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="inspectionLocation">Location</label>
-                            <input type="text" id="inspectionLocation" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="inspectionReason">Reason for Inspection</label>
-                            <select id="inspectionReason" class="form-control" required>
-                                <option value="">Select Reason</option>
-                                <option value="Routine Schedule">Routine Schedule</option>
-                                <option value="Pre-Arrival (Port Entry)">Pre-Arrival (Port Entry)</option>
-                                <option value="Pre-Drydock">Pre-Drydock</option>
-                                <option value="Post-Cleaning Verification">Post-Cleaning Verification</option>
-                                <option value="Investigative">Investigative (e.g., performance loss)</option>
-                                <option value="Regulatory Request">Regulatory Request</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="visibility">Visibility (m)</label>
-                            <input type="number" id="visibility" class="form-control" min="0" step="0.1" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="inspector">Lead Inspector Name</label>
-                            <input type="text" id="inspector" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="inspectionCompany">Inspection Company</label>
-                            <input type="text" id="inspectionCompany" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="clientDetails">Client Details</label>
-                            <input type="text" id="clientDetails" class="form-control" placeholder="e.g., Vessel Owner/Operator Name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="clientRep">Client Representative Onsite</label>
-                            <input type="text" id="clientRep" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="supervisor">Inspection Supervisor</label>
-                            <input type="text" id="supervisor" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="diverCount">Number of Divers/ROVs</label>
-                            <select id="diverCount" class="form-control" required>
-                                <option value="0">0</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="ROV Only">ROV Only</option>
-                                <option value="ROV + Divers">ROV + Divers</option>
-                            </select>
-                        </div>
-                        <div id="diverFields" class="form-group full-width">
-                            <!-- Dynamic fields added by JS -->
-                        </div>
-                        <div class="form-group full-width">
-                            <label for="methodologyText">Inspection Methodology</label>
-                            <textarea id="methodologyText" class="form-control" rows="4" required>Standard visual and tactile inspection methods employed (e.g., Diver survey, Mini-ROV with HD camera). Representative areas of hull and all niche areas inspected. Fouling rated according to [Specify Standard, e.g., FR scale]. Paint condition rated according to [Specify Standard, e.g., PDR scale].</textarea>
-                        </div>
-                    </form>
-                    <div class="form-actions">
-                        <button class="btn btn-secondary prev-tab" data-prev="vessel-details">Previous</button>
-                        <button class="btn btn-primary next-tab" data-next="components">Next</button>
-                    </div>
-                </div>
-
-                <!-- Components Tab -->
-                <div id="components" class="tab-pane">
-                    <h4>Component Condition Assessment</h4>
-                    <p>Select a component, record observations, ratings, and any actions taken/required.</p>
-                    <div class="components-grid">
-                        <div class="components-list">
-                            <h5><i class="fas fa-ship"></i> Select Component</h5>
-                            <div class="component-items">
-                                <div class="component-item" data-id="hull_flat_bottom">
-                                    <span class="component-name">Hull - Flat Bottom</span>
-                                </div>
-                                <div class="component-item" data-id="hull_vertical_sides">
-                                    <span class="component-name">Hull - Vertical Sides</span>
-                                </div>
-                                <div class="component-item" data-id="hull_bow_dome">
-                                    <span class="component-name">Hull - Bow/Bulbous Bow</span>
-                                </div>
-                                <div class="component-item" data-id="propeller_blades">
-                                    <span class="component-name">Propeller - Blades</span>
-                                </div>
-                                <div class="component-item" data-id="propeller_boss">
-                                    <span class="component-name">Propeller - Boss/Cap</span>
-                                </div>
-                                <div class="component-item" data-id="rudder_blade">
-                                    <span class="component-name">Rudder - Blade</span>
-                                </div>
-                                <div class="component-item" data-id="rudder_hinges">
-                                    <span class="component-name">Rudder - Hinges/Horn</span>
-                                </div>
-                                <div class="component-item" data-id="thruster_tunnel">
-                                    <span class="component-name">Thruster - Tunnel/Grids</span>
-                                </div>
-                                <div class="component-item" data-id="thruster_unit">
-                                    <span class="component-name">Thruster - Propeller/Unit</span>
-                                </div>
-                                <div class="component-item" data-id="sea_chest_grates">
-                                    <span class="component-name">Sea Chest - Grates</span>
-                                </div>
-                                <div class="component-item" data-id="sea_chest_internal">
-                                    <span class="component-name">Sea Chest - Internal (If viewed)</span>
-                                </div>
-                                <div class="component-item" data-id="stabiliser_fins">
-                                    <span class="component-name">Stabiliser Fins</span>
-                                </div>
-                                <div class="component-item" data-id="bilge_keels">
-                                    <span class="component-name">Bilge Keels</span>
-                                </div>
-                                <div class="component-item" data-id="iccpanodes">
-                                    <span class="component-name">ICCP/Anodes</span>
-                                </div>
-                                <div class="component-item" data-id="waterline">
-                                    <span class="component-name">Waterline/Boottop</span>
-                                </div>
-                                <div class="component-item" data-id="other">
-                                    <span class="component-name">Other Niche Area</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="component-details">
-                            <div class="select-component-message">
-                                <p><i class="fas fa-arrow-left"></i> Please select a component to assess.</p>
-                            </div>
-                            <div class="component-form" style="display: none;">
-                                <h5 id="component-title" style="margin-bottom: var(--space-md);"></h5>
-                                <div class="form-group" id="other-component-name-group" style="display: none;">
-                                    <label for="other-component-name">Specify Other Component Name:</label>
-                                    <input type="text" id="other-component-name" class="form-control">
-                                </div>
-                                <form>
-                                    <div class="form-group">
-                                        <label for="fouling-rating">Fouling Rating (FR)</label>
-                                        <select id="fouling-rating" class="form-control" required>
-                                            <option value="FR0">FR0 - No fouling</option>
-                                            <option value="FR1">FR1 - Slime Layer (<1mm)</option>
-                                            <option value="FR2">FR2 - Slime Layer (>1mm)</option>
-                                            <option value="FR3">FR3 - Algae/Attached Fauna (<5cm height)</option>
-                                            <option value="FR4">FR4 - Algae/Attached Fauna (>5cm height)</option>
-                                            <option value="FR5">FR5 - Dense/Complex Community</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="fouling-coverage">Fouling Coverage (%)</label>
-                                        <select id="fouling-coverage" class="form-control" required>
-                                            <option value="0%">0%</option>
-                                            <option value="1-10%">1-10%</option>
-                                            <option value="11-30%">11-30%</option>
-                                            <option value="31-50%">31-50%</option>
-                                            <option value="51-75%">51-75%</option>
-                                            <option value="76-100%">76-100%</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="pdr-rating">Paint Damage Rating (PDR)</label>
-                                        <select id="pdr-rating" class="form-control" required>
-                                            <option value="PDR0">PDR0 - Intact/No Damage</option>
-                                            <option value="PDR1">PDR1 - Minor Abrasion</option>
-                                            <option value="PDR2">PDR2 - Moderate Abrasion/Scratches</option>
-                                            <option value="PDR3">PDR3 - Severe Abrasion/Peeling</option>
-                                            <option value="PDR4">PDR4 - Extensive Peeling/Blistering</option>
-                                            <option value="PDR5">PDR5 - Coating Failure/Bare Substrate</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="management-action">Management Action (Taken/Required)</label>
-                                        <select id="management-action" class="form-control">
-                                            <option value="None">None Required / Monitored</option>
-                                            <option value="Cleaned">Cleaned During Inspection</option>
-                                            <option value="Cleaning Recommended">Cleaning Recommended</option>
-                                            <option value="AFS Repair Recommended">AFS Repair Recommended</option>
-                                            <option value="Further Investigation">Further Investigation Required</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="component-comments">Observations & Specific Fouling Types</label>
-                                        <textarea id="component-comments" class="form-control" rows="4" placeholder="Describe fouling types (e.g., barnacles, mussels, specific algae), distribution, paint condition details..." required></textarea>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="component-photo">Add Photos (Optional)</label>
-                                        <input type="file" id="component-photo" class="form-control" accept="image/*" multiple>
-                                        <small class="form-text text-muted">Max 5 photos per component. Max size 5MB each.</small>
-                                    </div>
-                                    <div id="photo-preview" class="photo-preview-grid"></div>
-                                    <button type="button" id="save-component" class="btn btn-primary"><i class="fas fa-save"></i> Save Component Data</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button class="btn btn-secondary prev-tab" data-prev="inspection-details">Previous</button>
-                        <button class="btn btn-primary next-tab" data-next="recommendations">Next</button>
-                    </div>
-                </div>
-
-                <!-- Recommendations Tab -->
-                <div id="recommendations" class="tab-pane">
-                    <h4>Summary & Recommendations</h4>
-                    <form class="form-grid">
-                        <div class="form-group full-width">
-                            <label for="overallCondition">Overall Hull & Niche Area Condition Summary</label>
-                            <textarea id="overallCondition" class="form-control" rows="4" placeholder="Summarise the general state of biofouling and AFS across the vessel based on the assessment." required></textarea>
-                        </div>
-                        <div class="form-group full-width">
-                            <label for="summaryText">Executive Summary (for Report)</label>
-                            <textarea id="summaryText" class="form-control" rows="4" placeholder="Brief summary of key findings and overall assessment for the report introduction." required></textarea>
-                        </div>
-                        <div class="form-group full-width">
-                            <label for="recommendationsText">Detailed Recommendations</label>
-                            <textarea id="recommendationsText" class="form-control" rows="5" placeholder="List specific actions recommended (e.g., Clean propeller before departure, Schedule drydock for AFS repair, Update BFMP based on findings...)" required></textarea>
-                        </div>
-                        <div class="form-group full-width">
-                            <label for="nextInspectionDate">Recommended Next Inspection Date</label>
-                            <input type="date" id="nextInspectionDate" class="form-control">
-                        </div>
-                        <hr style="margin: var(--space-lg) 0;">
-                        <h4>Declaration & Sign Off</h4>
-                        <div class="form-group full-width">
-                            <label for="declaration">Declaration</label>
-                            <textarea id="declaration" class="form-control" rows="4" required>I, the undersigned Lead Inspector, certify that this inspection was conducted in accordance with recognised industry standards and the information contained in this report is accurate and complete to the best of my knowledge and belief.</textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="inspectorNameSignOff">Inspector Name (Signing)</label>
-                            <input type="text" id="inspectorNameSignOff" class="form-control" required>
-                            <small>This name will appear with the signature.</small>
-                        </div>
-                        <div class="form-group full-width">
-                            <label for="signaturePad">Inspector Signature</label>
-                            <canvas id="signaturePad" class="signature-pad" width="400" height="150"></canvas>
-                            <button type="button" id="clearSignature" class="btn btn-secondary btn-sm"><i class="fas fa-eraser"></i> Clear Signature</button>
-                        </div>
-                    </form>
-                    <div class="form-actions">
-                        <button class="btn btn-secondary prev-tab" data-prev="components">Previous</button>
-                        <button class="btn btn-primary next-tab" data-next="generate">Next</button>
-                    </div>
-                </div>
-
-                <!-- Generate Report Tab -->
-                <div id="generate" class="tab-pane">
-                    <h4>Final Report Configuration</h4>
-                    <form class="form-grid">
-                        <div class="form-group">
-                            <label for="reportTitle">Report Title</label>
-                            <input type="text" id="reportTitle" class="form-control" value="Biofouling Inspection Report" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="documentNumber">Document Number</label>
-                            <input type="text" id="documentNumber" class="form-control" placeholder="e.g., MS-INSP-YYYY-XXX" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="documentRevision">Revision</label>
-                            <input type="text" id="documentRevision" class="form-control" value="0" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="reportFormat">Report Format</label>
-                            <select id="reportFormat" class="form-control" required>
-                                <option value="Full Report">Full Inspection Report</option>
-                            </select>
-                        </div>
-                        <div class="form-group full-width">
-                            <label for="coverPhoto">Cover Photo (Optional)</label>
-                            <input type="file" id="coverPhoto" class="form-control" accept="image/*">
-                            <small class="form-text text-muted">Upload an image for the report cover page. Max size 5MB.</small>
-                            <div id="cover-preview" class="cover-preview"></div>
-                        </div>
-                    </form>
-                    <div class="form-actions button-group">
-                        <button class="btn btn-secondary prev-tab" data-prev="recommendations">Previous</button>
-                        <button id="preview-report" class="btn btn-primary"><i class="fas fa-eye"></i> Preview Report</button>
-                        <button id="generate-report" class="btn btn-success"><i class="fas fa-download"></i> Download Report (HTML)</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Report Preview Modal -->
-    <div id="report-preview-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Report Preview</h2>
-                <button class="modal-close" data-modal="report-preview-modal" aria-label="Close Preview">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="report-preview-container"></div>
-            </div>
-            <div class="modal-footer">
-                <button id="close-preview" class="btn btn-secondary">Close</button>
-                <button id="download-report" class="btn btn-primary">Download Report</button>
-            </div>
-        </div>
-    </div>
 
     <footer class="main-footer">
         <div class="container">
@@ -1363,6 +1066,291 @@
             </div>
         </div>
     </div>
+
+    <!-- BFMP Generator Modal -->
+    <div id="bfmp-generator-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-alt"></i> Biofouling Management Plan Generator</h2>
+                <button class="modal-close" aria-label="Close modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p>Complete the form below to generate your customized Biofouling Management Plan (BFMP). This plan will help you meet IMO guidelines and international biosecurity regulations.</p>
+                
+                <form id="bfmp-form" class="bfmp-form">
+                    <div class="form-section">
+                        <h3>1. Vessel Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="vesselName">Vessel Name*</label>
+                                <input type="text" id="vesselName" name="vesselName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="imoNumber">IMO Number</label>
+                                <input type="text" id="imoNumber" name="imoNumber" placeholder="e.g., 9876543">
+                            </div>
+                            <div class="form-group">
+                                <label for="flagState">Flag State*</label>
+                                <input type="text" id="flagState" name="flagState" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="vesselType">Vessel Type*</label>
+                                <select id="vesselType" name="vesselType" required>
+                                    <option value="">Select vessel type</option>
+                                    <option value="Bulk Carrier">Bulk Carrier</option>
+                                    <option value="Container Ship">Container Ship</option>
+                                    <option value="Cruise Ship">Cruise Ship</option>
+                                    <option value="Fishing Vessel">Fishing Vessel</option>
+                                    <option value="Oil Tanker">Oil Tanker</option>
+                                    <option value="Passenger Ship">Passenger Ship</option>
+                                    <option value="RoRo">RoRo</option>
+                                    <option value="Supply Vessel">Supply Vessel</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="vesselLength">Length Overall (m)*</label>
+                                <input type="number" id="vesselLength" name="vesselLength" min="1" step="0.1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="grossTonnage">Gross Tonnage</label>
+                                <input type="number" id="grossTonnage" name="grossTonnage" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="yearBuilt">Year Built</label>
+                                <input type="number" id="yearBuilt" name="yearBuilt" min="1900" max="2099">
+                            </div>
+                            <div class="form-group">
+                                <label for="callSign">Call Sign</label>
+                                <input type="text" id="callSign" name="callSign">
+                            </div>
+                            <div class="form-group">
+                                <label for="homePort">Home Port</label>
+                                <input type="text" id="homePort" name="homePort">
+                            </div>
+                            <div class="form-group">
+                                <label for="owner">Owner/Operator</label>
+                                <input type="text" id="owner" name="owner">
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="vesselImageUpload">Vessel Image (for cover page)</label>
+                                <input type="file" id="vesselImageUpload" name="vesselImageUpload" accept="image/*">
+                                <div id="imagePreview" class="image-preview" style="display: none; margin-top: 10px;">
+                                    <img id="vesselImagePreview" style="max-width: 100%; max-height: 200px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>2. Antifouling System</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="afSystem">Antifouling System Type*</label>
+                                <select id="afSystem" name="afSystem" required>
+                                    <option value="">Select system type</option>
+                                    <option value="Self-Polishing Copolymer">Self-Polishing Copolymer</option>
+                                    <option value="Controlled Depletion Polymer">Controlled Depletion Polymer</option>
+                                    <option value="Hard Coating">Hard Coating</option>
+                                    <option value="Foul Release">Foul Release</option>
+                                    <option value="Biocidal Coating">Biocidal Coating</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="afManufacturer">Manufacturer</label>
+                                <input type="text" id="afManufacturer" name="afManufacturer">
+                            </div>
+                            <div class="form-group">
+                                <label for="afProduct">Product Name</label>
+                                <input type="text" id="afProduct" name="afProduct">
+                            </div>
+                            <div class="form-group">
+                                <label for="afColor">Color</label>
+                                <input type="text" id="afColor" name="afColor">
+                            </div>
+                            <div class="form-group">
+                                <label for="afApplication">Application Date</label>
+                                <input type="date" id="afApplication" name="afApplication">
+                            </div>
+                            <div class="form-group">
+                                <label for="afValidity">Valid Until</label>
+                                <input type="date" id="afValidity" name="afValidity">
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="afDetails">Additional Details</label>
+                                <textarea id="afDetails" name="afDetails" rows="3" placeholder="Manufacturer, product name, etc."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>3. Inspection and Maintenance</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="inspectionFrequency">Inspection Frequency*</label>
+                                <select id="inspectionFrequency" name="inspectionFrequency" required>
+                                    <option value="">Select frequency</option>
+                                    <option value="Monthly">Monthly</option>
+                                    <option value="Quarterly">Quarterly</option>
+                                    <option value="Bi-annually">Bi-annually</option>
+                                    <option value="Annually">Annually</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="cleaningMethod">Primary Cleaning Method*</label>
+                                <select id="cleaningMethod" name="cleaningMethod" required>
+                                    <option value="">Select method</option>
+                                    <option value="In-water cleaning with capture">In-water cleaning with capture</option>
+                                    <option value="In-water cleaning without capture">In-water cleaning without capture</option>
+                                    <option value="Dry-dock cleaning">Dry-dock cleaning</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Niche Areas to Monitor</label>
+                                <div class="checkbox-group">
+                                    <label><input type="checkbox" name="nicheAreas" value="Sea chests and internal seawater cooling systems"> Sea chests and cooling systems</label>
+                                    <label><input type="checkbox" name="nicheAreas" value="Rudder hinges and stabilizer fins"> Rudder hinges and stabilizer fins</label>
+                                    <label><input type="checkbox" name="nicheAreas" value="Propellers, shafts, and associated components"> Propellers and shafts</label>
+                                    <label><input type="checkbox" name="nicheAreas" value="Bow/stern thrusters and thruster tunnels"> Thrusters and tunnels</label>
+                                    <label><input type="checkbox" name="nicheAreas" value="Gratings, chain lockers, and anchor chains"> Gratings and chain lockers</label>
+                                    <label><input type="checkbox" name="nicheAreas" value="Bilge keels and appendages"> Bilge keels and appendages</label>
+                                </div>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="maintenanceDetails">Maintenance Strategy</label>
+                                <textarea id="maintenanceDetails" name="maintenanceDetails" rows="3" placeholder="Describe your maintenance strategy for hull cleaning and niche areas"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>4. Operational Profile</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="operatingRegions">Primary Operating Regions*</label>
+                                <select id="operatingRegions" name="operatingRegions" multiple required>
+                                    <option value="North Pacific">North Pacific</option>
+                                    <option value="South Pacific">South Pacific</option>
+                                    <option value="North Atlantic">North Atlantic</option>
+                                    <option value="South Atlantic">South Atlantic</option>
+                                    <option value="Indian Ocean">Indian Ocean</option>
+                                    <option value="Mediterranean">Mediterranean</option>
+                                    <option value="Caribbean">Caribbean</option>
+                                    <option value="Arctic">Arctic</option>
+                                    <option value="Antarctic">Antarctic</option>
+                                </select>
+                                <span class="help-text">Hold Ctrl/Cmd to select multiple regions</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="tradingPattern">Trading Pattern</label>
+                                <select id="tradingPattern" name="tradingPattern">
+                                    <option value="">Select pattern</option>
+                                    <option value="Fixed route">Fixed route</option>
+                                    <option value="Tramping">Tramping</option>
+                                    <option value="Coastal">Coastal</option>
+                                    <option value="Deep sea">Deep sea</option>
+                                    <option value="Mixed">Mixed</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="avgSpeed">Average Operating Speed (knots)</label>
+                                <input type="number" id="avgSpeed" name="avgSpeed" min="1" max="50" step="0.5">
+                            </div>
+                            <div class="form-group">
+                                <label for="portCalls">Average Port Calls per Year*</label>
+                                <input type="number" id="portCalls" name="portCalls" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="layupPeriods">Typical Layup Periods</label>
+                                <input type="text" id="layupPeriods" name="layupPeriods" placeholder="e.g., 2 weeks in December">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>5. Additional Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label for="trainingDetails">Crew Training Details</label>
+                                <textarea id="trainingDetails" name="trainingDetails" rows="3" placeholder="Specify any special training requirements for crew members"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="approvalAuthority">Plan Approval Authority</label>
+                                <input type="text" id="approvalAuthority" name="approvalAuthority" placeholder="e.g., Ship Management, Flag State">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="bfmp-reset-btn">Reset Form</button>
+                        <button type="submit" class="btn btn-primary" id="bfmp-generate-btn">Generate BFMP</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- End of BFMP Generator Modal -->
+
+    <!-- BFMP Information Modal -->
+    <div id="bfmp-info-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Biofouling Management Plan Generator</h2>
+                <button class="modal-close" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="intro-content">
+                    <div class="intro-icon">
+                        <i class="fas fa-ship"></i>
+                    </div>
+                    <h3>Why You Need a Biofouling Management Plan</h3>
+                    <p>A Biofouling Management Plan (BFMP) is a vessel-specific document that outlines strategies and procedures to manage the accumulation of marine organisms on a vessel's submerged surfaces. These plans have become essential for international shipping as biofouling represents a significant pathway for invasive aquatic species transfer, which can devastate marine ecosystems and impact maritime industries.</p>
+                    
+                    <p>The International Maritime Organization (IMO) established guidelines for biofouling management through Resolution MEPC.207(62), providing a framework that many flag states now recommend or require. Australia and New Zealand have implemented some of the world's most stringent biofouling regulations, making compliant BFMPs mandatory for vessels entering their waters under their respective Biosecurity Acts.</p>
+                    
+                    <div class="benefits-grid">
+                        <div class="benefit-item">
+                            <div class="benefit-icon"><i class="fas fa-check-circle"></i></div>
+                            <div class="benefit-text">Regulatory Compliance</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon"><i class="fas fa-leaf"></i></div>
+                            <div class="benefit-text">Environmental Protection</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon"><i class="fas fa-gas-pump"></i></div>
+                            <div class="benefit-text">Reduced Fuel Consumption</div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon"><i class="fas fa-anchor"></i></div>
+                            <div class="benefit-text">Fewer Port Delays</div>
+                        </div>
+                    </div>
+                    
+                    <h3>Our BFMP Generator Tool</h3>
+                    <p>Our tool guides you through creating a comprehensive, customized BFMP that meets international standards including the IMO guidelines and Australian/New Zealand requirements. The generated plan includes:</p>
+                    <ul>
+                        <li>Vessel-specific information and operating profiles</li>
+                        <li>Customized anti-fouling system details</li>
+                        <li>Tailored inspection and cleaning schedules</li>
+                        <li>Risk management procedures and contingency plans</li>
+                        <li>A complete biofouling record book template</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button id="bfmp-start-btn" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Start Creating Your BFMP
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End of BFMP Information Modal -->
 
 </body>
 </html>

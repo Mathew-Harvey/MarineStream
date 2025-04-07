@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="orange">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hull Fouling Calculator - MarineStream™</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    
+    <!-- MarineStream Styling -->
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <div id="cost-calculator-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-calculator"></i> Hull Fouling Cost Calculator</h2>
+                <button class="modal-close" aria-label="Close modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p>Calculate the economic and environmental impact of biofouling on vessel performance and fuel consumption based on research data from the University of Melbourne.</p>
+                
+                <!-- Currency Selector -->
+                <div class="currency-selector-container">
+                    <div class="currency-selector">
+                        <label for="currencySelect"><i class="fas fa-money-bill-wave"></i> Currency:</label>
+                        <select id="currencySelect">
+                            <option value="AUD">AUD</option>
+                            <option value="GBP">GBP</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Chart Full Width Section - Moved to top -->
+                <div class="full-width-chart">
+                    <div class="card-header">
+                        <i class="fas fa-chart-line card-header-icon"></i>
+                        <h3 class="card-header-title">Cost & Emissions vs. Speed</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="myChart"></canvas>
+                        </div>
+                        <p class="chart-description">This chart shows how operating costs and emissions increase with speed for both clean and fouled hulls. The difference between the two cost lines represents your potential savings from hull maintenance.</p>
+                    </div>
+                </div>
+
+                <!-- Calculator Grid -->
+                <div class="calculator-grid" id="hull-calculator-container">
+                    <!-- Controls Card -->
+                    <div class="calculator-controls">
+                        <div class="card-header">
+                            <i class="fas fa-sliders-h card-header-icon"></i>
+                            <h3 class="card-header-title">Vessel Parameters</h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- Vessel Selection -->
+                            <div class="form-group">
+                                <label for="vesselType">Vessel Type</label>
+                                <div class="input-wrapper">
+                                    <select id="vesselType" class="form-control">
+                                        <option value="tug">Harbor Tug (32m)</option>
+                                        <option value="cruiseShip">Passenger Cruise Ship (93m)</option>
+                                        <option value="osv">Offshore Supply Vessel (50m)</option>
+                                        <option value="coaster">Coastal Freighter (80m)</option>
+                                    </select>
+                                </div>
+                                <span class="help-text">Select vessel to load parameters measured in UoM research</span>
+                            </div>
+                            
+                            <!-- Cost Inputs -->
+                            <div class="form-group">
+                                <label for="costEco">Operating Cost @ Economic Speed</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-dollar-sign input-icon"></i>
+                                    <input type="number" id="costEco" class="input-with-icon form-control" step="50" min="100">
+                                </div>
+                                <span class="help-text">Base fuel cost at economic speed ($/hr with clean hull)</span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="costFull">Operating Cost @ Full Speed</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-dollar-sign input-icon"></i>
+                                    <input type="number" id="costFull" class="input-with-icon form-control" step="50" min="500">
+                                </div>
+                                <span class="help-text">Base fuel cost at full speed ($/hr with clean hull)</span>
+                            </div>
+                            
+                            <!-- Fouling Rating Slider -->
+                            <div class="slider-container">
+                                <div class="slider-header">
+                                    <label for="frSlider">Hull Fouling Rating</label>
+                                    <div id="frLabel" class="slider-value">FR2</div>
+                                </div>
+                                <input type="range" id="frSlider" class="range-slider" min="0" max="5" step="1" value="2">
+                                <div class="range-ticks">
+                                    <div class="range-tick" data-value="0">
+                                        <div class="tick-dot"></div>
+                                        <div class="tick-label">FR0</div>
+                                    </div>
+                                    <div class="range-tick" data-value="1">
+                                        <div class="tick-dot"></div>
+                                        <div class="tick-label">FR1</div>
+                                    </div>
+                                    <div class="range-tick" data-value="2">
+                                        <div class="tick-dot"></div>
+                                        <div class="tick-label">FR2</div>
+                                    </div>
+                                    <div class="range-tick" data-value="3">
+                                        <div class="tick-dot"></div>
+                                        <div class="tick-label">FR3</div>
+                                    </div>
+                                    <div class="range-tick" data-value="4">
+                                        <div class="tick-dot"></div>
+                                        <div class="tick-label">FR4</div>
+                                    </div>
+                                    <div class="range-tick" data-value="5">
+                                        <div class="tick-dot"></div>
+                                        <div class="tick-label">FR5</div>
+                                    </div>
+                                </div>
+                                
+                                <table class="fouling-rating-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Rating</th>
+                                            <th>Description</th>
+                                            <th>Impact</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>FR0</strong></td>
+                                            <td>Clean hull</td>
+                                            <td>+0%</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>FR1</strong></td>
+                                            <td>Light slime</td>
+                                            <td>+15%</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>FR2</strong></td>
+                                            <td>Medium slime</td>
+                                            <td>+35%</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>FR3</strong></td>
+                                            <td>Heavy slime</td>
+                                            <td>+60%</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>FR4</strong></td>
+                                            <td>Light calcareous</td>
+                                            <td>+95%</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>FR5</strong></td>
+                                            <td>Heavy calcareous</td>
+                                            <td>+193%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-container">
+                    <div class="results-card">
+                        <div class="card-header">
+                            <i class="fas fa-table card-header-icon"></i>
+                            <h3 class="card-header-title">Calculation Results</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="resultsText"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="research-section">
+                    <h3>Research Foundation</h3>
+                    <p>This calculator is based on research studies that used advanced 3D underwater scanning technology to measure hull roughness and calculate the impact on vessel performance.</p>
+                    <div class="research-highlights">
+                        <div class="highlight">
+                            <h4>Key Findings</h4>
+                            <ul>
+                                <li>Heavy calcareous fouling increased friction coefficient by up to 193%</li>
+                                <li>For a medium-sized cruise ship, this translates to approximately $3M in additional annual fuel costs</li>
+                                <li>CO₂ emissions increase proportionally with fuel consumption</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h4><i class="fas fa-lightbulb"></i> Understanding The Model</h4>
+                        <p>The calculator uses a physics-based model that accounts for both frictional resistance (affected by fouling) and wave-making resistance (primarily affected by speed). The fouling impact values at FR5 (193% increase in friction) are directly measured from University of Melbourne research on the Coral Adventurer, with intermediate values derived from fluid dynamics modeling.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load the calculator script -->
+    <script src="./hullCalc.js"></script>
+</body>
+</html> 
