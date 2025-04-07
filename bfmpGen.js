@@ -1001,11 +1001,11 @@ function generatePlanHtml(data) {
 
             <h2 id="intro">1. Introduction / Plan Overview</h2>
             <div class="section">
-                <p>This Biofouling Management Plan has been developed to comply with the International Maritime Organization's Guidelines for the Control and Management of Ships' Biofouling to Minimize the Transfer of Invasive Aquatic Species (IMO Resolution MEPC.207(62)) and Australian national guidelines based on the Biosecurity Act 2015.</p>
+                <p>This Biofouling Management Plan has been developed to comply with the International Maritime Organization's Guidelines for the Control and Management of Ships' Biofouling to Minimise the Transfer of Invasive Aquatic Species (IMO Resolution MEPC.207(62)) and Australian national guidelines based on the Biosecurity Act 2015.</p>
                 
                 <p>Biofouling is the accumulation of aquatic organisms such as microorganisms, plants, and animals on surfaces and structures immersed in or exposed to the aquatic environment. Biofouling represents a significant pathway for the introduction and spread of invasive aquatic species, which can harm local ecosystems, impact human health, and cause economic damage.</p>
                 
-                <p>The purpose of this plan is to provide guidance on vessel-specific biofouling management measures to minimize the transfer of invasive aquatic species. This plan details operational practices and measures to be implemented to manage biofouling risks for the vessel.</p>
+                <p>The purpose of this plan is to provide guidance on vessel-specific biofouling management measures to minimise the transfer of invasive aquatic species. This plan details operational practices and measures to be implemented to manage biofouling risks for the vessel.</p>
                 
                 <h3>1.1 Vessel Applicability</h3>
                 <p>This Biofouling Management Plan applies specifically to the vessel ${getFieldValueOrPlaceholder(data.vessel.name, 'Vessel name must be entered in the Vessel Details section')}, IMO ${getFieldValueOrPlaceholder(data.vessel.imo, 'IMO number must be entered in the Vessel Details section')}.</p>

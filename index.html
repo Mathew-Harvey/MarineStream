@@ -182,6 +182,47 @@
             color: var(--accent-color);
             font-weight: 600;
         }
+        
+        /* Thank You Modal Styles */
+        .thank-you-content {
+            text-align: center;
+            padding: var(--space-md);
+        }
+        
+        .thank-you-icon {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: var(--space-md);
+            animation: pulse 1.5s infinite;
+        }
+        
+        .thank-you-content h3 {
+            color: var(--accent-color);
+            margin-bottom: var(--space-md);
+        }
+        
+        .thank-you-content p {
+            margin-bottom: var(--space-md);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .modal-footer {
+            margin-top: var(--space-lg);
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
     </style>
 </head>
 
@@ -363,7 +404,7 @@
                     </div>
                     <div class="monitoring-content">
                         <h2>ROV Inspection Capabilities</h2>
-                        <p>MarineStream utilizes advanced Remotely Operated Vehicles (ROVs) for comprehensive underwater inspections and monitoring:</p>
+                        <p>MarineStream utilises advanced Remotely Operated Vehicles (ROVs) for comprehensive underwater inspections and monitoring:</p>
                         <ul class="feature-list">
                             <li>High-definition imaging and recording of underwater assets</li>
                             <li>Detailed inspection of hulls, propellers, and niche areas</li>
@@ -384,7 +425,7 @@
                 <div class="split-layout reverse">
                     <div class="monitoring-content">
                         <h2>ROV Crawler Cleaning Technology</h2>
-                        <p>Our specialized ROV crawler systems revolutionize underwater cleaning with advanced capture technology:</p>
+                        <p>Our specialised ROV crawler systems revolutionise underwater cleaning with advanced capture technology:</p>
                         <ul class="feature-list">
                             <li>Fully contained biofouling removal with 10μ filtration system</li>
                             <li>Compliant with Australian In-Water Cleaning Standards</li>
@@ -452,7 +493,7 @@
             <div class="container">
                 <div class="section-header">
                     <h2 class="section-title">Practical Tools</h2>
-                    <p class="section-description">Explore our range of specialized tools designed to assist mariners in making informed decisions about biofouling management.</p>
+                    <p class="section-description">Explore our range of specialised tools designed to assist mariners in making informed decisions about biofouling management.</p>
                 </div>
                 
                 <div class="tools-grid">
@@ -747,7 +788,7 @@
                             <input type="hidden" name="_subject" value="MarineStream Website Inquiry">
                             <input type="hidden" name="_captcha" value="true">
                             <input type="hidden" name="_template" value="table">
-                            <input type="hidden" name="_next" value="https://marinestream.com.au/thanks.html">
+                            <input type="hidden" name="_next" value="https://marinestream.com.au/?thankyou=true">
                             <input type="hidden" name="_blacklist" value="viagra,casino,porn,gambling,bitcoin,crypto">
                             <input type="hidden" name="_autoresponse" value="Thank you for contacting MarineStream. Mat, our Biofouling Manager, will get back to you shortly.">
                             
@@ -1083,7 +1124,7 @@
                 <button class="modal-close" aria-label="Close modal"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <p>Complete the form below to generate your customized Biofouling Management Plan (BFMP). This plan will help you meet IMO guidelines and international biosecurity regulations.</p>
+                <p>Complete the form below to generate your customised Biofouling Management Plan (BFMP). This plan will help you meet IMO guidelines and international biosecurity regulations.</p>
                 
                 <form id="bfmp-form" class="bfmp-form">
                     <div class="form-section">
@@ -1220,7 +1261,7 @@
                                 <label>Niche Areas to Monitor</label>
                                 <div class="checkbox-group">
                                     <label><input type="checkbox" name="nicheAreas" value="Sea chests and internal seawater cooling systems"> Sea chests and cooling systems</label>
-                                    <label><input type="checkbox" name="nicheAreas" value="Rudder hinges and stabilizer fins"> Rudder hinges and stabilizer fins</label>
+                                    <label><input type="checkbox" name="nicheAreas" value="Rudder hinges and stabiliser fins"> Rudder hinges and stabiliser fins</label>
                                     <label><input type="checkbox" name="nicheAreas" value="Propellers, shafts, and associated components"> Propellers and shafts</label>
                                     <label><input type="checkbox" name="nicheAreas" value="Bow/stern thrusters and thruster tunnels"> Thrusters and tunnels</label>
                                     <label><input type="checkbox" name="nicheAreas" value="Gratings, chain lockers, and anchor chains"> Gratings and chain lockers</label>
@@ -1360,5 +1401,29 @@
     </div>
     <!-- End of BFMP Information Modal -->
 
+    <!-- Add the Thank You Modal before closing body tag -->
+    <div id="thank-you-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-check-circle"></i> Thank You</h2>
+                <button class="modal-close" aria-label="Close modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="thank-you-content">
+                    <div class="thank-you-icon">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                    <h3>Message Received!</h3>
+                    <p>Thank you for contacting MarineStream. We appreciate your interest in our biofouling management solutions.</p>
+                    <p>Our team will review your message and get back to you as soon as possible, typically within 1-2 business days.</p>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary thank-you-close-btn">
+                            <i class="fas fa-check"></i> Continue Browsing
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

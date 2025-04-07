@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialize core website functionality
     initWebsiteFunctions(); // Includes theme toggles, nav, etc.
 
+    // Check for thank you parameter in URL and show thank you modal if present
+    checkForThankYouParameter();
+
     // Set up Cost Calculator Modal
     const openCostCalculatorBtn = document.getElementById('open-cost-calculator');
     if (openCostCalculatorBtn && !openCostCalculatorBtn._eventHandlerAttached) {
@@ -196,6 +199,23 @@ function initWebsiteFunctions() {
     }
 }
 
+// Function to check for thank you parameter in URL
+function checkForThankYouParameter() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('thankyou') && urlParams.get('thankyou') === 'true') {
+        // Show thank you modal
+        const thankYouModal = document.getElementById('thank-you-modal');
+        if (thankYouModal) {
+            thankYouModal.style.display = 'flex';
+            document.body.classList.add('modal-open');
+            
+            // Clear the parameter from URL without page refresh
+            const newUrl = window.location.pathname + window.location.hash;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    }
+}
+
 // Initialize modals
 function initModals() {
     const modalButtons = document.querySelectorAll('[data-modal]');
@@ -222,6 +242,18 @@ function initModals() {
             }
         });
     });
+    
+    // Add event listener for "Continue Browsing" button in thank you modal
+    const thankYouCloseBtn = document.querySelector('.thank-you-close-btn');
+    if (thankYouCloseBtn) {
+        thankYouCloseBtn.addEventListener('click', function() {
+            const thankYouModal = document.getElementById('thank-you-modal');
+            if (thankYouModal) {
+                thankYouModal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+            }
+        });
+    }
     
     // Close modal when clicking outside
     document.addEventListener('click', function(event) {
@@ -816,7 +848,7 @@ function generateBFMP(data) {
                     <p>${data.afDetails || 'No additional details provided.'}</p>
                     
                     <h3>Antifouling System Maintenance Strategy</h3>
-                    <p>Regular inspection and maintenance of the antifouling system is essential to minimize biofouling accumulation. The vessel will follow the maintenance schedule detailed in this plan.</p>
+                    <p>Regular inspection and maintenance of the antifouling system is essential to minimise biofouling accumulation. The vessel will follow the maintenance schedule detailed in this plan.</p>
                 </div>
                 
                 <div class="section">
@@ -835,7 +867,7 @@ function generateBFMP(data) {
                     <ul>
                         ${data.nicheAreas ? data.nicheAreas.map(area => `<li>${area}</li>`).join('') : `
                         <li>Sea chests and internal seawater cooling systems</li>
-                        <li>Rudder hinges and stabilizer fins</li>
+                        <li>Rudder hinges and stabiliser fins</li>
                         <li>Propellers, shafts, and associated components</li>
                         <li>Bow/stern thrusters and thruster tunnels</li>
                         <li>Gratings, chain lockers, and anchor chains</li>`}
