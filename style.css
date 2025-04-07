@@ -1238,24 +1238,32 @@ img, video { /* Apply to video as well */
     flex-direction: column;
     align-items: center;
     gap: var(--space-sm); /* Reduced gap */
-    padding: var(--space-md);
+    padding: var(--space-lg); /* Increased padding */
     background-color: white;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
-    min-width: 160px;
+    min-width: 180px; /* Slightly wider */
     text-align: center;
     transition: all var(--transition-normal);
     border: 1px solid var(--border-color);
+    text-decoration: none; /* Add this for links */
 }
 
 .cert-logo:hover {
     transform: translateY(-6px);
     box-shadow: var(--shadow-lg);
+    border-color: var(--accent-color); /* Highlight border on hover */
 }
 
 .cert-logo-img {
-    height: 65px; /* Slightly larger */
+    height: 100px; /* Increased height for larger logos */
     width: auto;
+    object-fit: contain; /* Ensure image maintains aspect ratio */
+    transition: transform var(--transition-normal);
+}
+
+.cert-logo:hover .cert-logo-img {
+    transform: scale(1.05); /* Subtle zoom effect on hover */
 }
 
 .cert-logo span {
@@ -2605,8 +2613,8 @@ canvas#signaturePad {
     .feature-card p { font-size: 0.95rem; }
 
     .cert-logos { gap: var(--space-md); }
-    .cert-logo { min-width: 130px; padding: var(--space-sm);}
-    .cert-logo-img { height: 55px; }
+    .cert-logo { min-width: 140px; padding: var(--space-md);}
+    .cert-logo-img { height: 80px; } /* Maintain large size but slightly reduced for mobile */
     .cert-logo span { font-size: 0.8rem;}
 
     .dashboard-feature { padding: var(--space-md); gap: var(--space-sm);}
