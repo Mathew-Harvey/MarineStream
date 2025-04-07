@@ -1500,8 +1500,8 @@ img, video { /* Apply to video as well */
     transition: color var(--transition-fast), border-color var(--transition-fast);
 }
 .footer-bottom a:hover {
-    color: white;
-    border-bottom-color: white;
+    color: var(--accent-color);
+    text-decoration: underline;
 }
 
 
@@ -3271,4 +3271,35 @@ canvas#signaturePad {
 }
 .carousel-slide:nth-child(6) {
     background-image: url('assets/hero6.jpg');
+}
+
+/* Email Fallback Modal Styles */
+.webmail-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+}
+
+.webmail-links .btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    flex: 1;
+    min-width: 120px;
+}
+
+.webmail-links .btn i {
+    font-size: 1.1em;
+}
+
+#emailContent {
+    max-height: 200px;
+    overflow-y: auto;
+    line-height: 1.5;
+}
+
+#copyEmailBtn {
+    margin: var(--space-md) 0;
 }

@@ -597,18 +597,18 @@
                     <div class="contact-form-container">
                         <h2>Get In Touch</h2>
                         <p>Interested in our solutions? Contact us to learn how our underwater capability can transform your marine asset management.</p>
-                        <form class="contact-form">
+                        <form id="contactForm" class="contact-form" onsubmit="return handleFormSubmit(event);">
                             <div class="form-group">
-                                <input type="text" id="name" name="name" required placeholder=" "> <!-- Added placeholder for label animation -->
-                                <label for="name">Your Name</label>
+                                <input type="text" id="yourName" name="name" required placeholder=" ">
+                                <label for="yourName">Your Name</label>
                             </div>
                             <div class="form-group">
-                                <input type="email" id="email" name="email" required placeholder=" "> <!-- Added placeholder for label animation -->
-                                <label for="email">Your Email</label>
+                                <input type="email" id="yourEmail" name="email" required placeholder=" ">
+                                <label for="yourEmail">Your Email</label>
                             </div>
                             <div class="form-group">
-                                <textarea id="message" name="message" rows="5" required placeholder=" "></textarea> <!-- Added placeholder for label animation -->
-                                <label for="message">Your Message</label>
+                                <textarea id="yourMessage" name="message" rows="5" required placeholder=" "></textarea>
+                                <label for="yourMessage">Your Message</label>
                             </div>
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-paper-plane"></i> Send Message
@@ -1327,6 +1327,42 @@
  
     <script src="./capStat.js"></script>
     <script src="./script.js"></script>
+
+    <!-- Fallback modal that appears if mailto fails -->
+    <div id="emailFallback" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Email Information</h2>
+                <button onclick="document.getElementById('emailFallback').style.display='none';" class="modal-close" aria-label="Close Email Fallback">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>It seems you don't have an email client configured. You can:</p>
+                
+                <div id="emailContent" style="background: #f5f5f5; padding: 15px; margin: 15px 0; border-left: 3px solid #ccc; border-radius: 4px;">
+                    <!-- Email content will be inserted here -->
+                </div>
+                
+                <button id="copyEmailBtn" class="btn btn-primary">
+                    <i class="fas fa-copy"></i> Copy Email Content
+                </button>
+                
+                <p class="mt-lg">Or open your webmail service:</p>
+                <div class="webmail-links">
+                    <a href="https://mail.google.com/mail/?view=cm&fs=1" target="_blank" class="btn btn-outline">
+                        <i class="fab fa-google"></i> Gmail
+                    </a>
+                    <a href="https://outlook.live.com/mail/0/deeplink/compose" target="_blank" class="btn btn-outline">
+                        <i class="fab fa-microsoft"></i> Outlook
+                    </a>
+                    <a href="https://mail.yahoo.com/d/compose" target="_blank" class="btn btn-outline">
+                        <i class="fab fa-yahoo"></i> Yahoo Mail
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>

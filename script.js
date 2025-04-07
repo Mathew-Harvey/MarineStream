@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initialize hero carousel
     initHeroCarousel();
+    
+    // Remove initCapabilityStatement call - we're using capStat.js instead
 });
 
 // === Core Website Functions ===
@@ -2413,4 +2415,70 @@ function initHeroCarousel() {
     // Initialize
     updateSlide(0);
     startAutoPlay();
+}
+
+// Contact form handling with fallback
+function handleFormSubmit(event) {
+  event.preventDefault();
+  
+  // Get form values
+  const name = document.getElementById('yourName').value;
+  const email = document.getElementById('yourEmail').value;
+  const message = document.getElementById('yourMessage').value;
+  
+  // Recipient email (company email)
+  const recipientEmail = "mharvey@franmarine.com.au";
+  
+  // Construct email subject and body
+  const subject = `Website Inquiry from ${name}`;
+  const body = `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}\n\n---\nThis email was sent via the contact form on the MarineStream website.`;
+  
+  // Create the mailto URL
+  const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  
+  // Track if the mailto link worked (we'll use a timeout check)
+  let mailtoWorked = false;
+  
+  // Try to open the email client
+  window.location.href = mailtoUrl;
+  
+  // Check if the mailto link worked after a short delay
+  setTimeout(function() {
+    if (!mailtoWorked) {
+      // If we're still here, assume mailto didn't work
+      showEmailFallback(recipientEmail, subject, body);
+    }
+  }, 500);
+  
+  // Reset the form (will only execute if mailto fails)
+  setTimeout(function() {
+    document.getElementById('contactForm').reset();
+  }, 1000);
+  
+  return false;
+}
+
+function showEmailFallback(to, subject, body) {
+  // Format the email content for display
+  const emailContentHtml = `
+    <strong>To:</strong> ${to}<br>
+    <strong>Subject:</strong> ${subject}<br>
+    <strong>Body:</strong><br>${body.replace(/\n/g, '<br>')}
+  `;
+  
+  // Insert the content into the fallback div
+  document.getElementById('emailContent').innerHTML = emailContentHtml;
+  
+  // Show the fallback modal
+  document.getElementById('emailFallback').style.display = 'flex';
+  
+  // Set up copy button functionality
+  document.getElementById('copyEmailBtn').onclick = function() {
+    const emailText = `To: ${to}\nSubject: ${subject}\n\n${body}`;
+    navigator.clipboard.writeText(emailText).then(function() {
+      alert('Email content copied to clipboard!');
+    }).catch(function(err) {
+      console.error('Could not copy text: ', err);
+    });
+  };
 }
