@@ -4156,3 +4156,70 @@ input[type="file"]:focus {
         grid-template-columns: 1fr;
     }
 }
+
+/* Thank You Page Styles */
+.thanks-section {
+    padding: 120px 0;
+    text-align: center;
+    background-color: var(--bg-primary);
+}
+
+.thanks-content {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px;
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.thanks-icon {
+    font-size: 4rem;
+    color: var(--accent-color);
+    margin-bottom: 20px;
+}
+
+.thanks-content h1 {
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+}
+
+.thanks-content p {
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.thanks-actions {
+    margin-top: 30px;
+}
+
+.thanks-actions .btn {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .thanks-section {
+        padding: 80px 20px;
+    }
+    
+    .thanks-content {
+        padding: 30px 20px;
+    }
+    
+    .thanks-icon {
+        font-size: 3rem;
+    }
+    
+    .thanks-content h1 {
+        font-size: 2rem;
+    }
+    
+    .thanks-content p {
+        font-size: 1rem;
+    }
+}

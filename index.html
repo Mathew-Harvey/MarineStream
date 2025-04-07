@@ -742,7 +742,15 @@
                     <div class="contact-form-container">
                         <h2>Get In Touch</h2>
                         <p>Interested in our solutions? Contact us to learn how our underwater capability can transform your marine asset management.</p>
-                        <form id="contactForm" class="contact-form" onsubmit="return handleFormSubmit(event);">
+                        <form id="contactForm" class="contact-form" action="https://formsubmit.co/mharvey@franmarine.com.au" method="POST">
+                            <!-- FormSubmit.co configuration -->
+                            <input type="hidden" name="_subject" value="MarineStream Website Inquiry">
+                            <input type="hidden" name="_captcha" value="true">
+                            <input type="hidden" name="_template" value="table">
+                            <input type="hidden" name="_next" value="https://marinestream.com.au/thanks.html">
+                            <input type="hidden" name="_blacklist" value="viagra,casino,porn,gambling,bitcoin,crypto">
+                            <input type="hidden" name="_autoresponse" value="Thank you for contacting MarineStream. Mat, our Biofouling Manager, will get back to you shortly.">
+                            
                             <div class="form-group">
                                 <input type="text" id="yourName" name="name" required placeholder=" ">
                                 <label for="yourName">Your Name</label>
