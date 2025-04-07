@@ -246,10 +246,22 @@ function initVideos() {
         // Set up play button
         playBtn.addEventListener('click', function () {
             if (video.paused) {
-                video.play();
-                this.classList.add('playing');
-                this.innerHTML = '<i class="fas fa-pause"></i>'; // Switch to pause icon
-                videoContainer.classList.add('video-playing');
+                // Play video and handle Promise
+                const playPromise = video.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // Playback started successfully
+                        this.classList.add('playing');
+                        this.innerHTML = '<i class="fas fa-pause"></i>'; // Switch to pause icon
+                        videoContainer.classList.add('video-playing');
+                    }).catch(error => {
+                        // Auto-play was prevented or other error
+                        console.error("Video playback error:", error);
+                        // Try a second time after user interaction
+                        video.play().catch(e => console.error("Second play attempt failed:", e));
+                    });
+                }
             } else {
                 video.pause();
                 this.classList.remove('playing');
@@ -271,10 +283,21 @@ function initVideos() {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        video.play();
-                        playBtn.classList.add('playing');
-                        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                        videoContainer.classList.add('video-playing');
+                        // Use Promise-based approach for autoplay too
+                        const autoPlayPromise = video.play();
+                        
+                        if (autoPlayPromise !== undefined) {
+                            autoPlayPromise.then(() => {
+                                // Autoplay started successfully
+                                playBtn.classList.add('playing');
+                                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                                videoContainer.classList.add('video-playing');
+                            }).catch(err => {
+                                // Autoplay was prevented, don't change UI
+                                console.log("Autoplay prevented:", err);
+                                // Don't modify play button - user needs to click it
+                            });
+                        }
                     } else {
                         video.pause();
                     }
@@ -283,6 +306,9 @@ function initVideos() {
             
             observer.observe(videoContainer);
         }
+        
+        // Ensure video is muted for better autoplay chances (browsers often block unmuted autoplay)
+        video.muted = true;
     }
 
     // Set up the two main videos
