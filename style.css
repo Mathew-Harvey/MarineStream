@@ -653,9 +653,16 @@ img, video { /* Apply to video as well */
 
 .feature-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Slightly larger min */
+    grid-template-columns: repeat(2, 1fr); /* Change to a fixed 2-column layout */
     gap: var(--space-lg);
     margin-top: var(--space-xl);
+}
+
+/* Add media query for mobile devices */
+@media (max-width: 768px) {
+    .feature-grid {
+        grid-template-columns: 1fr; /* Single column on mobile */
+    }
 }
 
 .feature-card {
@@ -2591,8 +2598,6 @@ canvas#signaturePad {
     .hero-title { line-height: 1.2; }
     .hero-subtitle { font-size: 1rem; }
     .section-description { font-size: 1rem; }
-
-    .feature-grid { grid-template-columns: 1fr; }
 
     .feature-card { padding: var(--space-lg); } /* Good padding */
     .feature-icon { width: 60px; height: 60px; font-size: 1.6rem; }

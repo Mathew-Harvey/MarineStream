@@ -24,8 +24,90 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialize hero carousel
     initHeroCarousel();
     
-    // Remove initCapabilityStatement call - we're using capStat.js instead
+    // Initialize custom buttons
+    initCustomButtons();
 });
+
+// Function to initialize custom buttons
+function initCustomButtons() {
+    // ROV Inspections Button - in the live-monitoring section
+    const rovSection = document.getElementById('live-monitoring');
+    if (rovSection) {
+        const rovButton = rovSection.querySelector('a.btn.btn-secondary');
+        if (rovButton) {
+            rovButton.onclick = function(e) {
+                e.preventDefault();
+                openEmailWithPrefilledMessage('ROV Inspections');
+                return false;
+            };
+        }
+    }
+    
+    // Cleaning Demonstration Button - in the crawler-capabilities section
+    const crawlerSection = document.getElementById('crawler-capabilities');
+    if (crawlerSection) {
+        const cleaningButton = crawlerSection.querySelector('a.btn.btn-primary');
+        if (cleaningButton) {
+            cleaningButton.onclick = function(e) {
+                e.preventDefault();
+                openEmailWithPrefilledMessage('Cleaning Demonstration');
+                return false;
+            };
+        }
+    }
+    
+    // Learn More About Us Button - in the about section
+    const aboutSection = document.getElementById('about');
+    if (aboutSection) {
+        const learnMoreButton = aboutSection.querySelector('a.btn.btn-primary');
+        if (learnMoreButton) {
+            learnMoreButton.onclick = function(e) {
+                e.preventDefault();
+                // Call the generateCapabilityStatement function from capStat.js
+                if (typeof generateCapabilityStatement === 'function') {
+                    generateCapabilityStatement();
+                }
+                return false;
+            };
+        }
+    }
+}
+
+// Function to open email with prefilled message based on type
+function openEmailWithPrefilledMessage(messageType) {
+    const recipientEmail = "mharvey@franmarine.com.au";
+    let subject, body;
+    
+    if (messageType === 'ROV Inspections') {
+        subject = "Inquiry about ROV Inspection Services";
+        body = "Hello,\n\nI'd like to learn more about your ROV inspection services.\n\nPlease provide more information.\n\nThank you.";
+    } else if (messageType === 'Cleaning Demonstration') {
+        subject = "Request for Cleaning Demonstration";
+        body = "Hello,\n\nI'd like to request a cleaning demonstration.\n\nPlease contact me to arrange this.\n\nThank you.";
+    } else {
+        subject = "Website Inquiry";
+        body = "Hello,\n\nI'm interested in learning more about MarineStream's services.\n\nPlease provide additional information.\n\nThank you.";
+    }
+    
+    // Create the mailto URL
+    const mailtoUrl = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    // Track if the mailto link worked (we'll use a timeout check)
+    let mailtoWorked = false;
+    
+    // Try to open the email client
+    window.location.href = mailtoUrl;
+    
+    // Check if the mailto link worked after a short delay
+    setTimeout(function() {
+        if (!mailtoWorked) {
+            // If we're still here, assume mailto didn't work
+            showEmailFallback(recipientEmail, subject, body);
+        }
+    }, 500);
+    
+    return false;
+}
 
 // === Core Website Functions ===
 function initWebsiteFunctions() {
