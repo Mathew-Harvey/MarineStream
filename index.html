@@ -25,6 +25,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./loading-screen.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="./hullCalc.js"></script>
@@ -281,6 +282,17 @@
 </head>
 
 <body>
+    <div id="loading-screen">
+        <div class="loading-content">
+          <img src="./assets/marinestream_logo_white.png" alt="MarineStream Logo" class="loading-logo">
+          <div class="loading-spinner"></div>
+          <div class="loading-message">Loading maritime excellence...</div>
+          <div class="loading-progress">
+            <div class="progress-bar"></div>
+          </div>
+        </div>
+      </div>
+      
     <header class="main-header">
         <div class="container">
             <nav class="main-nav">
@@ -308,7 +320,7 @@
     <main>
         <!-- Hero Section -->
         <section id="home" class="hero">
-            <video id="hero-video" autoplay loop muted playsinline>
+            <video id="hero-video" autoplay loop muted playsinline preload="auto">
                 <source src="./assets/heroVid01.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
@@ -1580,6 +1592,7 @@
           }
         })();
       </script>
+      <script src="./loading-screen.js"></script>
 </body>
 
 </html>

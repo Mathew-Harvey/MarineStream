@@ -1,0 +1,93 @@
+/* Loading Screen Styles */
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #111111;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transition: opacity 0.5s ease-out;
+  }
+  
+  .loading-content {
+    text-align: center;
+    max-width: 80%;
+  }
+  
+  .loading-spinner {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 20px;
+    border: 6px solid rgba(255, 102, 0, 0.3);
+    border-top: 6px solid #FF6600;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .loading-message {
+    color: #ffffff;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    font-family: var(--font-primary);
+    min-height: 30px;
+  }
+  
+  .loading-progress {
+    width: 300px;
+    height: 8px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  
+  .progress-bar {
+    height: 100%;
+    background-color: #FF6600;
+    width: 0%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+  
+  /* Add a nice logo above the spinner */
+  .loading-logo {
+    width: 180px;
+    margin-bottom: 30px;
+    opacity: 0.9;
+  }
+  
+  /* Small animation for the loading content */
+  .loading-content {
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+  
+  /* Hide page content while loading */
+  body.is-loading {
+    overflow: hidden;
+  }
+  
+  /* Animation for when loading is complete */
+  .loading-complete {
+    animation: fadeOut 0.8s forwards;
+  }
+  
+  @keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; visibility: hidden; }
+  }

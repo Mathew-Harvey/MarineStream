@@ -1014,9 +1014,31 @@ function generateBFMP(data) {
 document.addEventListener('DOMContentLoaded', function() {
     const heroVideo = document.getElementById('hero-video');
     if (heroVideo) {
-        heroVideo.play().catch(err => {
-            console.log("Hero video autoplay error:", err);
-        });
+        // Show loading animation if you have one
+        const playPromise = heroVideo.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                // Automatic playback started successfully
+                // Optional: Update UI or trigger related animations if needed
+                console.log("Hero video playing successfully");
+            })
+            .catch(err => {
+                console.log("Hero video autoplay error:", err);
+                
+                // Since this is a hero video that should autoplay,
+                // we can try to play it again after a short delay 
+                // or with muted state to increase autoplay chances
+                heroVideo.muted = true; // Ensure muted for better autoplay chances
+                
+                // Try again after a short delay
+                setTimeout(() => {
+                    heroVideo.play().catch(secondErr => {
+                        console.log("Second hero video play attempt failed:", secondErr);
+                    });
+                }, 1000);
+            });
+        }
     }
     
     // Then your other initialization
