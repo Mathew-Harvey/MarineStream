@@ -978,3 +978,15 @@ function generateBFMP(data) {
         alert('An error occurred while generating the BFMP. Please try again.');
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const heroVideo = document.getElementById('hero-video');
+    if (heroVideo) {
+        heroVideo.play().catch(err => {
+            console.log("Hero video autoplay error:", err);
+        });
+    }
+    
+    // Then your other initialization
+    initVideos();
+});
