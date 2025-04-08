@@ -15,7 +15,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -28,7 +29,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="./hullCalc.js"></script>
     <script src="./script.js"></script>
-    
+
     <style>
         /* Calculator specific styles from the example */
         .validation-badge {
@@ -44,11 +45,11 @@
             gap: var(--space-xs);
             max-width: fit-content;
         }
-        
+
         .result-group {
             margin-bottom: var(--space-md);
         }
-        
+
         .result-group-header {
             display: flex;
             align-items: center;
@@ -57,12 +58,12 @@
             padding-bottom: var(--space-xs);
             border-bottom: 1px solid var(--border-color);
         }
-        
+
         .result-group-header h4 {
             margin: 0;
             color: var(--accent-color);
         }
-        
+
         .result-item {
             display: flex;
             justify-content: space-between;
@@ -73,20 +74,20 @@
             box-shadow: var(--shadow-sm);
             transition: transform var(--transition-fast);
         }
-        
+
         .result-item:hover {
             transform: translateX(5px);
         }
-        
+
         .result-label {
             color: var(--text-secondary);
         }
-        
+
         .result-value {
             font-weight: 700;
             color: var(--text-primary);
         }
-        
+
         .results-section {
             background-color: var(--bg-secondary);
             border-radius: var(--radius-md);
@@ -94,7 +95,7 @@
             margin-top: var(--space-md);
             border-left: 4px solid var(--accent-color);
         }
-        
+
         .results-section h3 {
             color: var(--accent-color);
             margin-top: 0;
@@ -102,11 +103,11 @@
             align-items: center;
             gap: var(--space-xs);
         }
-        
+
         .results-section h3 i {
             color: var(--accent-light);
         }
-        
+
         .information-note {
             background-color: rgba(255, 102, 0, 0.1);
             border-left: 4px solid var(--accent-color);
@@ -114,7 +115,7 @@
             border-radius: var(--radius-md);
             margin: var(--space-md) 0;
         }
-        
+
         .information-note h4 {
             color: var(--accent-dark);
             margin-bottom: var(--space-xs);
@@ -122,17 +123,17 @@
             align-items: center;
             gap: var(--space-xs);
         }
-        
+
         .information-note h4 i {
             color: var(--accent-color);
         }
-        
+
         .research-section {
             margin-top: var(--space-lg);
             padding-top: var(--space-md);
             border-top: 1px solid var(--border-color);
         }
-        
+
         .research-highlights {
             background-color: var(--accent-light);
             color: white;
@@ -142,21 +143,21 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .highlight h4 {
             color: white;
             margin-bottom: var(--space-md);
         }
-        
+
         .highlight ul {
             margin-bottom: var(--space-sm);
             color: rgba(255, 255, 255, 0.9);
         }
-        
+
         .highlight li {
             margin-bottom: var(--space-xs);
         }
-        
+
         .chart-container {
             width: 100%;
             height: 0;
@@ -164,7 +165,7 @@
             position: relative;
             margin-bottom: var(--space-md);
         }
-        
+
         .chart-wrapper {
             position: absolute;
             top: 0;
@@ -172,55 +173,108 @@
             right: 0;
             bottom: 0;
         }
-        
+
         .range-tick.active .tick-dot {
             background-color: var(--accent-color);
             transform: scale(1.5);
         }
-        
+
         .range-tick.active .tick-label {
             color: var(--accent-color);
             font-weight: 600;
         }
-        
+
         /* Thank You Modal Styles */
         .thank-you-content {
             text-align: center;
             padding: var(--space-md);
         }
-        
+
         .thank-you-icon {
             font-size: 3rem;
             color: var(--accent-color);
             margin-bottom: var(--space-md);
             animation: pulse 1.5s infinite;
         }
-        
+
         .thank-you-content h3 {
             color: var(--accent-color);
             margin-bottom: var(--space-md);
         }
-        
+
         .thank-you-content p {
             margin-bottom: var(--space-md);
             max-width: 500px;
             margin-left: auto;
             margin-right: auto;
         }
-        
+
         .modal-footer {
             margin-top: var(--space-lg);
         }
-        
+
         @keyframes pulse {
             0% {
                 transform: scale(1);
             }
+
             50% {
                 transform: scale(1.1);
             }
+
             100% {
                 transform: scale(1);
+            }
+        }
+
+        /* Mobile menu fix - high specificity to ensure override */
+        @media (max-width: 768px) {
+            .nav-links-container {
+                display: none !important;
+            }
+
+            .nav-links-container.active {
+                display: flex !important;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background-color: rgba(0, 0, 0, 0.95);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                z-index: 9999;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+
+            .nav-links-container.active .nav-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .nav-links-container.active .nav-link {
+                color: white !important;
+                font-size: 1.4rem;
+                text-align: center;
+            }
+
+            .mobile-menu-toggle.active {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                color: white !important;
+                background-color: var(--accent-color);
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
         }
     </style>
@@ -238,9 +292,10 @@
                     <ul class="nav-links">
                         <li><a href="#home" class="nav-link active">Home</a></li>
                         <li><a href="#about" class="nav-link">About</a></li>
-                        <li><a href="#solutions" class="nav-link">Solutions</a></li>
+                        <li><a href="#dashboard-preview" class="nav-link">Solutions</a></li>
                         <li><a href="#tools" class="nav-link">Tools</a></li>
-                        <li><a href="https://app.marinestream.io/marinestream/home" class="nav-link btn btn-primary" target="_blank" rel="noopener noreferrer">Get Started</a></li>
+                        <li><a href="https://app.marinestream.io/marinestream/home" class="nav-link btn btn-primary"
+                                target="_blank" rel="noopener noreferrer">Get Started</a></li>
                     </ul>
                 </div>
                 <button class="mobile-menu-toggle" aria-label="Toggle menu">
@@ -260,7 +315,9 @@
             <div class="container">
                 <div class="hero-content">
                     <h1 class="hero-title">Revolutionising <br>Biofouling <br>Management</h1>
-                    <p class="hero-subtitle">The integrated biofouling and underwater asset management system combines Australia's only regulatory compliant in-water cleaning and filtration hardware with novel blockchain technology.</p>
+                    <p class="hero-subtitle">The integrated biofouling and underwater asset management system combines
+                        Australia's only regulatory compliant in-water cleaning and filtration hardware with novel
+                        blockchain technology.</p>
                     <div class="hero-cta">
                         <a href="#features" class="btn btn-outline">
                             <i class="fas fa-anchor"></i>
@@ -272,32 +329,6 @@
                         </a>
                     </div>
                 </div>
-                <div class="hero-carousel">
-                    <div class="carousel-container">
-                        <div class="carousel-track">
-                            <div class="carousel-slide"></div>
-                            <div class="carousel-slide"></div>
-                            <div class="carousel-slide"></div>
-                            <div class="carousel-slide"></div>
-                            <div class="carousel-slide"></div>
-                            <div class="carousel-slide"></div>
-                        </div>
-                        <button class="carousel-control prev" aria-label="Previous slide">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button class="carousel-control next" aria-label="Next slide">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                        <div class="carousel-indicators">
-                            <button class="indicator active" aria-label="Go to slide 1"></button>
-                            <button class="indicator" aria-label="Go to slide 2"></button>
-                            <button class="indicator" aria-label="Go to slide 3"></button>
-                            <button class="indicator" aria-label="Go to slide 4"></button>
-                            <button class="indicator" aria-label="Go to slide 5"></button>
-                            <button class="indicator" aria-label="Go to slide 6"></button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -306,7 +337,8 @@
             <div class="container">
                 <div class="section-header">
                     <h2 class="section-title">Differentiators</h2>
-                    <p class="section-description">The only organisation in Australia delivering a complete marine biosecurity compliance and biofouling management service.</p>
+                    <p class="section-description">The only organisation in Australia delivering a complete marine
+                        biosecurity compliance and biofouling management service.</p>
                 </div>
 
                 <div class="feature-grid">
@@ -323,7 +355,8 @@
                             <i class="fas fa-globe"></i>
                         </div>
                         <h3>Sovereign Underwater Sustainment</h3>
-                        <p>Capability unique to Australia, extending trusted critical support to allied forces (AUKUS).</p>
+                        <p>Capability unique to Australia, extending trusted critical support to allied forces (AUKUS).
+                        </p>
                     </div>
 
                     <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
@@ -346,7 +379,8 @@
                 <!-- PDF Generator Button -->
                 <div class="pdf-generator">
                     <h3>Print Capability Statement</h3>
-                    <p>Download a comprehensive summary of MarineStream's capabilities, services, and competitive advantages in a single-page PDF document.</p>
+                    <p>Download a comprehensive summary of MarineStream's capabilities, services, and competitive
+                        advantages in a single-page PDF document.</p>
                     <button id="generate-pdf" class="btn btn-primary">
                         <i class="fas fa-file-pdf"></i>
                         Generate PDF
@@ -363,11 +397,13 @@
                     <ul class="tech-features">
                         <li>
                             <i class="fas fa-check-circle"></i>
-                            <span>The only in-water cleaning system compliant with the Australian In-Water Cleaning Standards</span>
+                            <span>The only in-water cleaning system compliant with the Australian In-Water Cleaning
+                                Standards</span>
                         </li>
                         <li>
                             <i class="fas fa-check-circle"></i>
-                            <span>A single 20" container with 10μ filtration and water processing unit with UV treatment capability</span>
+                            <span>A single 20" container with 10μ filtration and water processing unit with UV treatment
+                                capability</span>
                         </li>
                         <li>
                             <i class="fas fa-check-circle"></i>
@@ -375,14 +411,16 @@
                         </li>
                         <li>
                             <i class="fas fa-check-circle"></i>
-                            <span>A multifaceted system with tailored compatible tooling capable of complete clean to biosecurity specification</span>
+                            <span>A multifaceted system with tailored compatible tooling capable of complete clean to
+                                biosecurity specification</span>
                         </li>
                     </ul>
                     <!-- <a href="#products" class="btn btn-primary">View Full System Details</a> -->
                 </div>
                 <div class="tech-image">
                     <div class="tech-image-container">
-                        <img src="./assets/filterUnit.jpg" alt="MarineStream Cleaning System Illustration" class="placeholder-image">
+                        <img src="./assets/filterUnit.jpg" alt="MarineStream Cleaning System Illustration"
+                            class="placeholder-image">
                     </div>
                 </div>
             </div>
@@ -408,7 +446,8 @@
                     </div>
                     <div class="monitoring-content">
                         <h2>ROV Inspection Capabilities</h2>
-                        <p>MarineStream utilises advanced Remotely Operated Vehicles (ROVs) for comprehensive underwater inspections and monitoring:</p>
+                        <p>MarineStream utilises advanced Remotely Operated Vehicles (ROVs) for comprehensive underwater
+                            inspections and monitoring:</p>
                         <ul class="feature-list">
                             <li>High-definition imaging and recording of underwater assets</li>
                             <li>Detailed inspection of hulls, propellers, and niche areas</li>
@@ -429,7 +468,8 @@
                 <div class="split-layout reverse">
                     <div class="monitoring-content">
                         <h2>ROV Crawler Cleaning Technology</h2>
-                        <p>Our specialised ROV crawler systems revolutionise underwater cleaning with advanced capture technology:</p>
+                        <p>Our specialised ROV crawler systems revolutionise underwater cleaning with advanced capture
+                            technology:</p>
                         <ul class="feature-list">
                             <li>Fully contained biofouling removal with 10μ filtration system</li>
                             <li>Compliant with Australian In-Water Cleaning Standards</li>
@@ -447,7 +487,8 @@
                                 Your browser does not support HTML5 video.
                             </video>
                             <div class="video-controls">
-                                <button class="play-btn" id="crawler-play-btn" aria-label="Play ROV Crawler Cleaning Video">
+                                <button class="play-btn" id="crawler-play-btn"
+                                    aria-label="Play ROV Crawler Cleaning Video">
                                     <i class="fas fa-play"></i>
                                 </button>
                                 <span class="video-label">ROV Crawler Cleaning</span>
@@ -463,29 +504,35 @@
             <div class="container">
                 <div class="section-header center">
                     <h2 class="section-title">The MarineStream™ Biofouling and Underwater Asset Management Platform</h2>
-                    <p class="section-description">Holds the asset for instant operational readiness, seaworthiness and compliance demonstration purposes.</p>
+                    <p class="section-description">Holds the asset for instant operational readiness, seaworthiness and
+                        compliance demonstration purposes.</p>
                 </div>
                 <div class="dashboard-container">
                     <div class="dashboard-image">
                         <!-- Assumes dashboard.png exists -->
-                        <img src="./assets/marinestreamMock1.png" alt="MarineStream Dashboard Preview" class="placeholder-image">
+                        <img src="./assets/marinestreamMock1.png" alt="MarineStream Dashboard Preview"
+                            class="placeholder-image">
                     </div>
                     <div class="dashboard-features">
                         <div class="dashboard-feature">
                             <i class="fas fa-check"></i>
-                            <span>Holds the asset for instant operational readiness, seaworthiness and compliance demonstration purposes</span>
+                            <span>Holds the asset for instant operational readiness, seaworthiness and compliance
+                                demonstration purposes</span>
                         </div>
                         <div class="dashboard-feature">
                             <i class="fas fa-check"></i>
-                            <span>Contains digitised biofouling management plans, record books and multi-party workflows</span>
+                            <span>Contains digitised biofouling management plans, record books and multi-party
+                                workflows</span>
                         </div>
                         <div class="dashboard-feature">
                             <i class="fas fa-check"></i>
-                            <span>Captures data directly from integrated underwater inspection hardware (CCTV & ROV)</span>
+                            <span>Captures data directly from integrated underwater inspection hardware (CCTV &
+                                ROV)</span>
                         </div>
                         <div class="dashboard-feature">
                             <i class="fas fa-check"></i>
-                            <span>Enables interrogation of all data by authorised stakeholders within the ecosystem</span>
+                            <span>Enables interrogation of all data by authorised stakeholders within the
+                                ecosystem</span>
                         </div>
                     </div>
                 </div>
@@ -497,9 +544,10 @@
             <div class="container">
                 <div class="section-header">
                     <h2 class="section-title">Practical Tools</h2>
-                    <p class="section-description">Explore our range of specialised tools designed to assist mariners in making informed decisions about biofouling management.</p>
+                    <p class="section-description">Explore our range of specialised tools designed to assist mariners in
+                        making informed decisions about biofouling management.</p>
                 </div>
-                
+
                 <div class="tools-grid">
                     <!-- Hull Fouling Calculator -->
                     <div class="tool-card">
@@ -509,10 +557,12 @@
                             </div>
                             <h3 class="tool-title">Hull Fouling Calculator</h3>
                         </div>
-                        <p class="tool-description">Calculate the economic and environmental impact of biofouling on vessel performance and fuel consumption based on research data from the University of Melbourne.</p>
+                        <p class="tool-description">Calculate the economic and environmental impact of biofouling on
+                            vessel performance and fuel consumption based on research data from the University of
+                            Melbourne.</p>
                         <button id="open-cost-calculator" class="btn btn-primary">Open Calculator</button>
                     </div>
-                    
+
                     <!-- Biofouling Management Plan Generator -->
                     <div class="tool-card">
                         <div class="tool-header">
@@ -521,7 +571,8 @@
                             </div>
                             <h3 class="tool-title">Biofouling Management Plan</h3>
                         </div>
-                        <p class="tool-description">Generate a comprehensive biofouling management plan tailored to your vessel, compliant with IMO guidelines and international biosecurity regulations.</p>
+                        <p class="tool-description">Generate a comprehensive biofouling management plan tailored to your
+                            vessel, compliant with IMO guidelines and international biosecurity regulations.</p>
                         <button id="open-bfmp-generator" class="btn btn-primary">Generate Plan</button>
                     </div>
                 </div>
@@ -536,8 +587,9 @@
                     <button class="modal-close" aria-label="Close modal"><i class="fas fa-times"></i></button>
                 </div>
                 <div class="modal-body">
-                    <p>Calculate the economic and environmental impact of biofouling on vessel performance and fuel consumption based on research data from the University of Melbourne.</p>
-                    
+                    <p>Calculate the economic and environmental impact of biofouling on vessel performance and fuel
+                        consumption based on research data from the University of Melbourne.</p>
+
                     <!-- Currency Selector -->
                     <div class="currency-selector-container">
                         <div class="currency-selector">
@@ -563,7 +615,9 @@
                                     <canvas id="myChart" width="600" height="400"></canvas>
                                 </div>
                             </div>
-                            <p>This chart shows how operating costs and emissions increase with speed for both clean and fouled hulls. The difference between the two cost lines represents your potential savings from hull maintenance.</p>
+                            <p>This chart shows how operating costs and emissions increase with speed for both clean and
+                                fouled hulls. The difference between the two cost lines represents your potential
+                                savings from hull maintenance.</p>
                         </div>
                     </div>
 
@@ -589,9 +643,10 @@
                                             <option value="coaster">Coastal Freighter (80m)</option>
                                         </select>
                                     </div>
-                                    <span class="help-text">Select vessel to load parameters measured in UoM research</span>
+                                    <span class="help-text">Select vessel to load parameters measured in UoM
+                                        research</span>
                                 </div>
-                                
+
                                 <!-- Cost Inputs -->
                                 <div class="form-group">
                                     <label for="costEco">Operating Cost @ Economic Speed</label>
@@ -599,9 +654,10 @@
                                         <i class="fas fa-dollar-sign input-icon"></i>
                                         <input type="number" id="costEco" class="input-with-icon" step="50" min="100">
                                     </div>
-                                    <span class="help-text">Base fuel cost at economic speed ($/hr with clean hull)</span>
+                                    <span class="help-text">Base fuel cost at economic speed ($/hr with clean
+                                        hull)</span>
                                 </div>
-                                
+
                                 <div class="form-group">
                                     <label for="costFull">Operating Cost @ Full Speed</label>
                                     <div class="input-wrapper">
@@ -610,14 +666,15 @@
                                     </div>
                                     <span class="help-text">Base fuel cost at full speed ($/hr with clean hull)</span>
                                 </div>
-                                
+
                                 <!-- Fouling Rating Slider -->
                                 <div class="slider-container">
                                     <div class="slider-header">
                                         <label for="frSlider">Hull Fouling Rating</label>
                                         <div id="frLabel" class="slider-value">FR2</div>
                                     </div>
-                                    <input type="range" id="frSlider" class="range-slider" min="0" max="5" step="1" value="2">
+                                    <input type="range" id="frSlider" class="range-slider" min="0" max="5" step="1"
+                                        value="2">
                                     <div class="range-ticks">
                                         <div class="range-tick" data-value="0">
                                             <div class="tick-dot"></div>
@@ -644,7 +701,7 @@
                                             <div class="tick-label">FR5</div>
                                         </div>
                                     </div>
-                                    
+
                                     <table class="fouling-rating-table">
                                         <tr>
                                             <th>Rating</th>
@@ -690,7 +747,7 @@
                                         </tr>
                                     </table>
                                 </div>
-                                
+
                                 <!-- Results Section -->
                                 <div class="results-section">
                                     <h3><i class="fas fa-chart-line"></i> Cost Impact Analysis</h3>
@@ -702,18 +759,24 @@
 
                     <div class="info-section">
                         <h4><i class="fas fa-lightbulb"></i> Understanding The Model</h4>
-                        <p>The calculator uses a physics-based model that accounts for both frictional resistance (affected by fouling) and wave-making resistance (primarily affected by speed). The fouling impact values at FR5 (193% increase in friction) are directly measured from University of Melbourne research on the Coral Adventurer, with intermediate values derived from fluid dynamics modeling.</p>
+                        <p>The calculator uses a physics-based model that accounts for both frictional resistance
+                            (affected by fouling) and wave-making resistance (primarily affected by speed). The fouling
+                            impact values at FR5 (193% increase in friction) are directly measured from University of
+                            Melbourne research on the Coral Adventurer, with intermediate values derived from fluid
+                            dynamics modeling.</p>
                     </div>
 
                     <div class="research-section">
                         <h3>Research Foundation</h3>
-                        <p>This calculator is based on research studies that used advanced 3D underwater scanning technology to measure hull roughness and calculate the impact on vessel performance.</p>
+                        <p>This calculator is based on research studies that used advanced 3D underwater scanning
+                            technology to measure hull roughness and calculate the impact on vessel performance.</p>
                         <div class="research-highlights">
                             <div class="highlight">
                                 <h4>Key Findings</h4>
                                 <ul>
                                     <li>Heavy calcareous fouling increased friction coefficient by up to 193%</li>
-                                    <li>For a medium-sized cruise ship, this translates to approximately $3M in additional annual fuel costs</li>
+                                    <li>For a medium-sized cruise ship, this translates to approximately $3M in
+                                        additional annual fuel costs</li>
                                     <li>CO₂ emissions increase proportionally with fuel consumption</li>
                                 </ul>
                             </div>
@@ -729,14 +792,19 @@
             <div class="container">
                 <div class="about-content">
                     <h2>About MarineStream</h2>
-                    <p>MarineStream is dedicated to solving biofouling challenges through innovative hardware and blockchain technology, built on Rise-X's robust SaaS platform. Our mission is to deliver comprehensive biofouling solutions that enhance compliance, transparency, collaboration, and real-time monitoring.</p>
+                    <p>MarineStream is dedicated to solving biofouling challenges through innovative hardware and
+                        blockchain technology, built on Rise-X's robust SaaS platform. Our mission is to deliver
+                        comprehensive biofouling solutions that enhance compliance, transparency, collaboration, and
+                        real-time monitoring.</p>
                     <ul class="about-features">
                         <li>Based on the DIANA Ecosystem Orchestration Platform (EOP)</li>
                         <li>Trusted by commercial vessels and naval fleets worldwide</li>
                         <li>Implementing transparency and traceability from down under to the world</li>
                     </ul>
-                    <p class="mt-lg">MarineStream is a division of Franmarine, an Australian subsea and technology organisation renowned for supporting Defence with underwater services and support.</p>
-                    <a href="#contact" class="btn btn-primary">Learn More About Us</a> <!-- Changed link from #about to #contact -->
+                    <p class="mt-lg">MarineStream is a division of Franmarine, an Australian subsea and technology
+                        organisation renowned for supporting Defence with underwater services and support.</p>
+                    <a href="#contact" class="btn btn-primary">Learn More About Us</a>
+                    <!-- Changed link from #about to #contact -->
                 </div>
                 <div class="clients-section">
                     <h3>Valued Clients</h3>
@@ -763,16 +831,22 @@
 
                     <h3 class="mt-lg">Management System Certifications</h3>
                     <div class="cert-logos">
-                        <a href="https://www.iso.org/standard/62085.html" target="_blank" class="cert-logo" title="ISO 9001:2015 - Quality Management Systems">
-                            <img src="./assets/iso9001.png" alt="ISO 9001:2015 Certification Logo" class="cert-logo-img">
+                        <a href="https://www.iso.org/standard/62085.html" target="_blank" class="cert-logo"
+                            title="ISO 9001:2015 - Quality Management Systems">
+                            <img src="./assets/iso9001.png" alt="ISO 9001:2015 Certification Logo"
+                                class="cert-logo-img">
                             <span>ISO 9001:2015</span>
                         </a>
-                        <a href="https://www.iso.org/standard/60857.html" target="_blank" class="cert-logo" title="ISO 14001:2015 - Environmental Management Systems">
-                            <img src="./assets/iso14001.png" alt="ISO 14001:2015 Certification Logo" class="cert-logo-img">
+                        <a href="https://www.iso.org/standard/60857.html" target="_blank" class="cert-logo"
+                            title="ISO 14001:2015 - Environmental Management Systems">
+                            <img src="./assets/iso14001.png" alt="ISO 14001:2015 Certification Logo"
+                                class="cert-logo-img">
                             <span>ISO 14001:2015</span>
                         </a>
-                        <a href="https://www.iso.org/standard/63787.html" target="_blank" class="cert-logo" title="ISO 45001:2018 - Occupational Health and Safety Management Systems">
-                            <img src="./assets/iso45001.png" alt="ISO 45001:2018 Certification Logo" class="cert-logo-img">
+                        <a href="https://www.iso.org/standard/63787.html" target="_blank" class="cert-logo"
+                            title="ISO 45001:2018 - Occupational Health and Safety Management Systems">
+                            <img src="./assets/iso45001.png" alt="ISO 45001:2018 Certification Logo"
+                                class="cert-logo-img">
                             <span>ISO 45001:2018</span>
                         </a>
                     </div>
@@ -786,16 +860,19 @@
                 <div class="contact-grid">
                     <div class="contact-form-container">
                         <h2>Get In Touch</h2>
-                        <p>Interested in our solutions? Contact us to learn how our underwater capability can transform your marine asset management.</p>
-                        <form id="contactForm" class="contact-form" action="https://formsubmit.co/mharvey@franmarine.com.au" method="POST">
+                        <p>Interested in our solutions? Contact us to learn how our underwater capability can transform
+                            your marine asset management.</p>
+                        <form id="contactForm" class="contact-form"
+                            action="https://formsubmit.co/mharvey@franmarine.com.au" method="POST">
                             <!-- FormSubmit.co configuration -->
                             <input type="hidden" name="_subject" value="MarineStream Website Inquiry">
                             <input type="hidden" name="_captcha" value="true">
                             <input type="hidden" name="_template" value="table">
                             <input type="hidden" name="_next" value="https://marinestream.com.au/?thankyou=true">
                             <input type="hidden" name="_blacklist" value="viagra,casino,porn,gambling,bitcoin,crypto">
-                            <input type="hidden" name="_autoresponse" value="Thank you for contacting MarineStream. Mat, our Biofouling Manager, will get back to you shortly.">
-                            
+                            <input type="hidden" name="_autoresponse"
+                                value="Thank you for contacting MarineStream. Mat, our Biofouling Manager, will get back to you shortly.">
+
                             <div class="form-group">
                                 <input type="text" id="yourName" name="name" required placeholder=" ">
                                 <label for="yourName">Your Name</label>
@@ -830,10 +907,14 @@
                             </div>
                         </div>
                         <div class="social-links">
-                             <!-- Social media links -->
-                            <a href="https://www.linkedin.com/company/marinetream/posts/?feedView=all" class="social-link" aria-label="LinkedIn" target="_blank"><i class="fab fa-linkedin"></i></a>
-                            <a href="https://www.facebook.com/profile.php?id=100029694686734" class="social-link" aria-label="Facebook" target="_blank"><i class="fab fa-facebook"></i></a>
-                            <a href="https://www.youtube.com/@franmarine5117" class="social-link" aria-label="YouTube" target="_blank"><i class="fab fa-youtube"></i></a>
+                            <!-- Social media links -->
+                            <a href="https://www.linkedin.com/company/marinetream/posts/?feedView=all"
+                                class="social-link" aria-label="LinkedIn" target="_blank"><i
+                                    class="fab fa-linkedin"></i></a>
+                            <a href="https://www.facebook.com/profile.php?id=100029694686734" class="social-link"
+                                aria-label="Facebook" target="_blank"><i class="fab fa-facebook"></i></a>
+                            <a href="https://www.youtube.com/@franmarine5117" class="social-link" aria-label="YouTube"
+                                target="_blank"><i class="fab fa-youtube"></i></a>
                         </div>
                     </div>
                 </div>
@@ -846,31 +927,23 @@
             <div class="footer-content">
                 <div class="footer-brand">
                     <a href="#" class="footer-logo">
-                         <!-- Make sure logo.png exists -->
+                        <!-- Make sure logo.png exists -->
                         <img src="./assets/logo.png" alt="MarineStream Logo - Footer">
                     </a>
-                    <p>Revolutionising Biofouling Management with blockchain technology and live underwater monitoring.</p>
+                    <p>Revolutionising Biofouling Management with blockchain technology and live underwater monitoring.
+                    </p>
                 </div>
                 <div class="footer-links">
                     <h3>Quick Links</h3>
                     <ul>
                         <li><a href="#home">Home</a></li>
                         <li><a href="#about">About</a></li>
-                        <li><a href="#solutions">Solutions</a></li>
+                        <li><a href="#dashboard-preview">Solutions</a></li>
                         <li><a href="#tools">Tools</a></li>
                         <li><a href="#contact">Contact</a></li>
                     </ul>
                 </div>
-                <div class="footer-links">
-                    <h3>Solutions</h3>
-                    <ul>
-                        <li><a href="#">CLEAN</a></li>
-                        <li><a href="#">SURVEY</a></li>
-                        <li><a href="#">MAINTAIN</a></li>
-                        <li><a href="#">REPAIR</a></li>
-                        <li><a href="#">SUSTAIN</a></li>
-                    </ul>
-                </div>
+
                 <div class="footer-links">
                     <h3>Legal</h3>
                     <ul>
@@ -881,7 +954,8 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2025 MarineStream. All rights reserved. | A division of <a href="https://franmarine.com.au" target="_blank" rel="noopener noreferrer">franmarine.com.au</a></p>
+                <p>© 2025 MarineStream. All rights reserved. | A division of <a href="https://franmarine.com.au"
+                        target="_blank" rel="noopener noreferrer">franmarine.com.au</a></p>
             </div>
         </div>
     </footer>
@@ -895,8 +969,8 @@
     </div>
 
 
-<!-- Capability Statement Template for PDF generation -->
-<script id="capability-statement-template" type="text/x-handlebars-template">
+    <!-- Capability Statement Template for PDF generation -->
+    <script id="capability-statement-template" type="text/x-handlebars-template">
     <div style="font-family: 'Inter', Arial, sans-serif; max-width: 842px; margin: 0 auto; background-color: #ffffff; color: #333333; font-size: 10pt; line-height: 1.4;">
 
         <!-- FIRST PAGE -->
@@ -1079,8 +1153,8 @@
     </div>
 </script>
 
-<!-- Script for the page -->
- 
+    <!-- Script for the page -->
+
     <script src="./capStat.js"></script>
     <script src="./script.js"></script>
 
@@ -1089,21 +1163,23 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Email Information</h2>
-                <button onclick="document.getElementById('emailFallback').style.display='none';" class="modal-close" aria-label="Close Email Fallback">
+                <button onclick="document.getElementById('emailFallback').style.display='none';" class="modal-close"
+                    aria-label="Close Email Fallback">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
                 <p>It seems you don't have an email client configured. You can:</p>
-                
-                <div id="emailContent" style="background: #f5f5f5; padding: 15px; margin: 15px 0; border-left: 3px solid #ccc; border-radius: 4px;">
+
+                <div id="emailContent"
+                    style="background: #f5f5f5; padding: 15px; margin: 15px 0; border-left: 3px solid #ccc; border-radius: 4px;">
                     <!-- Email content will be inserted here -->
                 </div>
-                
+
                 <button id="copyEmailBtn" class="btn btn-primary">
                     <i class="fas fa-copy"></i> Copy Email Content
                 </button>
-                
+
                 <p class="mt-lg">Or open your webmail service:</p>
                 <div class="webmail-links">
                     <a href="https://mail.google.com/mail/?view=cm&fs=1" target="_blank" class="btn btn-outline">
@@ -1128,8 +1204,9 @@
                 <button class="modal-close" aria-label="Close modal"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <p>Complete the form below to generate your customised Biofouling Management Plan (BFMP). This plan will help you meet IMO guidelines and international biosecurity regulations.</p>
-                
+                <p>Complete the form below to generate your customised Biofouling Management Plan (BFMP). This plan will
+                    help you meet IMO guidelines and international biosecurity regulations.</p>
+
                 <form id="bfmp-form" class="bfmp-form">
                     <div class="form-section">
                         <h3>1. Vessel Information</h3>
@@ -1194,7 +1271,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="form-section">
                         <h3>2. Antifouling System</h3>
                         <div class="form-grid">
@@ -1232,11 +1309,12 @@
                             </div>
                             <div class="form-group full-width">
                                 <label for="afDetails">Additional Details</label>
-                                <textarea id="afDetails" name="afDetails" rows="3" placeholder="Manufacturer, product name, etc."></textarea>
+                                <textarea id="afDetails" name="afDetails" rows="3"
+                                    placeholder="Manufacturer, product name, etc."></textarea>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="form-section">
                         <h3>3. Inspection and Maintenance</h3>
                         <div class="form-grid">
@@ -1255,8 +1333,10 @@
                                 <label for="cleaningMethod">Primary Cleaning Method*</label>
                                 <select id="cleaningMethod" name="cleaningMethod" required>
                                     <option value="">Select method</option>
-                                    <option value="In-water cleaning with capture">In-water cleaning with capture</option>
-                                    <option value="In-water cleaning without capture">In-water cleaning without capture</option>
+                                    <option value="In-water cleaning with capture">In-water cleaning with capture
+                                    </option>
+                                    <option value="In-water cleaning without capture">In-water cleaning without capture
+                                    </option>
                                     <option value="Dry-dock cleaning">Dry-dock cleaning</option>
                                     <option value="Other">Other</option>
                                 </select>
@@ -1264,21 +1344,33 @@
                             <div class="form-group full-width">
                                 <label>Niche Areas to Monitor</label>
                                 <div class="checkbox-group">
-                                    <label><input type="checkbox" name="nicheAreas" value="Sea chests and internal seawater cooling systems"> Sea chests and cooling systems</label>
-                                    <label><input type="checkbox" name="nicheAreas" value="Rudder hinges and stabiliser fins"> Rudder hinges and stabiliser fins</label>
-                                    <label><input type="checkbox" name="nicheAreas" value="Propellers, shafts, and associated components"> Propellers and shafts</label>
-                                    <label><input type="checkbox" name="nicheAreas" value="Bow/stern thrusters and thruster tunnels"> Thrusters and tunnels</label>
-                                    <label><input type="checkbox" name="nicheAreas" value="Gratings, chain lockers, and anchor chains"> Gratings and chain lockers</label>
-                                    <label><input type="checkbox" name="nicheAreas" value="Bilge keels and appendages"> Bilge keels and appendages</label>
+                                    <label><input type="checkbox" name="nicheAreas"
+                                            value="Sea chests and internal seawater cooling systems"> Sea chests and
+                                        cooling systems</label>
+                                    <label><input type="checkbox" name="nicheAreas"
+                                            value="Rudder hinges and stabiliser fins"> Rudder hinges and stabiliser
+                                        fins</label>
+                                    <label><input type="checkbox" name="nicheAreas"
+                                            value="Propellers, shafts, and associated components"> Propellers and
+                                        shafts</label>
+                                    <label><input type="checkbox" name="nicheAreas"
+                                            value="Bow/stern thrusters and thruster tunnels"> Thrusters and
+                                        tunnels</label>
+                                    <label><input type="checkbox" name="nicheAreas"
+                                            value="Gratings, chain lockers, and anchor chains"> Gratings and chain
+                                        lockers</label>
+                                    <label><input type="checkbox" name="nicheAreas" value="Bilge keels and appendages">
+                                        Bilge keels and appendages</label>
                                 </div>
                             </div>
                             <div class="form-group full-width">
                                 <label for="maintenanceDetails">Maintenance Strategy</label>
-                                <textarea id="maintenanceDetails" name="maintenanceDetails" rows="3" placeholder="Describe your maintenance strategy for hull cleaning and niche areas"></textarea>
+                                <textarea id="maintenanceDetails" name="maintenanceDetails" rows="3"
+                                    placeholder="Describe your maintenance strategy for hull cleaning and niche areas"></textarea>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="form-section">
                         <h3>4. Operational Profile</h3>
                         <div class="form-grid">
@@ -1318,25 +1410,28 @@
                             </div>
                             <div class="form-group">
                                 <label for="layupPeriods">Typical Layup Periods</label>
-                                <input type="text" id="layupPeriods" name="layupPeriods" placeholder="e.g., 2 weeks in December">
+                                <input type="text" id="layupPeriods" name="layupPeriods"
+                                    placeholder="e.g., 2 weeks in December">
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="form-section">
                         <h3>5. Additional Information</h3>
                         <div class="form-grid">
                             <div class="form-group full-width">
                                 <label for="trainingDetails">Crew Training Details</label>
-                                <textarea id="trainingDetails" name="trainingDetails" rows="3" placeholder="Specify any special training requirements for crew members"></textarea>
+                                <textarea id="trainingDetails" name="trainingDetails" rows="3"
+                                    placeholder="Specify any special training requirements for crew members"></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="approvalAuthority">Plan Approval Authority</label>
-                                <input type="text" id="approvalAuthority" name="approvalAuthority" placeholder="e.g., Ship Management, Flag State">
+                                <input type="text" id="approvalAuthority" name="approvalAuthority"
+                                    placeholder="e.g., Ship Management, Flag State">
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" id="bfmp-reset-btn">Reset Form</button>
                         <button type="submit" class="btn btn-primary" id="bfmp-generate-btn">Generate BFMP</button>
@@ -1362,10 +1457,18 @@
                         <i class="fas fa-ship"></i>
                     </div>
                     <h3>Why You Need a Biofouling Management Plan</h3>
-                    <p>A Biofouling Management Plan (BFMP) is a vessel-specific document that outlines strategies and procedures to manage the accumulation of marine organisms on a vessel's submerged surfaces. These plans have become essential for international shipping as biofouling represents a significant pathway for invasive aquatic species transfer, which can devastate marine ecosystems and impact maritime industries.</p>
-                    
-                    <p>The International Maritime Organization (IMO) established guidelines for biofouling management through Resolution MEPC.207(62), providing a framework that many flag states now recommend or require. Australia and New Zealand have implemented some of the world's most stringent biofouling regulations, making compliant BFMPs mandatory for vessels entering their waters under their respective Biosecurity Acts.</p>
-                    
+                    <p>A Biofouling Management Plan (BFMP) is a vessel-specific document that outlines strategies and
+                        procedures to manage the accumulation of marine organisms on a vessel's submerged surfaces.
+                        These plans have become essential for international shipping as biofouling represents a
+                        significant pathway for invasive aquatic species transfer, which can devastate marine ecosystems
+                        and impact maritime industries.</p>
+
+                    <p>The International Maritime Organization (IMO) established guidelines for biofouling management
+                        through Resolution MEPC.207(62), providing a framework that many flag states now recommend or
+                        require. Australia and New Zealand have implemented some of the world's most stringent
+                        biofouling regulations, making compliant BFMPs mandatory for vessels entering their waters under
+                        their respective Biosecurity Acts.</p>
+
                     <div class="benefits-grid">
                         <div class="benefit-item">
                             <div class="benefit-icon"><i class="fas fa-check-circle"></i></div>
@@ -1384,9 +1487,11 @@
                             <div class="benefit-text">Fewer Port Delays</div>
                         </div>
                     </div>
-                    
+
                     <h3>Our BFMP Generator Tool</h3>
-                    <p>Our tool guides you through creating a comprehensive, customized BFMP that meets international standards including the IMO guidelines and Australian/New Zealand requirements. The generated plan includes:</p>
+                    <p>Our tool guides you through creating a comprehensive, customized BFMP that meets international
+                        standards including the IMO guidelines and Australian/New Zealand requirements. The generated
+                        plan includes:</p>
                     <ul>
                         <li>Vessel-specific information and operating profiles</li>
                         <li>Customized anti-fouling system details</li>
@@ -1418,8 +1523,10 @@
                         <i class="fas fa-paper-plane"></i>
                     </div>
                     <h3>Message Received!</h3>
-                    <p>Thank you for contacting MarineStream. We appreciate your interest in our biofouling management solutions.</p>
-                    <p>Our team will review your message and get back to you as soon as possible, typically within 1-2 business days.</p>
+                    <p>Thank you for contacting MarineStream. We appreciate your interest in our biofouling management
+                        solutions.</p>
+                    <p>Our team will review your message and get back to you as soon as possible, typically within 1-2
+                        business days.</p>
                     <div class="modal-footer">
                         <button class="btn btn-primary thank-you-close-btn">
                             <i class="fas fa-check"></i> Continue Browsing
@@ -1429,5 +1536,42 @@
             </div>
         </div>
     </div>
+    <script>
+        // Simple, direct mobile menu fix
+        (function() {
+          const toggle = document.querySelector('.mobile-menu-toggle');
+          const menu = document.querySelector('.nav-links-container');
+          
+          if (toggle && menu) {
+            // Remove any existing click handlers first
+            const newToggle = toggle.cloneNode(true);
+            toggle.parentNode.replaceChild(newToggle, toggle);
+            
+            newToggle.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              
+              // Direct toggle approach
+              menu.classList.toggle('active');
+              this.classList.toggle('active');
+              
+              // Update icon
+              const icon = this.querySelector('i');
+              if (icon) {
+                if (menu.classList.contains('active')) {
+                  icon.className = 'fas fa-times';
+                } else {
+                  icon.className = 'fas fa-bars';
+                }
+              }
+              
+              console.log('Menu toggled, active:', menu.classList.contains('active'));
+            });
+            
+            console.log('Mobile menu handler attached (final version)');
+          }
+        })();
+      </script>
 </body>
+
 </html>

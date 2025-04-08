@@ -135,14 +135,43 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // === Core Website Functionality ===
 function initWebsiteFunctions() {
-    // Mobile nav toggle
+    // Mobile navigation toggle
     const navToggle = document.querySelector('.mobile-menu-toggle');
-    const navLinks = document.querySelector('.nav-links');
+    const navLinksContainer = document.querySelector('.nav-links-container');
     
-    if (navToggle && navLinks) {
-        navToggle.addEventListener('click', function() {
-            navLinks.classList.toggle('active');
+    if (navToggle && navLinksContainer) {
+        navToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Toggle menu visibility
+            navLinksContainer.classList.toggle('active');
             navToggle.classList.toggle('active');
+            
+            // Change icon
+            const icon = navToggle.querySelector('i');
+            if (icon) {
+                if (navLinksContainer.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!navLinksContainer.contains(e.target) && !navToggle.contains(e.target)) {
+                navLinksContainer.classList.remove('active');
+                navToggle.classList.remove('active');
+                const icon = navToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
         });
     }
     
@@ -157,8 +186,8 @@ function initWebsiteFunctions() {
                     behavior: 'smooth'
                 });
                 // Close mobile menu if open
-                if (navLinks && navLinks.classList.contains('active')) {
-                    navLinks.classList.remove('active');
+                if (navLinksContainer && navLinksContainer.classList.contains('active')) {
+                    navLinksContainer.classList.remove('active');
                     if (navToggle) navToggle.classList.remove('active');
                 }
             }
@@ -350,6 +379,9 @@ function initVideos() {
 
 // Initialize hero carousel
 function initHeroCarousel() {
+    // Only initialize on screens larger than 768px
+    if (window.innerWidth <= 768) return;
+    
     const carousel = document.querySelector('.carousel-container');
     if (!carousel) return;
     
