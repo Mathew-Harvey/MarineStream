@@ -431,11 +431,21 @@ img, video { /* Apply to video as well */
 /* Hero Section */
 .hero {
     position: relative;
-    min-height: 100vh;
+    height: 100vh;
     color: var(--text-on-accent);
     padding: 120px 0 80px;
     overflow: hidden;
     background-color: #000; /* Fallback */
+}
+
+.hero video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Makes the video cover the area like a background image */
+    z-index: 0; /* Ensures the video stays behind all other content */
 }
 
 /* Add grain texture */
@@ -446,9 +456,6 @@ img, video { /* Apply to video as well */
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: 
-        url('data:image/svg+xml;charset=utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.1 0"/></filter><rect width="100%" height="100%" filter="url(%23noise)"/></svg>'),
-        url('./assets/heroBackGround.JPG');
     background-size: 200px, cover;
     background-position: center;
     background-repeat: repeat, no-repeat;
@@ -458,19 +465,13 @@ img, video { /* Apply to video as well */
 }
 
 .hero::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    z-index: 1; /* Lower than content, higher than video */
     background: linear-gradient(
         to right,
-        rgba(0, 0, 0, 0.85) 0%,
-        rgba(0, 0, 0, 0.65) 50%,
-        rgba(0, 0, 0, 0.45) 100%
+        rgba(0, 0, 0, 0.5) 0%, /* Reduced opacity */
+        rgba(0, 0, 0, 0.3) 50%,
+        rgba(0, 0, 0, 0.2) 100%
     );
-    z-index: 1;
 }
 
 .hero .container {
