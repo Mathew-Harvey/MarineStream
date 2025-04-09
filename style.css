@@ -104,6 +104,31 @@
     --accent-light: #B488FF;
 }
 
+/* Orange Theme Variants */
+[data-theme="orange"] {
+    --accent-color: #FF6600;
+    --accent-dark: #E05A00;
+    --accent-light: #FF8533;
+}
+
+[data-theme="burnt"] {
+    --accent-color: #CC5500;
+    --accent-dark: #B34A00;
+    --accent-light: #E06A00;
+}
+
+[data-theme="coral"] {
+    --accent-color: #FF7F50;
+    --accent-dark: #E06F40;
+    --accent-light: #FF9F80;
+}
+
+[data-theme="amber"] {
+    --accent-color: #FFBF00;
+    --accent-dark: #E0A800;
+    --accent-light: #FFD633;
+}
+
 /* Dark theme adjustments for B/W/Orange */
 [data-theme-mode="dark"] {
     --bg-primary: #161616;
