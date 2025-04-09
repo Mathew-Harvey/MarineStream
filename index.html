@@ -613,28 +613,28 @@
                         </div>
                     </div>
 
-                    <!-- Chart Card - Moved to top -->
-                    <div class="calculator-chart">
-                        <div class="card-header">
-                            <h3 class="card-header-title">Cost & Emissions vs. Speed</h3>
-                            <div class="card-header-icon">
-                                <i class="fas fa-chart-area"></i>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart-container">
-                                <div class="chart-wrapper">
-                                    <canvas id="myChart" width="600" height="400"></canvas>
-                                </div>
-                            </div>
-                            <p>This chart shows how operating costs and emissions increase with speed for both clean and
-                                fouled hulls. The difference between the two cost lines represents your potential
-                                savings from hull maintenance.</p>
-                        </div>
-                    </div>
-
+                    <!-- Chart Card - Moved inside the grid -->
                     <!-- Calculator Grid -->
                     <div class="calculator-grid" id="hull-calculator-container">
+                        <div class="calculator-chart"> <!-- MOVED HERE -->
+                            <div class="card-header">
+                                <h3 class="card-header-title">Cost & Emissions vs. Speed</h3>
+                                <div class="card-header-icon">
+                                    <i class="fas fa-chart-area"></i>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <div class="chart-wrapper">
+                                        <canvas id="myChart" width="600" height="400"></canvas>
+                                    </div>
+                                </div>
+                                <p>This chart shows how operating costs and emissions increase with speed for both clean and
+                                    fouled hulls. The difference between the two cost lines represents your potential
+                                    savings from hull maintenance.</p>
+                            </div>
+                        </div>
+
                         <!-- Controls Card -->
                         <div class="calculator-controls">
                             <div class="card-header">
@@ -760,13 +760,14 @@
                                     </table>
                                 </div>
 
-                                <!-- Results Section -->
-                                <div class="results-section">
-                                    <h3><i class="fas fa-chart-line"></i> Cost Impact Analysis</h3>
-                                    <div id="resultsText"></div>
-                                </div>
+                                <!-- Results Section - Moved outside/after grid -->
                             </div>
                         </div>
+                    </div>
+                    <!-- Results Section - Moved here -->
+                    <div class="results-section">
+                        <h3><i class="fas fa-chart-line"></i> Cost Impact Analysis</h3>
+                        <div id="resultsText"></div>
                     </div>
 
                     <div class="info-section">
