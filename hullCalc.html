@@ -98,83 +98,91 @@
                                 </div>
                                 <span class="help-text">Base fuel cost at full speed ($/hr with clean hull)</span>
                             </div>
-                            
-                            <!-- Fouling Rating Slider -->
-                            <div class="slider-container">
-                                <div class="slider-header">
-                                    <label for="frSlider">Hull Fouling Rating</label>
-                                    <div id="frLabel" class="slider-value">FR2</div>
-                                </div>
-                                <input type="range" id="frSlider" class="range-slider" min="0" max="5" step="1" value="2">
-                                <div class="range-ticks">
-                                    <div class="range-tick" data-value="0">
-                                        <div class="tick-dot"></div>
-                                        <div class="tick-label">FR0</div>
-                                    </div>
-                                    <div class="range-tick" data-value="1">
-                                        <div class="tick-dot"></div>
-                                        <div class="tick-label">FR1</div>
-                                    </div>
-                                    <div class="range-tick" data-value="2">
-                                        <div class="tick-dot"></div>
-                                        <div class="tick-label">FR2</div>
-                                    </div>
-                                    <div class="range-tick" data-value="3">
-                                        <div class="tick-dot"></div>
-                                        <div class="tick-label">FR3</div>
-                                    </div>
-                                    <div class="range-tick" data-value="4">
-                                        <div class="tick-dot"></div>
-                                        <div class="tick-label">FR4</div>
-                                    </div>
-                                    <div class="range-tick" data-value="5">
-                                        <div class="tick-dot"></div>
-                                        <div class="tick-label">FR5</div>
-                                    </div>
-                                </div>
-                                
-                                <table class="fouling-rating-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Rating</th>
-                                            <th>Description</th>
-                                            <th>Impact</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><strong>FR0</strong></td>
-                                            <td>Clean hull</td>
-                                            <td>+0%</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>FR1</strong></td>
-                                            <td>Light slime</td>
-                                            <td>+15%</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>FR2</strong></td>
-                                            <td>Medium slime</td>
-                                            <td>+35%</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>FR3</strong></td>
-                                            <td>Heavy slime</td>
-                                            <td>+60%</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>FR4</strong></td>
-                                            <td>Light calcareous</td>
-                                            <td>+95%</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>FR5</strong></td>
-                                            <td>Heavy calcareous</td>
-                                            <td>+193%</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fouling Rating Slider Section -->
+                <div class="fouling-rating-section">
+                    <div class="card-header">
+                        <i class="fas fa-water card-header-icon"></i>
+                        <h3 class="card-header-title">Hull Fouling Rating</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="slider-container">
+                            <div class="slider-header">
+                                <label for="frSlider">Current Fouling Level</label>
+                                <div id="frLabel" class="slider-value">FR2</div>
                             </div>
+                            <input type="range" id="frSlider" class="range-slider" min="0" max="5" step="1" value="2">
+                            <div class="range-ticks">
+                                <div class="range-tick" data-value="0">
+                                    <div class="tick-dot"></div>
+                                    <div class="tick-label">FR0</div>
+                                </div>
+                                <div class="range-tick" data-value="1">
+                                    <div class="tick-dot"></div>
+                                    <div class="tick-label">FR1</div>
+                                </div>
+                                <div class="range-tick" data-value="2">
+                                    <div class="tick-dot"></div>
+                                    <div class="tick-label">FR2</div>
+                                </div>
+                                <div class="range-tick" data-value="3">
+                                    <div class="tick-dot"></div>
+                                    <div class="tick-label">FR3</div>
+                                </div>
+                                <div class="range-tick" data-value="4">
+                                    <div class="tick-dot"></div>
+                                    <div class="tick-label">FR4</div>
+                                </div>
+                                <div class="range-tick" data-value="5">
+                                    <div class="tick-dot"></div>
+                                    <div class="tick-label">FR5</div>
+                                </div>
+                            </div>
+                            
+                            <table class="fouling-rating-table">
+                                <thead>
+                                    <tr>
+                                        <th>Rating</th>
+                                        <th>Description</th>
+                                        <th>Impact</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>FR0</strong></td>
+                                        <td>Clean hull</td>
+                                        <td>+0%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>FR1</strong></td>
+                                        <td>Light slime</td>
+                                        <td>+15%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>FR2</strong></td>
+                                        <td>Medium slime</td>
+                                        <td>+35%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>FR3</strong></td>
+                                        <td>Heavy slime</td>
+                                        <td>+60%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>FR4</strong></td>
+                                        <td>Light calcareous</td>
+                                        <td>+95%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>FR5</strong></td>
+                                        <td>Heavy calcareous</td>
+                                        <td>+193%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

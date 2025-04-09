@@ -569,9 +569,8 @@
                             </div>
                             <h3 class="tool-title">Hull Fouling Calculator</h3>
                         </div>
-                        <p class="tool-description">Calculate the economic and environmental impact of biofouling on
-                            vessel performance and fuel consumption based on research data from the University of
-                            Melbourne.</p>
+                        <p class="tool-description"><b>What This Calculator Does</b><br><p>
+                            This tool helps vessel operators estimate the economic and environmental impact of hull fouling based on actual research data from the University of Melbourne. It synthesizes findings from multiple studies, including measurements on the Coral Adventurer cruise ship and a Rio Tinto tugboat.</p>
                         <button id="open-cost-calculator" class="btn btn-primary">Open Calculator</button>
                     </div>
 
@@ -599,9 +598,8 @@
                     <button class="modal-close" aria-label="Close modal"><i class="fas fa-times"></i></button>
                 </div>
                 <div class="modal-body">
-                    <p>Calculate the economic and environmental impact of biofouling on vessel performance and fuel
-                        consumption based on research data from the University of Melbourne.</p>
-
+                    <b>What This Calculator Does</b><br><p>
+                        This tool helps vessel operators estimate the economic and environmental impact of hull fouling based on actual research data from the University of Melbourne. It synthesizes findings from multiple studies, including measurements on the Coral Adventurer cruise ship and a Rio Tinto tugboat.</p>
                     <!-- Currency Selector -->
                     <div class="currency-selector-container">
                         <div class="currency-selector">
@@ -613,10 +611,9 @@
                         </div>
                     </div>
 
-                    <!-- Chart Card - Moved inside the grid -->
                     <!-- Calculator Grid -->
                     <div class="calculator-grid" id="hull-calculator-container">
-                        <div class="calculator-chart"> <!-- MOVED HERE -->
+                        <div class="calculator-chart">
                             <div class="card-header">
                                 <h3 class="card-header-title">Cost & Emissions vs. Speed</h3>
                                 <div class="card-header-icon">
@@ -651,8 +648,8 @@
                                         <select id="vesselType">
                                             <option value="tug">Harbor Tug (32m)</option>
                                             <option value="cruiseShip">Passenger Cruise Ship (93m)</option>
-                                            <option value="osv">Offshore Supply Vessel (50m)</option>
-                                            <option value="coaster">Coastal Freighter (80m)</option>
+                                            <!-- <option value="osv">Offshore Supply Vessel (50m)</option>
+                                            <option value="coaster">Coastal Freighter (80m)</option> -->
                                         </select>
                                     </div>
                                     <span class="help-text">Select vessel to load parameters measured in UoM
@@ -678,111 +675,118 @@
                                     </div>
                                     <span class="help-text">Base fuel cost at full speed ($/hr with clean hull)</span>
                                 </div>
-
-                                <!-- Fouling Rating Slider -->
-                                <div class="slider-container">
-                                    <div class="slider-header">
-                                        <label for="frSlider">Hull Fouling Rating</label>
-                                        <div id="frLabel" class="slider-value">FR2</div>
-                                    </div>
-                                    <input type="range" id="frSlider" class="range-slider" min="0" max="5" step="1"
-                                        value="2">
-                                    <div class="range-ticks">
-                                        <div class="range-tick" data-value="0">
-                                            <div class="tick-dot"></div>
-                                            <div class="tick-label">FR0</div>
-                                        </div>
-                                        <div class="range-tick" data-value="1">
-                                            <div class="tick-dot"></div>
-                                            <div class="tick-label">FR1</div>
-                                        </div>
-                                        <div class="range-tick" data-value="2">
-                                            <div class="tick-dot"></div>
-                                            <div class="tick-label">FR2</div>
-                                        </div>
-                                        <div class="range-tick" data-value="3">
-                                            <div class="tick-dot"></div>
-                                            <div class="tick-label">FR3</div>
-                                        </div>
-                                        <div class="range-tick" data-value="4">
-                                            <div class="tick-dot"></div>
-                                            <div class="tick-label">FR4</div>
-                                        </div>
-                                        <div class="range-tick" data-value="5">
-                                            <div class="tick-dot"></div>
-                                            <div class="tick-label">FR5</div>
-                                        </div>
-                                    </div>
-
-                                    <table class="fouling-rating-table">
-                                        <tr>
-                                            <th>Rating</th>
-                                            <th>Description</th>
-                                            <th>Impact</th>
-                                            <th>Validation</th>
-                                        </tr>
-                                        <tr>
-                                            <td>FR0</td>
-                                            <td>Clean hull</td>
-                                            <td>+0%</td>
-                                            <td>Baseline</td>
-                                        </tr>
-                                        <tr>
-                                            <td>FR1</td>
-                                            <td>Light slime</td>
-                                            <td>+15%</td>
-                                            <td>Research calibrated</td>
-                                        </tr>
-                                        <tr>
-                                            <td>FR2</td>
-                                            <td>Medium slime</td>
-                                            <td>+35%</td>
-                                            <td>Research calibrated</td>
-                                        </tr>
-                                        <tr>
-                                            <td>FR3</td>
-                                            <td>Heavy slime</td>
-                                            <td>+60%</td>
-                                            <td>Research calibrated</td>
-                                        </tr>
-                                        <tr>
-                                            <td>FR4</td>
-                                            <td>Light calcareous</td>
-                                            <td>+95%</td>
-                                            <td>Research calibrated</td>
-                                        </tr>
-                                        <tr>
-                                            <td>FR5</td>
-                                            <td>Heavy calcareous</td>
-                                            <td>+193%</td>
-                                            <td>Directly measured (UoM)</td>
-                                        </tr>
-                                    </table>
-                                </div>
-
-                                <!-- Results Section - Moved outside/after grid -->
                             </div>
                         </div>
                     </div>
-                    <!-- Results Section - Moved here -->
+
+                    <!-- Fouling Rating Slider Section -->
+                    <div class="fouling-rating-section">
+                        <div class="card-header">
+                            <h3 class="card-header-title">Hull Fouling Rating</h3>
+                            <div class="card-header-icon">
+                                <i class="fas fa-water"></i>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="slider-container">
+                                <div class="slider-header">
+                                    <label for="frSlider">Current Fouling Level</label>
+                                    <div id="frLabel" class="slider-value">FR2</div>
+                                </div>
+                                <input type="range" id="frSlider" class="range-slider" min="0" max="5" step="1" value="2">
+                                <div class="range-ticks">
+                                    <div class="range-tick" data-value="0">
+                                        <div class="tick-dot"></div>
+                                        <div class="tick-label">FR0</div>
+                                    </div>
+                                    <div class="range-tick" data-value="1">
+                                        <div class="tick-dot"></div>
+                                        <div class="tick-label">FR1</div>
+                                    </div>
+                                    <div class="range-tick" data-value="2">
+                                        <div class="tick-dot"></div>
+                                        <div class="tick-label">FR2</div>
+                                    </div>
+                                    <div class="range-tick" data-value="3">
+                                        <div class="tick-dot"></div>
+                                        <div class="tick-label">FR3</div>
+                                    </div>
+                                    <div class="range-tick" data-value="4">
+                                        <div class="tick-dot"></div>
+                                        <div class="tick-label">FR4</div>
+                                    </div>
+                                    <div class="range-tick" data-value="5">
+                                        <div class="tick-dot"></div>
+                                        <div class="tick-label">FR5</div>
+                                    </div>
+                                </div>
+
+                                <table class="fouling-rating-table">
+                                    <tr>
+                                        <th>Rating</th>
+                                        <th>Description</th>
+                                        <th>Impact</th>
+                                        <th>Validation</th>
+                                    </tr>
+                                    <tr>
+                                        <td>FR0</td>
+                                        <td>Clean hull</td>
+                                        <td>+0%</td>
+                                        <td>Baseline</td>
+                                    </tr>
+                                    <tr>
+                                        <td>FR1</td>
+                                        <td>Light slime</td>
+                                        <td>+15%</td>
+                                        <td>Research calibrated</td>
+                                    </tr>
+                                    <tr>
+                                        <td>FR2</td>
+                                        <td>Medium slime</td>
+                                        <td>+35%</td>
+                                        <td>Research calibrated</td>
+                                    </tr>
+                                    <tr>
+                                        <td>FR3</td>
+                                        <td>Heavy slime</td>
+                                        <td>+60%</td>
+                                        <td>Research calibrated</td>
+                                    </tr>
+                                    <tr>
+                                        <td>FR4</td>
+                                        <td>Light calcareous</td>
+                                        <td>+95%</td>
+                                        <td>Research calibrated</td>
+                                    </tr>
+                                    <tr>
+                                        <td>FR5</td>
+                                        <td>Heavy calcareous</td>
+                                        <td>+193%</td>
+                                        <td>Direct measurement</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Section - Moved outside/after grid -->
                     <div class="results-section">
                         <h3><i class="fas fa-chart-line"></i> Cost Impact Analysis</h3>
                         <div id="resultsText"></div>
                     </div>
 
                     <div class="info-section">
-                        <h4><i class="fas fa-lightbulb"></i> Understanding The Model</h4>
-                        <p>The calculator uses a physics-based model that accounts for both frictional resistance
-                            (affected by fouling) and wave-making resistance (primarily affected by speed). The fouling
-                            impact values at FR5 (193% increase in friction) are directly measured from University of
-                            Melbourne research on the Coral Adventurer, with intermediate values derived from fluid
-                            dynamics modeling.</p>
-                    </div>
+                        <h4><i class="fas fa-lightbulb"></i> Understanding Ship Resistance</h4>
+                        <p>Vessels face two primary types of resistance when moving through water:</p>
+                        <ol>
+                            <li><strong>Frictional Resistance:</strong> The drag created by water flowing along the hull surface. It follows a cubic relationship with speed (∝ speed³) and is the dominant force at lower speeds. Hull fouling directly increases this component.</li>
+                            <li><strong>Wave-Making Resistance:</strong> The energy needed to push water aside and create waves. It increases more rapidly with speed (∝ speed⁴·⁵) and dominates at higher speeds. Hull fouling has minimal impact on this component.</li>
+                        </ol>
+                                        </div>
 
                     <div class="research-section">
                         <h3>Research Foundation</h3>
-                        <p>This calculator is based on research studies that used advanced 3D underwater scanning
-                            technology to measure hull roughness and calculate the impact on vessel performance.</p>
+                        <p>This calculator is built using direct measurements and validated outcomes from University of Melbourne studies using AQUAMARS (Advanced Quality Underwater Mapping and Analysis for Rough Surfaces) technology. The calculations represent real-world impacts measured through advanced 3D underwater scanning.</p>
                         <div class="research-highlights">
                             <div class="highlight">
                                 <h4>Key Findings</h4>

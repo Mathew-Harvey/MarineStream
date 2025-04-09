@@ -2058,7 +2058,7 @@ video {
     flex-direction: row;
     gap: var(--space-lg);
     margin-bottom: var(--space-lg);
-    align-items: stretch; /* Ensure equal height */
+    align-items: stretch;
 }
 
 .calculator-chart, .calculator-controls {
@@ -2071,16 +2071,14 @@ video {
     overflow: hidden;
 }
 
-/* Chart takes ~66% width */
 .calculator-chart {
     flex: 2;
-    min-width: 0; /* Prevent overflow */
+    min-width: 0;
 }
 
-/* Controls take ~33% width */
 .calculator-controls {
     flex: 1;
-    min-width: 0; /* Prevent overflow */
+    min-width: 0;
 }
 
 .card-header {
@@ -2125,7 +2123,7 @@ video {
 
 .chart-container {
     flex: 1;
-    min-height: 350px;
+    min-height: 175px; /* Reduced from 350px to half height */
     width: 100%;
     position: relative;
     margin-bottom: var(--space-md);
@@ -2150,7 +2148,7 @@ video {
         flex: 2; /* Give controls enough space to be readable */
     }
     .chart-container {
-        min-height: 300px;
+        min-height: 150px;
     }
 }
 
@@ -2163,6 +2161,9 @@ video {
     }
     .chart-description {
         font-size: 0.8rem;
+    }
+    .chart-container {
+        min-height: 125px;
     }
 }
 
@@ -2180,7 +2181,7 @@ video {
         margin-bottom: var(--space-md);
     }
     .chart-container {
-        min-height: 250px;
+        min-height: 100px;
     }
 }
 
@@ -2195,8 +2196,339 @@ video {
 
 .form-group {
     margin-bottom: var(--space-md);
+    background-color: var(--bg-secondary);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
 }
 
+.form-group label {
+    display: block;
+    margin-bottom: var(--space-xs);
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: var(--space-sm);
+    color: var(--accent-color);
+    font-size: 0.9rem;
+}
+
+.input-with-icon {
+    width: 100%;
+    padding: var(--space-sm) var(--space-sm) var(--space-sm) calc(var(--space-lg) + var(--space-xs));
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.input-with-icon:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(255, 102, 0, 0.2);
+}
+
+.help-text {
+    display: block;
+    margin-top: var(--space-xs);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* Fouling Rating Table */
+.fouling-rating-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--space-md);
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.fouling-rating-table th,
+.fouling-rating-table td {
+    padding: var(--space-sm) var(--space-md);
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.fouling-rating-table th {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.fouling-rating-table td {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.fouling-rating-table tr:last-child td {
+    border-bottom: none;
+}
+
+.fouling-rating-table tr:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.fouling-rating-table td strong {
+    color: var(--accent-color);
+}
+
+/* Slider Container */
 .slider-container {
+    background-color: var(--bg-secondary);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
     margin-bottom: var(--space-md);
+}
+
+.slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+}
+
+.slider-header label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.slider-value {
+    color: var(--accent-color);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.range-slider {
+    width: 100%;
+    margin: var(--space-md) 0;
+}
+
+.range-ticks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-xs);
+}
+
+.range-tick {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.tick-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--neutral-500);
+    border-radius: 50%;
+    margin-bottom: var(--space-xs);
+    transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.tick-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.range-tick.active .tick-dot {
+    background-color: var(--accent-color);
+    transform: scale(1.5);
+}
+
+.range-tick:hover .tick-dot {
+    transform: scale(1.2);
+}
+
+/* Vessel Parameters Section - Enhanced Styling (Revision 2) */
+.calculator-controls .form-group {
+    margin-bottom: var(--space-lg);
+    /* Remove background, border, and shadow for a cleaner look */
+    /* background-color: var(--bg-secondary); */
+    /* padding: var(--space-lg); */
+    /* border-radius: var(--radius-lg); */
+    /* border: 1px solid var(--border-color); */
+    /* box-shadow: var(--shadow-md); */
+    /* transition: transform var(--transition-fast), box-shadow var(--transition-fast); */
+}
+
+/* Remove hover effect from the container */
+/* .calculator-controls .form-group:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+} */
+
+.calculator-controls .form-group label {
+    display: block;
+    margin-bottom: var(--space-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+}
+
+.calculator-controls .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    /* Add a subtle inner shadow for depth */
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.calculator-controls .input-wrapper:focus-within {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2); /* Keep focus ring */
+}
+
+/* Remove the separate icon span if not needed, handled by select padding now */
+/* .calculator-controls .input-icon { ... } */
+
+.calculator-controls .form-control {
+    width: 100%;
+    /* Adjust padding: top/bottom, right (for arrow), left */
+    padding: var(--space-md) calc(var(--space-lg) + var(--space-md)) var(--space-md) var(--space-md);
+    border: none;
+    background-color: transparent;
+    /* Add background-image: none as extra fallback for hiding arrow */
+    background-image: none;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    /* Remove default outline */
+    outline: none;
+}
+
+.calculator-controls .form-control:focus {
+    outline: none;
+}
+
+.calculator-controls .form-control option {
+    padding: var(--space-md);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.calculator-controls .help-text {
+    display: block;
+    margin-top: var(--space-sm);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* Custom select arrow - ensure correct vertical alignment */
+.calculator-controls .input-wrapper::after {
+    content: '\f078'; /* Font Awesome chevron-down */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    right: var(--space-md);
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Adjust for exact vertical centering */
+    color: var(--accent-color);
+    pointer-events: none;
+    transition: transform var(--transition-fast);
+}
+
+/* Rotate arrow on focus/open - :focus-within on wrapper */
+.calculator-controls .input-wrapper:focus-within::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .calculator-controls .form-group {
+        /* padding: var(--space-md); */ /* No padding needed if container is simplified */
+        margin-bottom: var(--space-md); /* Adjust margin if needed */
+    }
+    
+    .calculator-controls .form-group label {
+        font-size: 0.95rem;
+    }
+    
+    .calculator-controls .form-control {
+        font-size: 0.95rem;
+        /* Adjust padding for smaller screens */
+        padding: var(--space-sm) calc(var(--space-lg) + var(--space-sm)) var(--space-sm) var(--space-sm);
+    }
+
+    .calculator-controls .input-wrapper::after {
+        right: var(--space-sm);
+    }
+}
+
+/* Fouling Rating Section */
+.fouling-rating-section {
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    margin-top: var(--space-lg);
+    overflow: hidden;
+}
+
+.fouling-rating-section .card-header {
+    background-color: var(--bg-tertiary);
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 2px solid var(--accent-light);
+}
+
+.fouling-rating-section .card-body {
+    padding: var(--space-md);
+}
+
+.fouling-rating-section .slider-container {
+    margin-bottom: var(--space-md);
+}
+
+.fouling-rating-section .fouling-rating-table {
+    margin-top: var(--space-md);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .chart-container {
+        min-height: 150px;
+    }
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        min-height: 125px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-container {
+        min-height: 100px;
+    }
 }
