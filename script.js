@@ -7,199 +7,334 @@ document.addEventListener('DOMContentLoaded', function () {
     // Check for thank you parameter in URL and show thank you modal if present
     checkForThankYouParameter();
 
-    // Set up Cost Calculator Modal
+    // --- Helper Function to Toggle Modal --- (NEW)
+    function toggleModal(modalElement, show) {
+        if (!modalElement) return;
+        if (show) {
+            modalElement.classList.add('active'); // Use class for visibility
+            document.body.classList.add('modal-open');
+        } else {
+            modalElement.classList.remove('active');
+            // Only remove body class if no other modals are active
+            if (!document.querySelector('.modal-overlay.active')) {
+                document.body.classList.remove('modal-open');
+            }
+        }
+    }
+
+    // --- Set up Cost Calculator Modal ---
     const openCostCalculatorBtn = document.getElementById('open-cost-calculator');
-    if (openCostCalculatorBtn && !openCostCalculatorBtn._eventHandlerAttached) {
-        openCostCalculatorBtn.addEventListener('click', function() {
-            const costCalculatorModal = document.getElementById('cost-calculator-modal');
-            if (costCalculatorModal) {
-                costCalculatorModal.style.display = 'flex';
-                document.body.classList.add('modal-open');
-
-                // Initialize calculator if not already done
-                if (!window.calculatorInitialized && typeof initHullFoulingCalculator === 'function') {
-        initHullFoulingCalculator();
-                }
-            }
-        });
-        openCostCalculatorBtn._eventHandlerAttached = true;
-    }
-    
-    // Close Cost Calculator Modal
     const costCalculatorModal = document.getElementById('cost-calculator-modal');
-    if (costCalculatorModal && !costCalculatorModal._eventHandlerAttached) {
-        // Close when clicking outside modal content
+
+    if (openCostCalculatorBtn && costCalculatorModal) {
+        openCostCalculatorBtn.addEventListener('click', function() {
+            toggleModal(costCalculatorModal, true);
+            // Initialize calculator if not already done
+            if (!window.calculatorInitialized && typeof initHullFoulingCalculator === 'function') {
+                initHullFoulingCalculator();
+                window.calculatorInitialized = true; // Ensure it's initialized only once
+            }
+        });
+
+        // Close Logic
         costCalculatorModal.addEventListener('click', function(event) {
-            if (event.target === costCalculatorModal) {
-                costCalculatorModal.style.display = 'none';
-                document.body.classList.remove('modal-open');
+            if (event.target === costCalculatorModal) { // Click outside content
+                toggleModal(costCalculatorModal, false);
             }
         });
-        
-        // Close button
-        const closeBtn = costCalculatorModal.querySelector('.modal-close');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function() {
-                costCalculatorModal.style.display = 'none';
-                document.body.classList.remove('modal-open');
-            });
+        const closeBtnCost = costCalculatorModal.querySelector('.modal-close');
+        if (closeBtnCost) {
+            closeBtnCost.addEventListener('click', () => toggleModal(costCalculatorModal, false));
         }
-        
-        costCalculatorModal._eventHandlerAttached = true;
-    }
-    
-    // Initialize the Plan Generator button to load bfmpGen.html
-    const openPlanGeneratorBtn = document.getElementById('open-plan-generator');
-    if (openPlanGeneratorBtn) {
-        openPlanGeneratorBtn.addEventListener('click', function() {
-            // Show BFMP info modal first
-            const bfmpInfoModal = document.getElementById('bfmp-info-modal');
-            if (bfmpInfoModal) {
-                bfmpInfoModal.style.display = 'flex';
-                document.body.classList.add('modal-open');
-            } else {
-                // If modal doesn't exist, redirect directly
-            window.location.href = 'bfmpGen.html';
-            }
-        });
     }
 
-    // Initialize BFMP Generator Button
+    // --- Set up BFMP Modals ---
+    console.log("Setting up BFMP Modals..."); // Log setup start
     const openBfmpBtn = document.getElementById('open-bfmp-generator');
-    if (openBfmpBtn && !openBfmpBtn._eventHandlerAttached) {
-        openBfmpBtn.addEventListener('click', function() {
-            const bfmpModal = document.getElementById('bfmp-info-modal');
-            if (bfmpModal) {
-                bfmpModal.style.display = 'flex';
-                document.body.classList.add('modal-open');
-            }
-        });
-        openBfmpBtn._eventHandlerAttached = true;
-    }
-    
-    // Close BFMP modal if clicked outside
-    const bfmpModal = document.getElementById('bfmp-info-modal');
-    if (bfmpModal && !bfmpModal._eventHandlerAttached) {
-        bfmpModal.addEventListener('click', function(event) {
-            if (event.target === bfmpModal) {
-                bfmpModal.style.display = 'none';
-                document.body.classList.remove('modal-open');
-            }
-        });
-        
-        // Set up close button handler for the BFMP modal
-        const closeBtn = bfmpModal.querySelector('.modal-close');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function() {
-                bfmpModal.style.display = 'none';
-                document.body.classList.remove('modal-open');
-            });
-        }
-        
-        bfmpModal._eventHandlerAttached = true;
-    }
-    
-    // Handle the "Start Creating Your BFMP" button
+    const bfmpInfoModal = document.getElementById('bfmp-info-modal');
+    const bfmpGeneratorModal = document.getElementById('bfmp-generator-modal');
     const bfmpStartBtn = document.getElementById('bfmp-start-btn');
-    if (bfmpStartBtn && !bfmpStartBtn._eventHandlerAttached) {
-        bfmpStartBtn.addEventListener('click', function() {
-            // Close the info modal first
-            const bfmpModal = document.getElementById('bfmp-info-modal');
-            if (bfmpModal) {
-                bfmpModal.style.display = 'none';
-            }
-            
-            // Open the BFMP generator modal instead of redirecting
-            const bfmpGeneratorModal = document.getElementById('bfmp-generator-modal');
-            if (bfmpGeneratorModal) {
-                bfmpGeneratorModal.style.display = 'flex';
-                document.body.classList.add('modal-open');
-            } else {
-                console.error('BFMP Generator modal not found in the document.');
-            }
+
+    // Verify elements exist
+    if (!openBfmpBtn) console.error("SCRIPT ERROR: Button #open-bfmp-generator NOT FOUND!");
+    if (!bfmpInfoModal) console.error("SCRIPT ERROR: Modal #bfmp-info-modal NOT FOUND!");
+    if (!bfmpGeneratorModal) console.error("SCRIPT ERROR: Modal #bfmp-generator-modal NOT FOUND!");
+    if (!bfmpStartBtn) console.error("SCRIPT ERROR: Button #bfmp-start-btn NOT FOUND!");
+
+    // 1. Button to open the *initial* BFMP Info Modal
+    if (openBfmpBtn && bfmpInfoModal) {
+        console.log("SUCCESS: Found button #open-bfmp-generator and modal #bfmp-info-modal. Attaching listener...");
+        openBfmpBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent potential conflicts
+            console.log("--> Click detected on #open-bfmp-generator. Attempting to open #bfmp-info-modal using toggleModal"); // Log click event
+            toggleModal(bfmpInfoModal, true); // Use the toggleModal function
+            // bfmpInfoModal.style.display = 'flex'; // REMOVE DIRECT STYLE MANIPULATION
+            // document.body.classList.add('modal-open'); // toggleModal handles body class
+            console.log("Called toggleModal to open #bfmp-info-modal.")
         });
-        bfmpStartBtn._eventHandlerAttached = true;
+        console.log("Listener attached to #open-bfmp-generator.");
+    } else {
+        console.error("FAILED to attach listener: BFMP Info Modal trigger button or modal itself was not found earlier.");
     }
 
-    // Initialize videos with autoplay
+    // 2. Close BFMP Info Modal Logic (Close button and click outside)
+    if (bfmpInfoModal) {
+        bfmpInfoModal.addEventListener('click', function(event) {
+            if (event.target === bfmpInfoModal) { // Click outside content
+                 console.log("Closing BFMP Info Modal (click outside)");
+                 toggleModal(bfmpInfoModal, false);
+            }
+        });
+        const closeBtnInfo = bfmpInfoModal.querySelector('.modal-close');
+        if (closeBtnInfo) {
+            closeBtnInfo.addEventListener('click', () => {
+                console.log("Closing BFMP Info Modal (close button)");
+                toggleModal(bfmpInfoModal, false);
+            });
+        }
+    }
+
+    // 3. Handle the "Start Creating Your BFMP" button (inside Info Modal)
+    if (bfmpStartBtn && bfmpInfoModal && bfmpGeneratorModal) {
+        bfmpStartBtn.addEventListener('click', function() {
+            console.log("Closing Info Modal, Opening Generator Modal");
+            toggleModal(bfmpInfoModal, false); // Close info modal
+            // Use a tiny timeout to ensure the close transition completes before opening the next
+            setTimeout(() => {
+                toggleModal(bfmpGeneratorModal, true); // Open generator modal
+            }, 50); 
+        });
+    } else {
+         console.error("BFMP Start button or one of the BFMP modals not found.");
+    }
+
+    // 4. Close BFMP Generator Modal Logic (Close button and click outside)
+    if (bfmpGeneratorModal) {
+        bfmpGeneratorModal.addEventListener('click', function(event) {
+            if (event.target === bfmpGeneratorModal) { // Click outside content
+                console.log("Closing BFMP Generator Modal (click outside)");
+                toggleModal(bfmpGeneratorModal, false);
+            }
+        });
+        const closeBtnGen = bfmpGeneratorModal.querySelector('.modal-close');
+        if (closeBtnGen) {
+            closeBtnGen.addEventListener('click', () => {
+                console.log("Closing BFMP Generator Modal (close button)");
+                toggleModal(bfmpGeneratorModal, false);
+            });
+        }
+    }
+
+    // --- Other Initializations ---
     if (document.getElementById('rov-video') || document.getElementById('crawler-video')) {
         initVideos();
     }
-
-    // Initialize hero carousel
     initHeroCarousel();
-    
-    // Initialize the new image carousel
     initImageCarousel();
-    
-    // Initialize custom buttons
     initCustomButtons();
+    initModals(); // Initialize Thank You and Fallback modals
+
+    // --- BFMP Form Logic (remains the same) ---
+    const bfmpForm = document.getElementById('bfmp-form');
+    const bfmpResetBtn = document.getElementById('bfmp-reset-btn');
+    // ... (rest of the form handling code, starting from line ~623 in original file)
+    // Handle BFMP form submission
+    // ... (Existing code for reset button, image upload, and form submission) ...
+    if (bfmpResetBtn && bfmpForm) {
+        bfmpResetBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to reset the form? All entered data will be lost.')) {
+                bfmpForm.reset();
+                // Reset image preview if it exists
+                const imagePreview = document.getElementById('imagePreview');
+                const vesselImagePreview = document.getElementById('vesselImagePreview');
+                if (imagePreview && vesselImagePreview) {
+                    imagePreview.style.display = 'none';
+                    vesselImagePreview.src = '';
+                }
+            }
+        });
+    }
+
+    // Handle vessel image upload and preview
+    const vesselImageUpload = document.getElementById('vesselImageUpload');
+    const imagePreview = document.getElementById('imagePreview');
+    const vesselImagePreview = document.getElementById('vesselImagePreview');
+
+    if (vesselImageUpload && imagePreview && vesselImagePreview) {
+        vesselImageUpload.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file && file.type.match('image.*')) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    vesselImagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+                vesselImagePreview.src = '';
+            }
+        });
+    }
+
+    // Form submission handler
+    if (bfmpForm) {
+        bfmpForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Validate form
+            const requiredFields = bfmpForm.querySelectorAll('[required]');
+            let isValid = true;
+            const firstInvalidField = null;
+
+            requiredFields.forEach(field => {
+                // Checkboxes/Radio buttons might need different validation
+                let fieldValid = true;
+                if (field.type === 'checkbox' || field.type === 'radio') {
+                    // Basic check: Ensure at least one in a group is checked if required
+                    // More complex validation might be needed depending on setup
+                    const groupName = field.name;
+                    if (!bfmpForm.querySelector(`input[name="${groupName}"]:checked`)) {
+                        fieldValid = false;
+                    }
+                } else if (field.multiple && field.tagName === 'SELECT') {
+                     if (field.selectedOptions.length === 0) {
+                         fieldValid = false;
+                     }
+                } else if (!field.value.trim()) {
+                    fieldValid = false;
+                }
+
+                if (!fieldValid) {
+                    isValid = false;
+                    field.classList.add('error');
+                    // Find parent group to show error (optional)
+                     const formGroup = field.closest('.form-group');
+                     if (formGroup) formGroup.classList.add('error-group');
+                    if (!firstInvalidField) firstInvalidField = field;
+                } else {
+                    field.classList.remove('error');
+                    const formGroup = field.closest('.form-group');
+                     if (formGroup) formGroup.classList.remove('error-group');
+                }
+            });
+
+            if (!isValid) {
+                alert('Please fill in all required fields marked with *. Check highlighted fields.');
+                 if (firstInvalidField) firstInvalidField.focus();
+                return;
+            }
+
+            // Collect form data
+            const formData = new FormData(bfmpForm);
+            const bfmpData = {};
+
+            // Handle regular form fields and multiple selects/checkboxes
+            formData.forEach((value, key) => {
+                // Check if it's a multiple select or checkbox field
+                const field = bfmpForm.querySelector(`[name="${key}"]`);
+                const isMultiple = (field && (field.multiple || field.type === 'checkbox'));
+
+                if (isMultiple) {
+                    if (!bfmpData[key]) {
+                        bfmpData[key] = []; // Initialize as array
+                    }
+                    bfmpData[key].push(value);
+                } else {
+                    bfmpData[key] = value;
+                }
+            });
+
+            // Handle the vessel image if provided
+            const vesselImageInput = document.getElementById('vesselImageUpload');
+            if (vesselImageInput && vesselImageInput.files && vesselImageInput.files[0] && vesselImagePreview.src) {
+                // Use the preview image's data URL
+                bfmpData.vesselImage = vesselImagePreview.src;
+            }
+
+            // Generate BFMP document
+            generateBFMP(bfmpData);
+        });
+    }
 });
 
 // === Core Website Functionality ===
+// ... (initWebsiteFunctions remains mostly the same, ensure mobile menu logic is robust)
 function initWebsiteFunctions() {
     // Mobile navigation toggle
     const navToggle = document.querySelector('.mobile-menu-toggle');
     const navLinksContainer = document.querySelector('.nav-links-container');
-    
+
     if (navToggle && navLinksContainer) {
         navToggle.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             // Toggle menu visibility
-            navLinksContainer.classList.toggle('active');
-            navToggle.classList.toggle('active');
-            
+            const isActive = navLinksContainer.classList.toggle('active');
+            navToggle.classList.toggle('active', isActive);
+            document.body.classList.toggle('mobile-menu-open', isActive); // Prevent body scroll
+
             // Change icon
             const icon = navToggle.querySelector('i');
             if (icon) {
+                icon.className = isActive ? 'fas fa-times' : 'fas fa-bars';
+            }
+        });
+
+        // Close menu when clicking a link
+        navLinksContainer.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
                 if (navLinksContainer.classList.contains('active')) {
-                    icon.classList.remove('fa-bars');
-                    icon.classList.add('fa-times');
-                } else {
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
+                    navLinksContainer.classList.remove('active');
+                    navToggle.classList.remove('active');
+                    document.body.classList.remove('mobile-menu-open');
+                    const icon = navToggle.querySelector('i');
+                    if (icon) icon.className = 'fas fa-bars';
                 }
-            }
+            });
         });
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!navLinksContainer.contains(e.target) && !navToggle.contains(e.target)) {
-                navLinksContainer.classList.remove('active');
-                navToggle.classList.remove('active');
-                const icon = navToggle.querySelector('i');
-                if (icon) {
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
-                }
-            }
-        });
+
+        // Close menu when clicking outside (if needed, ensure it doesn't interfere)
+        // document.addEventListener('click', function(e) {
+        //     if (navLinksContainer.classList.contains('active') && !navLinksContainer.contains(e.target) && !navToggle.contains(e.target)) {
+        //         navLinksContainer.classList.remove('active');
+        //         navToggle.classList.remove('active');
+        //         document.body.classList.remove('mobile-menu-open');
+        //         const icon = navToggle.querySelector('i');
+        //         if (icon) icon.className = 'fas fa-bars';
+        //     }
+        // });
     }
-    
+
     // Smooth scroll for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                window.scrollTo({
-                    top: target.offsetTop - 70, // Offset for fixed header
-                    behavior: 'smooth'
-                });
-                // Close mobile menu if open
-                if (navLinksContainer && navLinksContainer.classList.contains('active')) {
-                    navLinksContainer.classList.remove('active');
-                    if (navToggle) navToggle.classList.remove('active');
-                }
+            const href = this.getAttribute('href');
+            // Ensure it's an internal link before preventing default
+            if (href.startsWith('#') && href.length > 1) {
+                 e.preventDefault();
+                 const target = document.querySelector(href);
+                 if (target) {
+                     const headerOffset = document.querySelector('.main-header')?.offsetHeight || 70;
+                     const elementPosition = target.getBoundingClientRect().top;
+                     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                     window.scrollTo({
+                         top: offsetPosition,
+                         behavior: 'smooth'
+                     });
+
+                     // Close mobile menu if open (handled by link click listener above)
+                 }
             }
         });
     });
-    
-    // Initialize modals
-    initModals();
+
 }
+
 
 // Function to check for thank you parameter in URL
 function checkForThankYouParameter() {
@@ -208,65 +343,58 @@ function checkForThankYouParameter() {
         // Show thank you modal
         const thankYouModal = document.getElementById('thank-you-modal');
         if (thankYouModal) {
-            thankYouModal.style.display = 'flex';
-            document.body.classList.add('modal-open');
-            
+             // Use the helper function
+            if (typeof toggleModal === 'function') {
+                 toggleModal(thankYouModal, true);
+            } else {
+                 // Fallback if called before DOMContentLoaded finishes
+                 thankYouModal.style.display = 'flex';
+                 document.body.classList.add('modal-open');
+            }
+
             // Clear the parameter from URL without page refresh
-            const newUrl = window.location.pathname + window.location.hash;
-            window.history.replaceState({}, document.title, newUrl);
+            try {
+                 const newUrl = window.location.pathname + window.location.hash;
+                 window.history.replaceState({}, document.title, newUrl);
+            } catch (e) {
+                console.warn("Could not update URL history.");
+            }
         }
     }
 }
 
-// Initialize modals
+// Initialize Thank You and Fallback Modals
 function initModals() {
-    const modalButtons = document.querySelectorAll('[data-modal]');
-    const modalCloseButtons = document.querySelectorAll('.modal-close');
-    
-    modalButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const modalId = this.getAttribute('data-modal');
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.style.display = 'flex';
-                document.body.classList.add('modal-open');
-            }
-        });
-    });
-    
-    modalCloseButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const modalId = this.getAttribute('data-modal');
-            const modal = modalId ? document.getElementById(modalId) : this.closest('.modal-overlay');
-            if (modal) {
-                modal.style.display = 'none';
+     function setupGenericModal(modalId) {
+        const modalElement = document.getElementById(modalId);
+        if (!modalElement) return;
+
+        const closeButtons = modalElement.querySelectorAll('.modal-close, .thank-you-close-btn'); // Include specific button if needed
+
+        const closeModal = () => {
+            if (typeof toggleModal === 'function') {
+                toggleModal(modalElement, false);
+            } else {
+                modalElement.style.display = 'none';
                 document.body.classList.remove('modal-open');
             }
-        });
-    });
-    
-    // Add event listener for "Continue Browsing" button in thank you modal
-    const thankYouCloseBtn = document.querySelector('.thank-you-close-btn');
-    if (thankYouCloseBtn) {
-        thankYouCloseBtn.addEventListener('click', function() {
-            const thankYouModal = document.getElementById('thank-you-modal');
-            if (thankYouModal) {
-                thankYouModal.style.display = 'none';
-                document.body.classList.remove('modal-open');
-            }
+        };
+
+        closeButtons.forEach(btn => btn.addEventListener('click', closeModal));
+
+        modalElement.addEventListener('click', function(event) {
+             if (event.target === modalElement) {
+                 closeModal();
+             }
         });
     }
-    
-    // Close modal when clicking outside
-    document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('modal-overlay')) {
-            event.target.style.display = 'none';
-            document.body.classList.remove('modal-open');
-        }
-    });
+
+    setupGenericModal('thank-you-modal');
+    setupGenericModal('emailFallback');
 }
 
 // === Video Initialization (with Autoplay) ===
+// ... (initVideos remains the same) ...
 function initVideos() {
     function setupVideo(videoId, buttonId) {
         const video = document.getElementById(videoId);
@@ -274,180 +402,181 @@ function initVideos() {
         const videoContainer = video ? video.closest('.video-container') : null; // Get container
 
         if (!video || !playBtn || !videoContainer) {
+            // console.warn(`Video setup failed for: ${videoId}`);
             return;
         }
 
+        // Function to update button state
+        const updateButtonState = (isPlaying) => {
+            if (isPlaying) {
+                playBtn.classList.add('playing');
+                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                videoContainer.classList.add('video-playing');
+            } else {
+                playBtn.classList.remove('playing');
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                videoContainer.classList.remove('video-playing');
+            }
+        };
+
         // Set up play button
         playBtn.addEventListener('click', function () {
-            if (video.paused) {
-                // Play video and handle Promise
+            if (video.paused || video.ended) {
                 const playPromise = video.play();
-                
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
-                        // Playback started successfully
-                        this.classList.add('playing');
-                        this.innerHTML = '<i class="fas fa-pause"></i>'; // Switch to pause icon
-                        videoContainer.classList.add('video-playing');
+                        updateButtonState(true);
                     }).catch(error => {
-                        // Auto-play was prevented or other error
                         console.error("Video playback error:", error);
-                        // Try a second time after user interaction
-                        video.play().catch(e => console.error("Second play attempt failed:", e));
+                        // Try forcing mute and playing again on user interaction
+                        video.muted = true;
+                        video.play().then(() => updateButtonState(true)).catch(e => console.error("Second play attempt failed:", e));
                     });
                 }
             } else {
                 video.pause();
-                this.classList.remove('playing');
-                this.innerHTML = '<i class="fas fa-play"></i>'; // Switch to play icon
-                videoContainer.classList.remove('video-playing');
+                updateButtonState(false);
             }
         });
 
-        // Video ended event
-        video.addEventListener('ended', function () {
-            playBtn.classList.remove('playing');
-            playBtn.innerHTML = '<i class="fas fa-play"></i>'; // Switch back to play icon
-            videoContainer.classList.remove('video-playing');
-            video.currentTime = 0; // Reset video
+        // Update button state on video events
+        video.addEventListener('play', () => updateButtonState(true));
+        video.addEventListener('pause', () => updateButtonState(false));
+        video.addEventListener('ended', () => {
+            updateButtonState(false);
+            video.currentTime = 0; // Optional: Reset video to start
         });
 
-        // Initialize autoplay if data attribute is set
+        // Intersection Observer for Autoplay (if enabled)
         if (video.dataset.autoplay === 'true') {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        // Use Promise-based approach for autoplay too
-                        const autoPlayPromise = video.play();
-                        
-                        if (autoPlayPromise !== undefined) {
-                            autoPlayPromise.then(() => {
-                                // Autoplay started successfully
-                                playBtn.classList.add('playing');
-                                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                                videoContainer.classList.add('video-playing');
-                            }).catch(err => {
-                                // Autoplay was prevented, don't change UI
-                                console.log("Autoplay prevented:", err);
-                                // Don't modify play button - user needs to click it
-                            });
+                        // Attempt autoplay only if paused
+                        if(video.paused) {
+                            video.muted = true; // Ensure muted for autoplay
+                            const autoPlayPromise = video.play();
+                            if (autoPlayPromise !== undefined) {
+                                autoPlayPromise.catch(err => {
+                                    // Autoplay likely prevented, log it but don't change UI state
+                                    console.log(`Autoplay prevented for ${videoId}:`, err);
+                                    updateButtonState(false); // Ensure button shows play if autoplay fails
+                                });
+                            }
                         }
                     } else {
-                        video.pause();
+                        // Pause when not visible
+                        if (!video.paused) {
+                            video.pause();
+                        }
                     }
                 });
-            }, { threshold: 0.5 });
-            
+            }, { threshold: 0.5 }); // Trigger when 50% visible
+
             observer.observe(videoContainer);
+        } else {
+             // Set initial state for non-autoplay videos
+             updateButtonState(false);
         }
-        
-        // Ensure video is muted for better autoplay chances (browsers often block unmuted autoplay)
-        video.muted = true;
     }
 
-    // Set up the two main videos
+    // Set up the specific videos
     setupVideo('rov-video', 'rov-play-btn');
     setupVideo('crawler-video', 'crawler-play-btn');
 }
 
 // Initialize hero carousel
+// ... (initHeroCarousel remains the same) ...
 function initHeroCarousel() {
     // Only initialize on screens larger than 768px
     if (window.innerWidth <= 768) return;
-    
-    const carousel = document.querySelector('.carousel-container');
+
+    const carousel = document.querySelector('.carousel-container'); // Assuming this class exists for the hero carousel
     if (!carousel) return;
-    
+
     const track = carousel.querySelector('.carousel-track');
     const slides = carousel.querySelectorAll('.carousel-slide');
-    const indicators = carousel.querySelectorAll('.indicator');
-    const prevButton = carousel.querySelector('.prev');
-    const nextButton = carousel.querySelector('.next');
-    
+    const indicatorsContainer = carousel.querySelector('.carousel-indicators'); // Assuming this exists
+    const prevButton = carousel.querySelector('.prev'); // Assuming this exists
+    const nextButton = carousel.querySelector('.next'); // Assuming this exists
+
     if (!track || slides.length === 0) return;
-    
+
+    let indicators = [];
+    if (indicatorsContainer) {
+        // Dynamically create indicators if needed, or select existing ones
+        // Example: indicators = indicatorsContainer.querySelectorAll('.indicator');
+    }
+
     let currentSlide = 0;
     let autoplayInterval;
-    
-    // Set initial slide
-    setActiveSlide(0);
-    
-    // Set up indicators if they exist
-    if (indicators.length > 0) {
-        indicators.forEach((indicator, index) => {
-            indicator.addEventListener('click', () => {
-                setActiveSlide(index);
-                resetAutoplay();
-            });
-        });
-    }
-    
-    // Set up prev/next buttons if they exist
-    if (prevButton) {
-        prevButton.addEventListener('click', () => {
-            const newIndex = (currentSlide - 1 + slides.length) % slides.length;
-            setActiveSlide(newIndex);
-            resetAutoplay();
-        });
-    }
-    
-    if (nextButton) {
-        nextButton.addEventListener('click', () => {
-            const newIndex = (currentSlide + 1) % slides.length;
-            setActiveSlide(newIndex);
-            resetAutoplay();
-        });
-    }
-    
+    const autoplayDelay = 5000; // 5 seconds
+
     // Function to set active slide
     function setActiveSlide(index) {
-        // Update currentSlide index
-            currentSlide = index;
-        
+        // Bounds check
+        if (index < 0) index = slides.length - 1;
+        if (index >= slides.length) index = 0;
+
+        currentSlide = index;
+
         // Update slide position
         track.style.transform = `translateX(-${index * 100}%)`;
-        
+
         // Update indicators
         indicators.forEach((indicator, i) => {
             indicator.classList.toggle('active', i === index);
         });
-        
-        // Update slides
+
+        // Update slides (optional: for accessibility or specific styling)
         slides.forEach((slide, i) => {
             slide.classList.toggle('active', i === index);
-            
-            // Optional: handle aria-attributes for accessibility
             slide.setAttribute('aria-hidden', i !== index);
         });
     }
-    
-    // Function to reset autoplay
+
+    // Function to start/reset autoplay
     function resetAutoplay() {
-        if (autoplayInterval) {
-            clearInterval(autoplayInterval);
-        }
-        
+        clearInterval(autoplayInterval);
         autoplayInterval = setInterval(() => {
-            const newIndex = (currentSlide + 1) % slides.length;
-            setActiveSlide(newIndex);
-        }, 5000); // 5 second interval
+            setActiveSlide(currentSlide + 1);
+        }, autoplayDelay);
     }
-    
-    // Start autoplay
-    resetAutoplay();
-    
-    // Pause autoplay when the user hovers over the carousel
-    carousel.addEventListener('mouseenter', () => {
-        if (autoplayInterval) {
-            clearInterval(autoplayInterval);
-        }
+
+    // Set up indicators if they exist
+    indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => {
+            setActiveSlide(index);
+            resetAutoplay();
+        });
     });
-    
-    // Resume autoplay when the user stops hovering
+
+    // Set up prev/next buttons if they exist
+    if (prevButton) {
+        prevButton.addEventListener('click', () => {
+            setActiveSlide(currentSlide - 1);
+            resetAutoplay();
+        });
+    }
+
+    if (nextButton) {
+        nextButton.addEventListener('click', () => {
+            setActiveSlide(currentSlide + 1);
+            resetAutoplay();
+        });
+    }
+
+    // Pause autoplay on hover
+    carousel.addEventListener('mouseenter', () => clearInterval(autoplayInterval));
     carousel.addEventListener('mouseleave', resetAutoplay);
+
+    // Initial setup
+    setActiveSlide(0);
+    resetAutoplay();
 }
 
 // Initialize the new image carousel for Diver Cleaning section
+// ... (initImageCarousel remains the same) ...
 function initImageCarousel() {
     const carousel = document.querySelector('.image-carousel-showcase');
     if (!carousel) return;
@@ -511,235 +640,188 @@ function initImageCarousel() {
 }
 
 // === Custom button functionality ===
+// ... (initCustomButtons remains the same, ensure mailto fallback works)
 function initCustomButtons() {
-    // Get all the buttons
-    const rovInspectionBtn = document.getElementById('rov-inspection-btn');
-    const cleaningDemoBtn = document.getElementById('cleaning-demo-btn');
-    const learnMoreBtn = document.getElementById('learn-more-btn');
-    
-    // ROV Inspection Button
-    if (rovInspectionBtn) {
-        rovInspectionBtn.addEventListener('click', function() {
-            const emailSubject = encodeURIComponent("ROV Inspection Services Inquiry");
-            const emailBody = encodeURIComponent("I'd like to learn more about your ROV inspection services.");
-            const mailtoLink = `mailto:info@marinetream.com.au?subject=${emailSubject}&body=${emailBody}`;
-            
-            // Try to open email client
-            const mailtoAttempt = window.open(mailtoLink, '_self');
-            
-            // If couldn't open email client, show fallback
-            setTimeout(function() {
-                if (!mailtoAttempt || mailtoAttempt.closed || typeof mailtoAttempt.closed === 'undefined') {
-                    showEmailFallback("I'd like to learn more about your ROV inspection services.");
-                }
-            }, 500);
-        });
+    // Helper function for mailto links with fallback
+    function setupMailtoButton(buttonId, subject, body) {
+        const button = document.getElementById(buttonId);
+        if (button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent default if it's an anchor
+                const mailtoSubject = encodeURIComponent(subject);
+                const mailtoBody = encodeURIComponent(body);
+                const mailtoLink = `mailto:info@marinestream.com.au?subject=${mailtoSubject}&body=${mailtoBody}`;
+
+                // Try to open mail client
+                const mailWindow = window.open(mailtoLink, '_self');
+
+                // Fallback timeout
+                setTimeout(() => {
+                    // Check if window failed to open or closed immediately
+                    if (!mailWindow || mailWindow.closed || typeof mailWindow.closed === 'undefined') {
+                        showEmailFallback(body, subject); // Pass subject too
+                    }
+                }, 500); // 500ms delay seems reasonable
+            });
+        }
     }
-    
-    // Cleaning Demo Button
-    if (cleaningDemoBtn) {
-        cleaningDemoBtn.addEventListener('click', function() {
-            const emailSubject = encodeURIComponent("Cleaning Demonstration Request");
-            const emailBody = encodeURIComponent("I'd like to request a cleaning demonstration.");
-            const mailtoLink = `mailto:info@marinetream.com.au?subject=${emailSubject}&body=${emailBody}`;
-            
-            // Try to open email client
-            const mailtoAttempt = window.open(mailtoLink, '_self');
-            
-            // If couldn't open email client, show fallback
-            setTimeout(function() {
-                if (!mailtoAttempt || mailtoAttempt.closed || typeof mailtoAttempt.closed === 'undefined') {
-                    showEmailFallback("I'd like to request a cleaning demonstration.");
-                }
-            }, 500);
-        });
-    }
-    
-    // Learn More Button
+
+    // --- Set up specific buttons --- 
+    // Note: IDs like 'rov-inspection-btn', 'cleaning-demo-btn' aren't in the HTML provided.
+    // Assuming they might exist or these are placeholder examples.
+    setupMailtoButton('rov-inspection-btn', "ROV Inspection Services Inquiry", "I'd like to learn more about your ROV inspection services.");
+    setupMailtoButton('cleaning-demo-btn', "Cleaning Demonstration Request", "I'd like to request a cleaning demonstration.");
+
+    // Handle 'Learn More' button (if it triggers PDF or something else)
+    const learnMoreBtn = document.getElementById('learn-more-btn'); // ID not found in HTML
     if (learnMoreBtn) {
         learnMoreBtn.addEventListener('click', function() {
-            if (typeof showCapabilityStatement === 'function') {
+            if (typeof showCapabilityStatement === 'function') { // Assuming this function exists elsewhere
                 showCapabilityStatement();
+            } else {
+                console.warn('showCapabilityStatement function not found.');
+                // Potentially link to a relevant section instead
+                // window.location.href = '#about';
             }
         });
     }
-    
-    // Initialize social media links
+
+    // Initialize social media links (if needed)
     initSocialMediaLinks();
 }
 
 // Social media links
+// ... (initSocialMediaLinks remains the same) ...
 function initSocialMediaLinks() {
-    // Get all social media link containers
-    const socialContainers = document.querySelectorAll('.social-links');
-    
-    socialContainers.forEach(container => {
-        // LinkedIn Link
-        const linkedInLink = container.querySelector('a[data-platform="linkedin"]');
-        if (linkedInLink) {
-            linkedInLink.href = "https://www.linkedin.com/company/marinetream/posts/?feedView=all";
-            linkedInLink.target = "_blank";
-            linkedInLink.rel = "noopener noreferrer";
+    // Target specific links if they exist, e.g., in footer or contact section
+    const socialLinks = document.querySelectorAll('.social-link');
+
+    socialLinks.forEach(link => {
+        const platform = link.getAttribute('aria-label')?.toLowerCase();
+        let url;
+
+        switch (platform) {
+            case 'linkedin':
+                url = "https://www.linkedin.com/company/marinestream/posts/?feedView=all"; // Corrected URL
+                break;
+            case 'facebook':
+                url = "https://www.facebook.com/profile.php?id=100029694686734";
+                break;
+            case 'youtube':
+                url = "https://www.youtube.com/@franmarine5117";
+                break;
         }
-        
-        // Facebook Link
-        const facebookLink = container.querySelector('a[data-platform="facebook"]');
-        if (facebookLink) {
-            facebookLink.href = "https://www.facebook.com/profile.php?id=100029694686734";
-            facebookLink.target = "_blank";
-            facebookLink.rel = "noopener noreferrer";
-        }
-        
-        // YouTube Link
-        const youtubeLink = container.querySelector('a[data-platform="youtube"]');
-        if (youtubeLink) {
-            youtubeLink.href = "https://www.youtube.com/@franmarine5117";
-            youtubeLink.target = "_blank";
-            youtubeLink.rel = "noopener noreferrer";
+
+        if (url) {
+            link.href = url;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
         }
     });
 }
 
+
 // Email fallback functionality
-function showEmailFallback(messageBody) {
+function showEmailFallback(messageBody, subject = "MarineStream Inquiry") {
     const fallbackModal = document.getElementById('emailFallback');
     const emailContentDiv = document.getElementById('emailContent');
     const copyEmailBtn = document.getElementById('copyEmailBtn');
-    
+
     if (fallbackModal && emailContentDiv) {
-        emailContentDiv.textContent = messageBody;
-        fallbackModal.style.display = 'flex';
-        
+        // Construct full content for copy
+        const fullEmailContent = `To: info@marinestream.com.au\nSubject: ${subject}\n\n${messageBody}`;
+        emailContentDiv.textContent = fullEmailContent; // Show full content
+
+        if (typeof toggleModal === 'function') {
+             toggleModal(fallbackModal, true);
+        } else {
+            fallbackModal.style.display = 'flex';
+        }
+
         if (copyEmailBtn) {
-            copyEmailBtn.addEventListener('click', function() {
-                navigator.clipboard.writeText(messageBody).then(() => {
+            // Remove previous listener to avoid multiple copies
+            const newCopyBtn = copyEmailBtn.cloneNode(true);
+            copyEmailBtn.parentNode.replaceChild(newCopyBtn, copyEmailBtn);
+
+            newCopyBtn.addEventListener('click', function() {
+                navigator.clipboard.writeText(fullEmailContent).then(() => {
                     alert('Email content copied to clipboard!');
                 }).catch(err => {
                     console.error('Could not copy text: ', err);
+                    alert('Failed to copy content. Please copy manually.');
                 });
             });
         }
+
+        // Update webmail links (if needed)
+        const gmailLink = fallbackModal.querySelector('a[href*="mail.google.com"]');
+        const outlookLink = fallbackModal.querySelector('a[href*="outlook.live.com"]');
+        const yahooLink = fallbackModal.querySelector('a[href*="mail.yahoo.com"]');
+
+        if (gmailLink) gmailLink.href = `https://mail.google.com/mail/?view=cm&fs=1&to=info@marinestream.com.au&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(messageBody)}`;
+        if (outlookLink) outlookLink.href = `https://outlook.live.com/mail/0/deeplink/compose?to=info@marinestream.com.au&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(messageBody)}`;
+        if (yahooLink) yahooLink.href = `https://mail.yahoo.com/d/compose?to=info@marinestream.com.au&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(messageBody)}`;
+
     }
 }
+
 
 // Helper function to format dates
+// ... (formatDate remains the same) ...
 function formatDate(dateString) {
+    if (!dateString) return 'N/A'; // Handle empty dates
     try {
-        const date = new Date(dateString);
-        return date.toLocaleDateString();
+        // Try creating date assuming YYYY-MM-DD format first
+        const date = new Date(dateString + 'T00:00:00'); // Add time to avoid timezone issues
+        if (isNaN(date.getTime())) {
+            // If invalid, try parsing differently (might not be needed if input type=date)
+             return dateString; // Return original if parsing fails
+        }
+        // Use locale string format for better readability
+        return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
     } catch (error) {
-        return dateString;
+        console.error("Error formatting date:", dateString, error);
+        return dateString; // Return original on error
     }
 }
-
-// Handle BFMP form submission
-document.addEventListener('DOMContentLoaded', function() {
-    const bfmpForm = document.getElementById('bfmp-form');
-    const bfmpResetBtn = document.getElementById('bfmp-reset-btn');
-    
-    // Reset form handler
-    if (bfmpResetBtn) {
-        bfmpResetBtn.addEventListener('click', function() {
-            if (confirm('Are you sure you want to reset the form? All entered data will be lost.')) {
-                bfmpForm.reset();
-            }
-        });
-    }
-    
-    // Handle vessel image upload and preview
-    const vesselImageUpload = document.getElementById('vesselImageUpload');
-    const imagePreview = document.getElementById('imagePreview');
-    const vesselImagePreview = document.getElementById('vesselImagePreview');
-    
-    if (vesselImageUpload) {
-        vesselImageUpload.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file && file.type.match('image.*')) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    vesselImagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                };
-                
-                reader.readAsDataURL(file);
-            } else {
-                imagePreview.style.display = 'none';
-                vesselImagePreview.src = '';
-            }
-        });
-    }
-    
-    // Form submission handler
-    if (bfmpForm) {
-        bfmpForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            // Validate form
-            const requiredFields = bfmpForm.querySelectorAll('[required]');
-            let isValid = true;
-            
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    isValid = false;
-                    field.classList.add('error');
-                } else {
-                    field.classList.remove('error');
-                }
-            });
-            
-            if (!isValid) {
-                alert('Please fill in all required fields.');
-                return;
-            }
-            
-            // Collect form data
-            const formData = new FormData(bfmpForm);
-            const bfmpData = {};
-            
-            // Handle regular form fields
-            formData.forEach((value, key) => {
-                // Handle multiple checkbox values (like nicheAreas)
-                if (bfmpData[key] && Array.isArray(bfmpData[key])) {
-                    bfmpData[key].push(value);
-                } else if (bfmpData[key]) {
-                    bfmpData[key] = [bfmpData[key], value];
-                } else {
-                    bfmpData[key] = value;
-                }
-            });
-            
-            // Handle the vessel image if provided
-            const vesselImageInput = document.getElementById('vesselImageUpload');
-            if (vesselImageInput && vesselImageInput.files && vesselImageInput.files[0]) {
-                // Use the preview image's data URL
-                bfmpData.vesselImage = vesselImagePreview.src;
-            }
-            
-            // Generate BFMP document
-            generateBFMP(bfmpData);
-        });
-    }
-});
 
 // Function to generate BFMP document
 function generateBFMP(data) {
     try {
         // Create a new window for the generated BFMP
         const bfmpWindow = window.open('', '_blank');
-        
+
         // Make sure the window was created successfully
         if (!bfmpWindow) {
             alert('Pop-up blocked! Please allow pop-ups for this site to generate the BFMP.');
             return;
         }
-        
+
+         // Helper to safely get data or return 'N/A'
+        const getData = (key, defaultValue = 'N/A') => data[key] || defaultValue;
+        const formatList = (key) => {
+            const items = data[key];
+            if (Array.isArray(items) && items.length > 0) {
+                return items.map(item => `<li>${item}</li>`).join('');
+            } else if (typeof items === 'string' && items) {
+                 return `<li>${items}</li>`; // Handle single selection from multiple
+            } else {
+                // Provide default list items if data is missing
+                switch(key) {
+                    case 'nicheAreas':
+                        return `<li>Sea chests and cooling systems</li><li>Rudder hinges and stabiliser fins</li><li>Propellers and shafts</li><li>Thrusters and tunnels</li><li>Gratings and chain lockers</li>`;
+                    default:
+                        return '<li>No specific items listed.</li>';
+                }
+            }
+        };
+
         // Write the HTML content to the new window
         bfmpWindow.document.write(`
             <!DOCTYPE html>
-            <html>
+            <html lang="en">
             <head>
-                <title>Biofouling Management Plan - ${data.vesselName}</title>
+                <title>Biofouling Management Plan - ${getData('vesselName')}</title>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <style>
@@ -747,8 +829,12 @@ function generateBFMP(data) {
                         font-family: Arial, sans-serif;
                         line-height: 1.6;
                         color: #333;
-                        margin: 0;
-                        padding: 20px;
+                        margin: 20px;
+                        padding: 0;
+                    }
+                    .page-container {
+                        max-width: 800px;
+                        margin: 0 auto;
                     }
                     .bfmp-header {
                         text-align: center;
@@ -759,19 +845,23 @@ function generateBFMP(data) {
                     h1 {
                         color: #ff6600;
                         margin-bottom: 5px;
+                        font-size: 24px;
                     }
                     .section {
                         margin-bottom: 30px;
                         padding-bottom: 15px;
                         border-bottom: 1px solid #eee;
+                        page-break-inside: avoid;
                     }
                     h2 {
                         color: #ff6600;
                         margin-bottom: 15px;
+                        font-size: 18px;
                     }
                     h3 {
                         color: #333;
                         margin-bottom: 10px;
+                        font-size: 16px;
                     }
                     table {
                         width: 100%;
@@ -782,16 +872,20 @@ function generateBFMP(data) {
                         padding: 10px;
                         border: 1px solid #ddd;
                         text-align: left;
+                        font-size: 14px;
                     }
                     th {
                         background-color: #f5f5f5;
                         font-weight: bold;
+                        width: 30%; /* Give label column fixed width */
                     }
                     .footer {
                         margin-top: 50px;
                         text-align: center;
                         font-size: 0.9em;
                         color: #777;
+                        border-top: 1px solid #eee;
+                        padding-top: 15px;
                     }
                     .print-btn {
                         display: block;
@@ -805,278 +899,153 @@ function generateBFMP(data) {
                         font-size: 16px;
                     }
                     .logo {
-                        max-width: 200px;
-                        margin-bottom: 20px;
+                        max-width: 180px;
+                        height: auto;
+                        margin-bottom: 15px;
                     }
                     .vessel-image {
-                        max-width: 100%;
+                        max-width: 90%;
+                        max-height: 300px;
                         height: auto;
-                        margin: 15px 0;
+                        margin: 15px auto;
                         border: 1px solid #ddd;
+                        display: block;
                     }
+                     ul, ol { padding-left: 25px; margin-top: 5px; }
+                     li { margin-bottom: 5px; }
                     @media print {
-                        .print-btn {
-                            display: none;
-                        }
+                        body { margin: 10px; }
+                        .print-btn { display: none; }
+                        .page-container { max-width: 100%; }
+                        .bfmp-header { border-bottom: 1px solid #ccc; }
+                        h1, h2 { color: #000; }
+                        table { font-size: 11pt; }
+                        th, td { padding: 6px; }
+                        .footer { margin-top: 30px; }
                     }
                 </style>
             </head>
             <body>
+             <div class="page-container">
                 <div class="bfmp-header">
-                    <img src="./assets/logo.png" alt="MarineStream Logo" class="logo">
+                    <img src="./assets/marinestream_logo_colour.png" alt="MarineStream Logo" class="logo">
                     <h1>Biofouling Management Plan</h1>
-                    <p><strong>${data.vesselName}</strong> - ${data.vesselType}</p>
+                    <p><strong>Vessel: ${getData('vesselName')}</strong> (${getData('vesselType')})</p>
                     <p>Generated on ${new Date().toLocaleDateString()}</p>
-                    ${data.vesselImage ? `<img src="${data.vesselImage}" alt="${data.vesselName}" class="vessel-image">` : ''}
+                    ${data.vesselImage ? `<img src="${data.vesselImage}" alt="${getData('vesselName')}" class="vessel-image">` : ''}
                 </div>
-                
+
                 <div class="section">
                     <h2>1. Vessel Information</h2>
                     <table>
-                        <tr>
-                            <th>Vessel Name</th>
-                            <td>${data.vesselName}</td>
-                        </tr>
-                        <tr>
-                            <th>IMO Number</th>
-                            <td>${data.imoNumber || 'N/A'}</td>
-                        </tr>
-                        <tr>
-                            <th>Flag State</th>
-                            <td>${data.flagState}</td>
-                        </tr>
-                        <tr>
-                            <th>Vessel Type</th>
-                            <td>${data.vesselType}</td>
-                        </tr>
-                        <tr>
-                            <th>Length Overall</th>
-                            <td>${data.vesselLength} meters</td>
-                        </tr>
-                        <tr>
-                            <th>Gross Tonnage</th>
-                            <td>${data.grossTonnage || 'N/A'}</td>
-                        </tr>
-                        ${data.yearBuilt ? `
-                        <tr>
-                            <th>Year Built</th>
-                            <td>${data.yearBuilt}</td>
-                        </tr>` : ''}
-                        ${data.callSign ? `
-                        <tr>
-                            <th>Call Sign</th>
-                            <td>${data.callSign}</td>
-                        </tr>` : ''}
-                        ${data.homePort ? `
-                        <tr>
-                            <th>Home Port</th>
-                            <td>${data.homePort}</td>
-                        </tr>` : ''}
-                        ${data.owner ? `
-                        <tr>
-                            <th>Owner/Operator</th>
-                            <td>${data.owner}</td>
-                        </tr>` : ''}
+                        <tr><th>Vessel Name</th><td>${getData('vesselName')}</td></tr>
+                        <tr><th>IMO Number</th><td>${getData('imoNumber')}</td></tr>
+                        <tr><th>Flag State</th><td>${getData('flagState')}</td></tr>
+                        <tr><th>Vessel Type</th><td>${getData('vesselType')}</td></tr>
+                        <tr><th>Length Overall (m)</th><td>${getData('vesselLength')}</td></tr>
+                        <tr><th>Gross Tonnage</th><td>${getData('grossTonnage')}</td></tr>
+                        <tr><th>Year Built</th><td>${getData('yearBuilt')}</td></tr>
+                        <tr><th>Call Sign</th><td>${getData('callSign')}</td></tr>
+                        <tr><th>Home Port</th><td>${getData('homePort')}</td></tr>
+                        <tr><th>Owner/Operator</th><td>${getData('owner')}</td></tr>
                     </table>
                 </div>
-                
+
                 <div class="section">
                     <h2>2. Antifouling System</h2>
                     <table>
-                        <tr>
-                            <th>System Type</th>
-                            <td>${data.afSystem}</td>
-                        </tr>
-                        <tr>
-                            <th>Application Date</th>
-                            <td>${data.afApplication || 'N/A'}</td>
-                        </tr>
-                        <tr>
-                            <th>Valid Until</th>
-                            <td>${data.afValidity || 'N/A'}</td>
-                        </tr>
-                        ${data.afManufacturer ? `
-                        <tr>
-                            <th>Manufacturer</th>
-                            <td>${data.afManufacturer}</td>
-                        </tr>` : ''}
-                        ${data.afProduct ? `
-                        <tr>
-                            <th>Product Name</th>
-                            <td>${data.afProduct}</td>
-                        </tr>` : ''}
-                        ${data.afColor ? `
-                        <tr>
-                            <th>Color</th>
-                            <td>${data.afColor}</td>
-                        </tr>` : ''}
+                        <tr><th>System Type</th><td>${getData('afSystem')}</td></tr>
+                        <tr><th>Application Date</th><td>${formatDate(getData('afApplication', ''))}</td></tr>
+                        <tr><th>Valid Until</th><td>${formatDate(getData('afValidity', ''))}</td></tr>
+                        <tr><th>Manufacturer</th><td>${getData('afManufacturer')}</td></tr>
+                        <tr><th>Product Name</th><td>${getData('afProduct')}</td></tr>
+                         <tr><th>Color</th><td>${getData('afColor')}</td></tr>
                     </table>
-                    
-                    <h3>System Details</h3>
-                    <p>${data.afDetails || 'No additional details provided.'}</p>
-                    
-                    <h3>Antifouling System Maintenance Strategy</h3>
-                    <p>Regular inspection and maintenance of the antifouling system is essential to minimise biofouling accumulation. The vessel will follow the maintenance schedule detailed in this plan.</p>
+                    <h3>Additional Details</h3>
+                    <p>${getData('afDetails', 'No additional details provided.')}</p>
                 </div>
-                
+
                 <div class="section">
-                    <h2>3. Inspection and Maintenance Procedures</h2>
-                    <h3>Inspection Schedule</h3>
-                    <p>Regular inspections will be conducted ${data.inspectionFrequency.toLowerCase()} to detect and assess biofouling on the vessel hull and niche areas.</p>
-                    
-                    <h3>Cleaning Method</h3>
-                    <p>Primary cleaning method: ${data.cleaningMethod}</p>
-                    
+                    <h2>3. Inspection and Maintenance</h2>
+                    <table>
+                         <tr><th>Inspection Frequency</th><td>${getData('inspectionFrequency')}</td></tr>
+                         <tr><th>Primary Cleaning Method</th><td>${getData('cleaningMethod')}</td></tr>
+                    </table>
+                    <h3>Niche Areas to Monitor</h3>
+                    <ul>${formatList('nicheAreas')}</ul>
                     <h3>Maintenance Strategy</h3>
-                    <p>${data.maintenanceDetails || 'Standard maintenance procedures will be followed according to industry best practices and manufacturer recommendations.'}</p>
-                    
-                    <h3>Niche Areas Management</h3>
-                    <p>Special attention will be given to the following niche areas:</p>
-                    <ul>
-                        ${data.nicheAreas ? data.nicheAreas.map(area => `<li>${area}</li>`).join('') : `
-                        <li>Sea chests and internal seawater cooling systems</li>
-                        <li>Rudder hinges and stabiliser fins</li>
-                        <li>Propellers, shafts, and associated components</li>
-                        <li>Bow/stern thrusters and thruster tunnels</li>
-                        <li>Gratings, chain lockers, and anchor chains</li>`}
-                    </ul>
+                    <p>${getData('maintenanceDetails', 'Standard maintenance procedures will be followed.')}</p>
                 </div>
-                
+
                 <div class="section">
                     <h2>4. Operational Profile</h2>
-                    <p><strong>Primary Operating Regions:</strong> ${Array.isArray(data.operatingRegions) ? data.operatingRegions.join(', ') : data.operatingRegions}</p>
-                    <p><strong>Average Annual Port Calls:</strong> ${data.portCalls}</p>
-                    <p><strong>Typical Layup Periods:</strong> ${data.layupPeriods || 'None specified'}</p>
-                    ${data.tradingPattern ? `<p><strong>Trading Pattern:</strong> ${data.tradingPattern}</p>` : ''}
-                    ${data.avgSpeed ? `<p><strong>Average Operating Speed:</strong> ${data.avgSpeed} knots</p>` : ''}
-                    
-                    <h3>Voyage Planning Considerations</h3>
-                    <p>When planning voyages, the following biofouling risk factors will be considered:</p>
-                    <ul>
-                        <li>Duration of stay in ports</li>
-                        <li>Sailing speeds and patterns</li>
-                        <li>Water temperature and salinity changes</li>
-                        <li>Regulatory requirements of destination ports</li>
-                    </ul>
+                     <table>
+                         <tr><th>Primary Operating Regions</th><td>${formatList('operatingRegions')}</td></tr>
+                         <tr><th>Trading Pattern</th><td>${getData('tradingPattern')}</td></tr>
+                         <tr><th>Average Operating Speed (knots)</th><td>${getData('avgSpeed')}</td></tr>
+                         <tr><th>Average Port Calls per Year</th><td>${getData('portCalls')}</td></tr>
+                         <tr><th>Typical Layup Periods</th><td>${getData('layupPeriods')}</td></tr>
+                    </table>
                 </div>
-                
-                <div class="section">
-                    <h2>5. Biofouling Management Procedures</h2>
+
+                 <div class="section">
+                    <h2>5. Procedures & Contingency</h2>
                     <h3>Contingency Measures</h3>
-                    <p>If significant biofouling is detected during inspections, the following actions will be taken:</p>
-                    <ol>
-                        <li>Assess the extent and type of biofouling</li>
-                        <li>Determine if immediate cleaning is required</li>
-                        <li>Select appropriate cleaning method based on location, regulations, and fouling severity</li>
-                        <li>Document all actions in the Biofouling Record Book</li>
-                    </ol>
-                    
-                    <h3>Emergency Response</h3>
-                    <p>In case of emergency situations affecting biofouling management (e.g., equipment failure, unexpected hull damage):</p>
-                    <ol>
-                        <li>Notify the vessel's management company</li>
-                        <li>Assess the potential impact on planned voyages</li>
-                        <li>Develop and implement appropriate action plan</li>
-                        <li>Document all actions and decisions</li>
-                    </ol>
+                    <p>If significant biofouling is detected, actions include assessment, determining cleaning needs, selecting appropriate methods, and documenting in the Record Book.</p>
+                    <h3>Recordkeeping</h3>
+                    <p>All activities (inspections, cleaning, maintenance) will be logged in the Biofouling Record Book and retained per regulations.</p>
                 </div>
-                
+
                 <div class="section">
-                    <h2>6. Recordkeeping</h2>
-                    <p>All biofouling management activities will be recorded in the vessel's Biofouling Record Book, including:</p>
-                    <ul>
-                        <li>Inspection dates and results</li>
-                        <li>Cleaning activities and methods used</li>
-                        <li>Maintenance of the antifouling system</li>
-                        <li>Any contingency measures implemented</li>
-                    </ul>
-                    <p>Records will be maintained for a minimum of three years and will be available for inspection by relevant authorities.</p>
+                    <h2>6. Crew Training</h2>
+                    <p>${getData('trainingDetails', 'Relevant crew members will be trained on this plan, inspection methods, and documentation.')}</p>
                 </div>
-                
-                <div class="section">
-                    <h2>7. Staff Training and Familiarization</h2>
-                    <p>Relevant crew members will receive training on:</p>
-                    <ul>
-                        <li>Understanding biofouling and its impacts</li>
-                        <li>Implementation of this Biofouling Management Plan</li>
-                        <li>Inspection procedures and documentation requirements</li>
-                        <li>Emergency and contingency procedures</li>
-                        ${data.trainingDetails ? `<li>${data.trainingDetails}</li>` : ''}
-                    </ul>
+
+                 <div class="section">
+                    <h2>7. Plan Review</h2>
+                    <p>This plan will be reviewed annually or following significant changes (operations, regulations, maintenance). Plan Approval Authority: ${getData('approvalAuthority', 'Ship Management')}.</p>
                 </div>
-                
-                <div class="section">
-                    <h2>8. Plan Review and Update Procedures</h2>
-                    <p>This Biofouling Management Plan will be reviewed and updated:</p>
-                    <ul>
-                        <li>At least annually</li>
-                        <li>Following any significant changes to the vessel's operating profile</li>
-                        <li>After major hull maintenance or antifouling system renewal</li>
-                        <li>When new regulations affecting biofouling management come into effect</li>
-                    </ul>
-                    <p><strong>Plan Approval:</strong> ${data.approvalAuthority || 'Ship Management'}</p>
-                </div>
-                
+
                 <div class="footer">
-                    <p>This Biofouling Management Plan was generated by MarineStream™</p>
-                    <p>For assistance with implementation, please contact: info@marinestream.com.au</p>
+                    <p>Generated by MarineStream™ | info@marinestream.com.au</p>
                 </div>
-                
+
                 <button class="print-btn" onclick="window.print()">Print BFMP</button>
-                
-                <script>
-                    // Add any necessary JavaScript here
-                    document.querySelector('.print-btn').addEventListener('click', function() {
-                        window.print();
-                    });
-                </script>
+              </div>
             </body>
             </html>
         `);
         bfmpWindow.document.close();
-        
-        // Close the generator modal
+
+        // Close the generator modal AFTER generating the document
         const bfmpGeneratorModal = document.getElementById('bfmp-generator-modal');
-        if (bfmpGeneratorModal) {
-            bfmpGeneratorModal.style.display = 'none';
-            document.body.classList.remove('modal-open');
+        if (bfmpGeneratorModal && typeof toggleModal === 'function') {
+            toggleModal(bfmpGeneratorModal, false);
+        } else if (bfmpGeneratorModal) {
+             bfmpGeneratorModal.style.display = 'none';
+             document.body.classList.remove('modal-open');
         }
+
     } catch (error) {
         console.error('Error generating BFMP:', error);
-        alert('An error occurred while generating the BFMP. Please try again.');
+        alert('An error occurred while generating the BFMP. Please check console for details.');
     }
 }
 
+
+// Hero video autoplay logic (ensure it runs after DOM is ready)
+// ... (remains the same) ...
 document.addEventListener('DOMContentLoaded', function() {
     const heroVideo = document.getElementById('hero-video');
     if (heroVideo) {
-        // Show loading animation if you have one
+        heroVideo.muted = true; // Ensure muted for autoplay
         const playPromise = heroVideo.play();
-        
+
         if (playPromise !== undefined) {
-            playPromise.then(() => {
-                // Automatic playback started successfully
-                // Optional: Update UI or trigger related animations if needed
-                console.log("Hero video playing successfully");
-            })
-            .catch(err => {
-                console.log("Hero video autoplay error:", err);
-                
-                // Since this is a hero video that should autoplay,
-                // we can try to play it again after a short delay 
-                // or with muted state to increase autoplay chances
-                heroVideo.muted = true; // Ensure muted for better autoplay chances
-                
-                // Try again after a short delay
-                setTimeout(() => {
-                    heroVideo.play().catch(secondErr => {
-                        console.log("Second hero video play attempt failed:", secondErr);
-                    });
-                }, 1000);
+            playPromise.catch(err => {
+                console.log("Hero video autoplay attempt failed initially:", err);
+                // No need for complex retry logic here, browsers handle interaction requirement
             });
         }
     }
-    
-    // Then your other initialization
-    initVideos();
 });

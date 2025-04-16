@@ -2735,3 +2735,100 @@ video {
     padding-top: var(--space-lg);
     padding-bottom: var(--space-lg);
   }
+
+  /* --- Modal Base Styles --- */
+  .modal-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    z-index: var(--z-modal); /* Ensure it's above other content */
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto; /* Allow scrolling if content is tall */
+    padding: var(--space-lg); /* Padding around the modal content */
+    opacity: 0; /* Start hidden for animation */
+    transition: opacity 0.3s ease-out;
+    pointer-events: none; /* Prevent interaction when hidden */
+  }
+
+  .modal-overlay.active {
+    display: flex !important; /* Use flex for alignment, add !important */
+    opacity: 1;
+    pointer-events: auto; /* Allow interaction when visible */
+  }
+
+
+  .modal-content {
+    background-color: var(--bg-primary); /* Use theme background */
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    width: 90%;
+    max-width: 1000px; /* Max width for larger modals */
+    max-height: 90vh; /* Limit height */
+    overflow-y: auto; /* Scroll inside modal if needed */
+    position: relative;
+    transform: translateY(-20px); /* Start slightly up for animation */
+    transition: transform 0.3s ease-out;
+  }
+
+  .modal-overlay.active .modal-content {
+     transform: translateY(0);
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: var(--space-md);
+    margin-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .modal-header h2 {
+    margin: 0;
+    font-size: 1.6rem;
+    color: var(--accent-color);
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+    padding: 0.5rem;
+    line-height: 1;
+  }
+
+  .modal-close:hover {
+    color: var(--accent-dark);
+  }
+
+  .modal-body {
+    /* Styles specific to the modal body content */
+    padding-bottom: var(--space-lg); /* Ensure space below content */
+  }
+
+  body.modal-open {
+    overflow: hidden; /* Prevent background scrolling */
+  }
+
+  /* Ensure specific modal content styles don't override base */
+  #cost-calculator-modal .modal-content,
+  #bfmp-info-modal .modal-content,
+  #bfmp-generator-modal .modal-content,
+  #thank-you-modal .modal-content,
+  #emailFallback .modal-content {
+     /* Base styles applied via .modal-content. Add specific overrides here if needed */
+     max-width: 1100px; /* Example override for calculator */
+  }
+
+  #bfmp-generator-modal .modal-content {
+    max-width: 1200px; /* Wider modal for the form */
+  }
