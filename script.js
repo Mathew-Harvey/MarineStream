@@ -199,43 +199,6 @@ function initWebsiteFunctions() {
     
     // Initialize modals
     initModals();
-    
-    // Theme switcher
-    const themeSwitcher = document.querySelector('.theme-switcher');
-    const themeOptions = document.querySelectorAll('.theme-option');
-    
-    if (themeSwitcher && themeOptions.length) {
-        // Check for saved theme in localStorage
-        const savedTheme = localStorage.getItem('theme') || 'orange';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        
-        // Set initial active state
-        themeOptions.forEach(option => {
-            if (option.getAttribute('data-theme') === savedTheme) {
-                option.classList.add('active');
-            } else {
-                option.classList.remove('active');
-            }
-        });
-        
-        // Add click handlers
-        themeOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                const theme = this.getAttribute('data-theme');
-                
-                // Update theme
-                document.documentElement.setAttribute('data-theme', theme);
-                localStorage.setItem('theme', theme);
-                
-                // Update active states
-                themeOptions.forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-                
-                // Force a reflow to ensure CSS variables are updated
-                document.body.offsetHeight;
-            });
-        });
-    }
 }
 
 // Function to check for thank you parameter in URL
