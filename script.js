@@ -129,6 +129,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialize hero carousel
     initHeroCarousel();
     
+    // Initialize the new image carousel
+    initImageCarousel();
+    
     // Initialize custom buttons
     initCustomButtons();
 });
@@ -478,6 +481,69 @@ function initHeroCarousel() {
     });
     
     // Resume autoplay when the user stops hovering
+    carousel.addEventListener('mouseleave', resetAutoplay);
+}
+
+// Initialize the new image carousel for Diver Cleaning section
+function initImageCarousel() {
+    const carousel = document.querySelector('.image-carousel-showcase');
+    if (!carousel) return;
+
+    const track = carousel.querySelector('.image-carousel-track');
+    const slides = carousel.querySelectorAll('.image-carousel-slide');
+    const indicators = carousel.querySelectorAll('.carousel-indicators .indicator');
+
+    if (!track || slides.length === 0 || indicators.length === 0) return;
+
+    let currentSlide = 0;
+    let autoplayInterval;
+    const slideInterval = 4000; // Interval in milliseconds (e.g., 4 seconds)
+
+    function setActiveSlide(index) {
+        // Bounds check
+        if (index < 0) index = slides.length - 1;
+        if (index >= slides.length) index = 0;
+
+        currentSlide = index;
+
+        // Move the track
+        track.style.transform = `translateX(-${index * 100}%)`;
+
+        // Update indicators
+        indicators.forEach((indicator, i) => {
+            indicator.classList.toggle('active', i === index);
+        });
+
+        // Update slide active class (optional, for potential future styling)
+        slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === index);
+        });
+    }
+
+    function nextSlide() {
+        setActiveSlide(currentSlide + 1);
+    }
+
+    function resetAutoplay() {
+        clearInterval(autoplayInterval);
+        autoplayInterval = setInterval(nextSlide, slideInterval);
+    }
+
+    // Add event listeners to indicators
+    indicators.forEach(indicator => {
+        indicator.addEventListener('click', () => {
+            const slideIndex = parseInt(indicator.getAttribute('data-slide-to'));
+            setActiveSlide(slideIndex);
+            resetAutoplay(); // Reset timer when user interacts
+        });
+    });
+
+    // Set initial state
+    setActiveSlide(0);
+    resetAutoplay(); // Start autoplay
+
+    // Optional: Pause on hover
+    carousel.addEventListener('mouseenter', () => clearInterval(autoplayInterval));
     carousel.addEventListener('mouseleave', resetAutoplay);
 }
 

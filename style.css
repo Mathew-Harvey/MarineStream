@@ -2929,3 +2929,73 @@ video {
       max-width: 500px !important;
     }
   }
+
+  /* Image Carousel Showcase (Replaces Video Showcase) */
+  .image-carousel-showcase {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+    grid-column: span 1; /* Match split-layout structure */
+  }
+
+  .image-carousel-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden; /* Crucial for track movement */
+    background-color: var(--bg-dark);
+    border-radius: var(--radius-lg); /* Match showcase radius */
+    aspect-ratio: 16 / 9; /* Apply aspect ratio to the container */
+  }
+
+  .image-carousel-track {
+    display: flex;
+    transition: transform var(--transition-slow);
+    height: 100%; /* Ensure track fills container height */
+  }
+
+  .image-carousel-slide {
+    min-width: 100%;
+    flex-shrink: 0;
+    height: 100%; /* Ensure slide fills container height */
+  }
+
+  .image-carousel-slide img {
+    width: 100%;
+    height: 100%; /* Explicitly set height with contain */
+    display: block;
+    object-fit: contain; /* Keep contain */
+    border-radius: var(--radius-lg);
+  }
+
+  /* Carousel Indicators */
+  .carousel-indicators {
+    position: absolute;
+    bottom: var(--space-md);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: var(--space-sm);
+    z-index: 10; /* Ensure indicators are above image */
+  }
+
+  .carousel-indicators .indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: none;
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+    padding: 0;
+  }
+
+  .carousel-indicators .indicator.active {
+    background-color: var(--accent-color);
+  }
+
+  /* Add spacing specifically for the diver cleaning text content */
+  .diver-cleaning-capabilities .monitoring-content {
+    padding-top: var(--space-lg);
+    padding-bottom: var(--space-lg);
+  }
