@@ -278,6 +278,147 @@
                 justify-content: center;
             }
         }
+
+        .partners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-lg);
+            padding: var(--space-lg);
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .partner-logo {
+            background-color: white;
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 120px;
+            transition: transform var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .partner-logo img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            filter: grayscale(100%);
+            transition: filter var(--transition-fast);
+        }
+
+        .partner-logo:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent-light);
+        }
+
+        .partner-logo:hover img {
+            filter: grayscale(0%);
+        }
+
+        /* Logo Carousel Styles */
+        .logos {
+          overflow: hidden;
+          position: relative;
+          width: 100%;
+          /* background-color: var(--bg-secondary); Optional: Set background if needed */
+          padding: var(--space-md) 0; /* Add some vertical padding */
+          -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+        }
+
+        .logos-slide {
+          display: flex; /* Use flexbox */
+          align-items: center; /* Vertically center logos */
+          width: fit-content; /* Allow width to grow with content */
+          /* Animation applied via JS or external CSS likely, ensure 'infiniteScroll' name matches */
+          /* animation: infiniteScroll 180s linear infinite; */ /* Example - Updated comment for slower speed */
+        }
+
+        /* Style the link container for logos */
+        .logos-slide a {
+          display: flex; /* Use flex to center image inside link */
+          align-items: center;
+          justify-content: center;
+          height: 165px; /* FURTHER INCREASED height (110px * 1.5) */
+          padding: var(--space-sm); /* Padding inside the link */
+          margin: 0 var(--space-md); /* Use margin for spacing */
+          flex-shrink: 0; /* Prevent logos from shrinking */
+          background-color: white; /* Give logos a white background like in the image */
+          border-radius: var(--radius-sm);
+          box-shadow: var(--shadow-sm);
+          border: 1px solid var(--border-color);
+          transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+        }
+
+        .logos-slide a:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent-light);
+        }
+
+        .logos-slide img {
+          max-height: 120px; /* FURTHER INCREASED max height (80px * 1.5) */
+          max-width: 270px; /* FURTHER INCREASED max width (180px * 1.5) */
+          object-fit: contain;
+          display: block;
+          /* filter: grayscale(100%); REMOVED */
+          transition: filter var(--transition-fast);
+        }
+
+        .logos-slide a:hover img {
+            /* filter: grayscale(0%); REMOVED */
+        }
+
+        /* Pause animation on hover - Add if desired */
+        .logos:hover .logos-slide {
+          /* animation-play-state: paused; */ /* Uncomment if animation is CSS-driven */
+        }
+
+        /* Keyframes likely defined elsewhere (e.g., style.css or JS). Example:
+        @keyframes infiniteScroll {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+        */
+    </style>
+    <style>
+        /* ... existing styles ... */
+
+        .contact-info .social-links {
+            margin-top: var(--space-lg); /* Add some space above */
+        }
+
+        .contact-info .social-link {
+            display: inline-flex; /* Use flex to center icon inside */
+            align-items: center;
+            justify-content: center;
+            width: 44px; /* Set fixed size */
+            height: 44px;
+            background-color: var(--bg-secondary); /* Subtle background */
+            border-radius: 50%; /* Make it circular */
+            color: var(--text-secondary); /* Default color */
+            font-size: 1.4rem; /* Increase icon size */
+            transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+            border: 1px solid var(--border-color);
+            text-decoration: none; /* Remove underline */
+        }
+
+        .contact-info .social-link:hover {
+            background-color: var(--accent-color); /* Accent on hover */
+            color: white; /* White icon on hover */
+            transform: translateY(-2px); /* Slight lift effect */
+            border-color: var(--accent-dark);
+        }
+
+        /* Ensure icon is centered vertically */
+        .contact-info .social-link i {
+            line-height: 1;
+        }
     </style>
 </head>
 
@@ -854,59 +995,50 @@
                         comprehensive biofouling solutions that enhance compliance, transparency, collaboration, and
                         real-time monitoring.</p>
                     <ul class="about-features">
-                        <li>Based on the <a href="https://www.rise-x.io/" target="_blank">DIANA Ecosystem Orchestration Platform
-                                (EOP)</a></li>
                         <li>Trusted by commercial vessels and naval fleets worldwide</li>
                         <li>Implementing transparency and traceability from down under to the world</li>
                     </ul>
-                    <p class="mt-lg">MarineStream is a division of Franmarine, an Australian subsea and technology
-                        organisation renowned for supporting Defence with underwater services and support.</p>
+                    <p class="mt-lg">MarineStream is a technology of Franmarine, a diversified marine and underwater service provider renowned for supporting Defence with consolidated biofouling management and underwater engineering capability.</p>
                     <a href="#contact" class="btn btn-primary">Learn More About Us</a>
                     <!-- Changed link from #about to #contact -->
                 </div>
                 <div class="clients-section">
-                    <h3>Valued Clients</h3>
-                    <div class="partners-grid">
-                        <div class="partner-logo">
-                            <img src="./assets/AMC.jpg" alt="Australian Maritime College Logo">
+                    <h3>Clients and Industry Partners</h3>
+                    <div class="logos">
+                        <div class="logos-slide">
+                            <a href="https://australianmarinecomplex.com.au" target="_blank" rel="noopener noreferrer"><img src="./assets/AMC.jpg" alt="Australian Marine Complex Logo"></a>
+                            <a href="https://www.amepl.com.au" target="_blank" rel="noopener noreferrer"><img src="./assets/ame.jpg" alt="AME Offshore Solutions Logo"></a>
+                            <a href="https://www.asc.com.au" target="_blank" rel="noopener noreferrer"><img src="./assets/AscLogo150x.jpg" alt="ASC Logo"></a>
+                            <a href="https://www.austal.com" target="_blank" rel="noopener noreferrer"><img src="./assets/austal.jpg" alt="Austal Logo"></a>
+                            <a href="https://www.babcock.com.au" target="_blank" rel="noopener noreferrer"><img src="./assets/babcock.png" alt="Babcock Logo"></a>
+                            <a href="https://www.baesystems.com" target="_blank" rel="noopener noreferrer"><img src="./assets/bae.jpg" alt="BAE Systems Logo"></a>
+                            <a href="https://www.bp.com/en/global/bp-supply-trading-and-shipping.html" target="_blank" rel="noopener noreferrer"><img src="./assets/bp.jpg" alt="BP Shipping Logo"></a>
+                            <a href="https://www.carnivalcorp.com" target="_blank" rel="noopener noreferrer"><img src="./assets/carnival.jpg" alt="Carnival Corporation Logo"></a>
+                            <a href="https://www.cma-cgm.com" target="_blank" rel="noopener noreferrer"><img src="./assets/cma.jpg" alt="CMA CGM Logo"></a>
+                            <a href="https://www.cockburn.wa.gov.au" target="_blank" rel="noopener noreferrer"><img src="./assets/cock.jpg" alt="City of Cockburn Logo"></a>
+                            <a href="https://www.transport.wa.gov.au" target="_blank" rel="noopener noreferrer"><img src="./assets/dept_trans.jpg" alt="Department of Transport WA Logo"></a>
+                            <a href="https://www.echomarinegroup.com" target="_blank" rel="noopener noreferrer"><img src="./assets/echo.jpg" alt="Echo Marine Group Logo"></a>
+                            <a href="https://www.innovativecm.com.au" target="_blank" rel="noopener noreferrer"><img src="./assets/icm.jpg" alt="Innovative Corrosion Management Logo"></a>
+                            <a href="https://www.ikad.com.au" target="_blank" rel="noopener noreferrer"><img src="./assets/IKAD-Gold-Black-Smol.png" alt="IKAD Engineering Logo"></a>
+                            <a href="https://www.jfdglobal.com" target="_blank" rel="noopener noreferrer"><img src="./assets/jfd.jpg" alt="JFD Logo"></a>
+                            <a href="https://www.maersk.com" target="_blank" rel="noopener noreferrer"><img src="./assets/maersk.jpg" alt="Maersk Logo"></a>
+                            <a href="https://www.iss-shipping.com" target="_blank" rel="noopener noreferrer"><img src="./assets/inchscape.jpg" alt="Inchcape Shipping Services Logo"></a>
+                            <a href="https://www.navalshipmanagement.com" target="_blank" rel="noopener noreferrer"><img src="./assets/nsm.jpg" alt="NSM Logo"></a>
+                            <a href="https://www.oldendorff.com" target="_blank" rel="noopener noreferrer"><img src="./assets/oldendorff.jpg" alt="Oldendorff Carriers Logo"></a>
+                            <a href="https://www.pta.wa.gov.au" target="_blank" rel="noopener noreferrer"><img src="./assets/pta.jpg" alt="Public Transport Authority WA Logo"></a>
+                            <a href="https://www.navy.gov.au" target="_blank" rel="noopener noreferrer"><img src="./assets/ran.jpg" alt="Royal Australian Navy Logo"></a>
+                            <a href="https://www.riotinto.com" target="_blank" rel="noopener noreferrer"><img src="./assets/rio.jpg" alt="Rio Tinto Logo"></a>
+                            <a href="https://www.rottnestisland.com" target="_blank" rel="noopener noreferrer"><img src="./assets/rotto.jpg" alt="Rottnest Island Authority Logo"></a>
+                            <a href="https://www.scamp.com" target="_blank" rel="noopener noreferrer"><img src="./assets/scamp.jpg" alt="Scamp Logo"></a>
+                            <a href="https://www.seatec-services.com" target="_blank" rel="noopener noreferrer"><img src="./assets/Seatech-Logo.png" alt="SeaTec Logo"></a>
+                            <a href="https://www.silveryachts.com" target="_blank" rel="noopener noreferrer"><img src="./assets/silver.jpg" alt="Silver Yachts Logo"></a>
+                            <a href="https://www.subseaglobalsolutions.com" target="_blank" rel="noopener noreferrer"><img src="./assets/subsea.jpg" alt="Subsea Global Solutions Logo"></a>
+                            <a href="https://www.svitzer.com" target="_blank" rel="noopener noreferrer"><img src="./assets/svitzer.jpg" alt="Svitzer Logo"></a>
+                            <a href="https://www.swireshipping.com" target="_blank" rel="noopener noreferrer"><img src="./assets/swire.jpg" alt="Swire Shipping Logo"></a>
+                            <a href="https://www.teekay.com" target="_blank" rel="noopener noreferrer"><img src="./assets/teekay.jpg" alt="Teekay Logo"></a>
+                            <a href="https://www.wilhelmsen.com" target="_blank" rel="noopener noreferrer"><img src="./assets/wilhelmsen.jpg" alt="Wilhelmsen Logo"></a>
+                            <a href="https://www.fremantleports.com.au" target="_blank" rel="noopener noreferrer"><img src="./assets/freoports.jpg" alt="Fremantle Ports Logo"></a>
                         </div>
-                        <div class="partner-logo">
-                            <img src="./assets/AscLogo150x.jpg" alt="ASC Logo">
-                        </div>
-                        <div class="partner-logo">
-                            <img src="./assets/austal.jpg" alt="Austal Logo">
-                        </div>
-                        <div class="partner-logo">
-                            <img src="./assets/bae.jpg" alt="BAE Systems Logo">
-                        </div>
-                        <!-- <div class="partner-logo">
-                            <img src="./assets/Baleen-Logo.jpg" alt="Baleen Logo">
-                        </div> -->
-                        <div class="partner-logo">
-                            <img src="./assets/freoports.jpg" alt="Fremantle Ports Logo">
-                        </div>
-                    </div>
-
-                    <h3 class="mt-lg">Management System Certifications</h3>
-                    <div class="cert-logos">
-                        <a href="https://www.iso.org/standard/62085.html" target="_blank" class="cert-logo"
-                            title="ISO 9001:2015 - Quality Management Systems">
-                            <img src="./assets/iso9001.png" alt="ISO 9001:2015 Certification Logo"
-                                class="cert-logo-img">
-                            <span>ISO 9001:2015</span>
-                        </a>
-                        <a href="https://www.iso.org/standard/60857.html" target="_blank" class="cert-logo"
-                            title="ISO 14001:2015 - Environmental Management Systems">
-                            <img src="./assets/iso14001.png" alt="ISO 14001:2015 Certification Logo"
-                                class="cert-logo-img">
-                            <span>ISO 14001:2015</span>
-                        </a>
-                        <a href="https://www.iso.org/standard/63787.html" target="_blank" class="cert-logo"
-                            title="ISO 45001:2018 - Occupational Health and Safety Management Systems">
-                            <img src="./assets/iso45001.png" alt="ISO 45001:2018 Certification Logo"
-                                class="cert-logo-img">
-                            <span>ISO 45001:2018</span>
-                        </a>
                     </div>
                 </div>
             </div>
@@ -955,7 +1087,7 @@
                                 <div class="contact-icon">
                                     <i class="fas fa-envelope"></i>
                                 </div>
-                                <p>mharvey@franmarine.com.au</p>
+                                <p>mharvey@marinestream.com.au</p>
                             </div>
                             <br>
                             <div class="contact-item">
@@ -977,10 +1109,10 @@
                             <a href="https://www.linkedin.com/company/marinetream/posts/?feedView=all"
                                 class="social-link" aria-label="LinkedIn" target="_blank"><i
                                     class="fab fa-linkedin"></i></a>
-                            <a href="https://www.facebook.com/profile.php?id=100029694686734" class="social-link"
+                            <!-- <a href="https://www.facebook.com/profile.php?id=100029694686734" class="social-link"
                                 aria-label="Facebook" target="_blank"><i class="fab fa-facebook"></i></a>
                             <a href="https://www.youtube.com/@franmarine5117" class="social-link" aria-label="YouTube"
-                                target="_blank"><i class="fab fa-youtube"></i></a>
+                                target="_blank"><i class="fab fa-youtube"></i></a> -->
                         </div>
                     </div>
                 </div>

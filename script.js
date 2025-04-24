@@ -258,6 +258,17 @@ document.addEventListener('DOMContentLoaded', function () {
             generateBFMP(bfmpData);
         });
     }
+
+    // Set up infinite scroll for logos
+    const logosSlide = document.querySelector('.logos-slide');
+    if (logosSlide) {
+        // Clone all images
+        const images = logosSlide.querySelectorAll('img');
+        images.forEach(img => {
+            const clone = img.cloneNode(true);
+            logosSlide.appendChild(clone);
+        });
+    }
 });
 
 // === Core Website Functionality ===

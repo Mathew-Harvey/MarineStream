@@ -1259,61 +1259,98 @@ video {
 .clients-section {
     text-align: center;
     margin-top: var(--space-xl);
-    /* Add space above clients */
+    /* Remove the background color and other container styling */
+    padding: 0; /* Remove padding from the section */
+    border-radius: 0; /* Remove border radius */
 }
 
 .clients-section h3 {
-    /* Sub-heading style */
     font-size: 1.6rem;
     margin-bottom: var(--space-lg);
     color: var(--text-primary);
     font-weight: 600;
 }
 
-.mt-lg {
-    margin-top: var(--space-lg);
+/* Add responsive adjustments for logos */
+@media (max-width: 767px) {
+    .logos-slide img {
+        height: 80px; /* Increased from 65px */
+        margin: 0 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logos-slide img {
+        height: 65px; /* Increased from 55px */
+        margin: 0 20px;
+    }
 }
 
 /* Partners Grid - Cleaner */
-.partners-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: var(--space-lg);
-    padding: var(--space-lg);
-    background-color: var(--bg-secondary);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
+.logos {
+    overflow: hidden;
+    padding: 30px 0; /* Increase padding for more vertical space */
+    background: transparent;
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 0;
+    box-shadow: none;
 }
 
-.partner-logo {
-    background-color: white;
-    padding: var(--space-md);
-    border-radius: var(--radius-md);
+.logos:before,
+.logos:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 200px;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.logos:before {
+    left: 0;
+    background: linear-gradient(to left, rgba(255,255,255,0), var(--bg-tertiary)); /* Match gradient to page background */
+}
+
+.logos:after {
+    right: 0;
+    background: linear-gradient(to right, rgba(255,255,255,0), var(--bg-tertiary)); /* Match gradient to page background */
+}
+
+.logos-slide {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 120px;
-    transition: transform var(--transition-fast);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-color);
+    animation: slide 180s linear infinite; /* Increased duration from 30s */
+    width: fit-content;
 }
 
-.partner-logo img {
-    max-width: 90%;
-    max-height: 90%;
+.logos-slide img {
+    height: 100px; /* Increase from 80px to 100px */
+    margin: 0 40px; /* Increase spacing between logos */
     object-fit: contain;
-    filter: grayscale(100%);
-    transition: filter var(--transition-fast);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 0.95;
 }
 
-.partner-logo:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--accent-light);
+.logos-slide img:hover {
+    transform: scale(1.1);
+    /* No need for filter: grayscale(0%) since we're not starting with grayscale */
+    opacity: 1; /* Full opacity on hover */
 }
 
-.partner-logo:hover img {
-    filter: grayscale(0%);
+@keyframes slide {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.logos:hover .logos-slide {
+    animation-play-state: paused;
 }
 
 /* Certification Logos - Cleaner */
@@ -2831,4 +2868,48 @@ video {
 
   #bfmp-generator-modal .modal-content {
     max-width: 1200px; /* Wider modal for the form */
+  }
+
+  .logos-slide a {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    border: none;
+    background: none;
+  }
+
+  .logos-slide a:hover {
+    text-decoration: none;
+    border: none;
+    background: none;
+  }
+
+  /* Style the link container for logos - REMOVED WHITE BOX */
+  .logos-slide a {
+    display: flex; /* Use flex to center image inside link */
+    align-items: center;
+    justify-content: center;
+    height: 180px; /* Significantly Increased height */
+    padding: 0; /* Removed padding */
+    margin: 0 var(--space-xl); /* Increased margin significantly */
+    flex-shrink: 0; /* Prevent logos from shrinking */
+    background-color: transparent; /* Removed white background */
+    border-radius: 0; /* Removed radius */
+    box-shadow: none; /* Removed shadow */
+    border: none; /* Removed border */
+    transition: transform var(--transition-fast);
+  }
+
+  .logos-slide a:hover {
+    transform: translateY(-5px) scale(1.08); /* Enhanced hover */
+    /* Removed shadow and border changes on hover */
+  }
+
+  .logos-slide img {
+    max-height: 160px; /* Significantly Increased max height */
+    max-width: 280px; /* Significantly Increased max width */
+    object-fit: contain;
+    display: block;
+    transition: filter var(--transition-fast);
   }
