@@ -2961,17 +2961,21 @@ body.modal-open {
       padding-left: 20px;
       padding-right: 20px;
       text-align: left; /* Override center alignment for mobile */
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
   }
   
   .about h2, 
   .about-content h2 {
       text-align: left;
       margin-bottom: var(--space-lg);
-      width: calc(100% - 20px); /* Account for scrollbar */
-      max-width: calc(100% - 20px);
+      width: 100%;
+      max-width: 100%;
       font-size: 1.8rem;
       display: inline-block;
       padding-bottom: 10px;
+      box-sizing: border-box;
   }
   
   .about h2::after,
@@ -2983,9 +2987,12 @@ body.modal-open {
   
   .about-content {
       padding: 0;
-      width: calc(100% - 20px); /* Account for scrollbar */
-      max-width: calc(100% - 20px);
+      width: 100%;
+      max-width: 100%;
       text-align: left; /* Override center alignment for mobile */
+      box-sizing: border-box;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
   }
   
   .about-content p {
@@ -2996,6 +3003,9 @@ body.modal-open {
       max-width: 100%;
       font-size: 1rem;
       box-sizing: border-box;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      hyphens: auto;
   }
   
   .about-content .btn {
