@@ -308,8 +308,8 @@ function generateCapabilityStatement() {
                             <div>
                                 <p style="margin: 0 0 3px 0; font-size: 9pt;"><strong>Mathew Harvey</strong></p>
                                 <p style="margin: 0 0 3px 0; font-size: 9pt;"><strong>Phone:</strong> +61 408 930 300</p>
-                                <p style="margin: 0 0 3px 0; font-size: 9pt;"><strong>Email:</strong> <a href="mailto:mharvey@franmarine.com.au" style="color: ${accentColor}; text-decoration: none;">mharvey@franmarine.com.au</a></p>
-                                <p style="margin: 0 0 3px 0; font-size: 9pt;"><strong>Web:</strong> <a href="https://www.franmarine.com.au" target="_blank" style="color: ${accentColor}; text-decoration: none;">www.franmarine.com.au</a></p>
+                                <p style="margin: 0 0 3px 0; font-size: 9pt;"><strong>Email:</strong> <a href="mailto:mharvey@franmarine.com.au" style="color: ${accentColor}; text-decoration: none;">mharvey@marinestream.com.au</a></p>
+                                <p style="margin: 0 0 3px 0; font-size: 9pt;"><strong>Web:</strong> <a href="https://www.marinestream.com.au" target="_blank" style="color: ${accentColor}; text-decoration: none;">www.marinestream.com.au</a></p>
                                 <p style="margin: 0 0 3px 0; font-size: 9pt;"><strong>Address:</strong> 13 Possner Way, Henderson, WA 6166, Australia</p>
                             </div>
                             <img src="./assets/logo.png" alt="MarineStream Logo" style="height: 50px; margin-left: 20px;">
