@@ -1204,6 +1204,19 @@ video {
     /* Handled by h2 clamp */
     margin-bottom: var(--space-md);
     color: var(--text-primary);
+    position: relative;
+}
+
+.about-content h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background-color: var(--accent-color);
+    border-radius: 2px;
 }
 
 .about-content p {
@@ -1265,6 +1278,7 @@ video {
 .clients-section {
     text-align: center;
     margin-top: var(--space-xl);
+    width: 100%;
     /* Remove the background color and other container styling */
     padding: 0; /* Remove padding from the section */
     border-radius: 0; /* Remove border radius */
@@ -1319,32 +1333,34 @@ video {
     width: fit-content;
 }
 
-/* Style the link container for logos - REMOVED WHITE BOX */
+/* Logo link styling */
 .logos-slide a {
     display: flex; /* Use flex to center image inside link */
     align-items: center;
     justify-content: center;
-    height: 180px; /* Significantly Increased height */
-    margin: 0 var(--space-xl); /* Increased margin significantly */
+    height: 150px; /* Slightly reduced from 180px for better mobile scaling */
+    margin: 0 var(--space-lg); /* Adjusted margin */
     flex-shrink: 0; /* Prevent logos from shrinking */
-    background-color: transparent; /* Removed white background */
-    border-radius: 0; /* Removed radius */
-    box-shadow: none; /* Removed shadow */
-    border: none; /* Removed border */
-    transition: transform var(--transition-fast);
+    background-color: white; /* Add white background for consistency with mobile */
+    border-radius: var(--radius-sm); /* Add subtle radius */
+    box-shadow: var(--shadow-sm); /* Subtle shadow */
+    border: 1px solid var(--border-color); /* Subtle border */
+    padding: var(--space-sm);
+    transition: all var(--transition-normal);
 }
 
 .logos-slide a:hover {
-    transform: translateY(-5px) scale(1.08); /* Enhanced hover */
-    /* Removed shadow and border changes on hover */
+    transform: translateY(-5px); 
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent-light);
 }
 
 .logos-slide img {
-    max-height: 160px; /* Significantly Increased max height */
-    max-width: 280px; /* Significantly Increased max width */
+    max-height: 120px; /* Adjusted from 160px */
+    max-width: 200px; /* Adjusted from 280px */
     object-fit: contain;
     display: block;
-    transition: filter var(--transition-fast);
+    transition: all var(--transition-normal);
 }
 
 @keyframes slide {
@@ -1595,6 +1611,7 @@ video {
     /* Larger icon */
     transition: all var(--transition-normal);
     border: 1px solid var(--border-color);
+    text-decoration: none; /* Ensure no underline */
 }
 
 .social-link:hover {
@@ -1604,6 +1621,38 @@ video {
     transform: translateY(-4px) scale(1.1);
     border-color: var(--accent-dark);
     box-shadow: var(--shadow-md);
+}
+
+/* Additional styles for social links from paste-2.txt */
+.contact-info .social-links {
+    margin-top: var(--space-lg); /* Add some space above */
+}
+
+.contact-info .social-link {
+    display: inline-flex; /* Use flex to center icon inside */
+    align-items: center;
+    justify-content: center;
+    width: 44px; /* Set fixed size */
+    height: 44px;
+    background-color: var(--bg-secondary); /* Subtle background */
+    border-radius: 50%; /* Make it circular */
+    color: var(--text-secondary); /* Default color */
+    font-size: 1.4rem; /* Increase icon size */
+    transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+    border: 1px solid var(--border-color);
+    text-decoration: none; /* Remove underline */
+}
+
+.contact-info .social-link:hover {
+    background-color: var(--accent-color); /* Accent on hover */
+    color: white; /* White icon on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+    border-color: var(--accent-dark);
+}
+
+/* Ensure icon is centered vertically */
+.contact-info .social-link i {
+    line-height: 1;
 }
 
 /* Footer */
@@ -2647,23 +2696,59 @@ body.modal-open {
         padding: var(--space-md);
     }
     
-    /* About Section */
+    /* About Section - Fixed Mobile Styling */
     .about-content {
-        text-align: left; /* Align text left */
+        text-align: left !important; /* Force left alignment on mobile */
     }
   
+    .about-content h2 {
+        text-align: left;
+        margin-bottom: var(--space-lg);
+    }
+    
+    .about-content h2::after {
+        left: 0;
+        transform: none;
+    }
+    
+    .about-content p {
+        margin-left: 0;
+        margin-right: 0;
+        text-align: left;
+    }
+    
+    .about-content .btn {
+        margin-left: 0;
+        max-width: 100%;
+        width: 100%;
+    }
+  
+    .about-features {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+    
     .about-features li {
-        padding-left: 1.5rem; /* Adjust icon padding */
+        padding-left: 1.8rem; /* Consistent padding */
+    }
+    
+    .clients-section {
+        margin-top: var(--space-lg);
     }
     
     .clients-section h3 {
-        text-align: left; /* Align heading left */
+        text-align: left;
         margin-bottom: var(--space-md);
+        font-size: 1.3rem;
     }
   
     /* Mobile Logo Carousel Adjustments */
     .logos {
         padding: var(--space-sm) 0;
+        margin: 0;
+        width: 100%;
         -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
         mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
     }
@@ -2671,8 +2756,9 @@ body.modal-open {
     .logos-slide a {
         height: 90px; /* Smaller on mobile */
         margin: 0 var(--space-sm);
-        background-color: white; /* Add background back for visibility */
-        border-radius: var(--radius-xs);
+        padding: var(--space-xs);
+        background-color: white;
+        border-radius: var(--radius-sm);
         box-shadow: var(--shadow-sm);
         border: 1px solid var(--border-color);
     }
@@ -2779,7 +2865,39 @@ body.modal-open {
         font-size: 1rem;
     }
     
+    /* About Section Small Mobile Adjustments */
+    .about {
+        padding: var(--space-xl) 0;
+    }
+    
+    .about-content h2 {
+        font-size: 1.7rem;
+    }
+    
+    .about-content p {
+        font-size: 1rem;
+        margin-bottom: var(--space-md);
+    }
+    
+    .about-features li {
+        font-size: 0.95rem;
+        margin-bottom: var(--space-sm);
+    }
+    
+    .about-features li::before {
+        font-size: 0.9rem;
+    }
+    
+    .clients-section h3 {
+        font-size: 1.2rem;
+        margin-bottom: var(--space-sm);
+    }
+    
     /* Further reduce logo size on very small screens */
+    .logos {
+        padding: var(--space-xs) 0;
+    }
+    
     .logos-slide a {
         height: 70px;
         margin: 0 var(--space-xs);
