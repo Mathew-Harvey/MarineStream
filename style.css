@@ -216,6 +216,20 @@ video {
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* About section specific button */
+.about-content .btn {
+    display: inline-block;
+    max-width: 300px;
+    /* Wider button */
+    margin-top: var(--space-md);
+    background-color: var(--accent-color); /* Ensure orange background */
+    color: white; /* Ensure white text */
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 0.9rem 1.8rem;
+    border-radius: var(--radius-md);
+}
+
 .btn-secondary {
     background-color: var(--accent-color);
     color: var(--bg-white);
@@ -1187,16 +1201,20 @@ video {
     padding: var(--space-2xl) 0;
     background-color: var(--bg-tertiary);
     position: relative;
+    overflow: hidden; /* Prevent content overflow */
 }
 
 .about .container {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-xl);
+    width: 100%;
+    max-width: 1280px;
 }
 
 .about-content {
     text-align: center;
+    width: 100%;
 }
 
 .about-content h2 {
@@ -1205,6 +1223,7 @@ video {
     margin-bottom: var(--space-md);
     color: var(--text-primary);
     position: relative;
+    max-width: 100%; /* Ensure heading doesn't overflow */
 }
 
 .about-content h2::after {
@@ -1225,20 +1244,26 @@ video {
     margin-bottom: var(--space-lg);
     font-weight: 400;
     color: var(--text-secondary);
+    width: 100%;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
     line-height: 1.7;
+    word-wrap: break-word; /* Ensure text wraps properly */
+    overflow-wrap: break-word;
+    box-sizing: border-box;
 }
 
 .about-features {
     /* Clean bullet points */
+    width: 100%;
     max-width: 700px;
     /* Wider list */
     margin: 0 auto var(--space-lg);
     padding-left: 0;
     list-style: none;
     /* Remove default bullets */
+    box-sizing: border-box;
 }
 
 .about-features li {
@@ -1251,6 +1276,8 @@ video {
     font-weight: 400;
     font-size: 1.05rem;
     line-height: 1.6;
+    word-wrap: break-word; /* Ensure text wraps properly */
+    overflow-wrap: break-word;
 }
 
 .about-features li::before {
@@ -1282,6 +1309,7 @@ video {
     /* Remove the background color and other container styling */
     padding: 0; /* Remove padding from the section */
     border-radius: 0; /* Remove border radius */
+    box-sizing: border-box;
 }
 
 .clients-section h3 {
@@ -1289,6 +1317,9 @@ video {
     margin-bottom: var(--space-lg);
     color: var(--text-primary);
     font-weight: 600;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Partners Grid - Cleaner */
@@ -2536,7 +2567,10 @@ body.modal-open {
     
     /* Container padding */
     .container {
-        padding: 0 var(--space-sm);
+        padding: 0 var(--space-md);
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     /* Header & Navigation */
@@ -2697,13 +2731,25 @@ body.modal-open {
     }
     
     /* About Section - Fixed Mobile Styling */
+    .about {
+        padding: var(--space-xl) 0;
+    }
+    
+    .about .container {
+        padding: 0 var(--space-md);
+    }
+    
     .about-content {
         text-align: left !important; /* Force left alignment on mobile */
+        width: 100%;
+        padding: 0;
     }
   
     .about-content h2 {
         text-align: left;
         margin-bottom: var(--space-lg);
+        width: 100%;
+        padding-right: var(--space-md);
     }
     
     .about-content h2::after {
@@ -2715,12 +2761,16 @@ body.modal-open {
         margin-left: 0;
         margin-right: 0;
         text-align: left;
+        width: 100%;
+        padding-right: var(--space-md);
+        box-sizing: border-box;
     }
     
     .about-content .btn {
         margin-left: 0;
         max-width: 100%;
-        width: 100%;
+        width: calc(100% - var(--space-md));
+        box-sizing: border-box;
     }
   
     .about-features {
@@ -2728,20 +2778,30 @@ body.modal-open {
         margin-right: 0;
         width: 100%;
         max-width: 100%;
+        padding-right: var(--space-md);
+        box-sizing: border-box;
     }
     
     .about-features li {
         padding-left: 1.8rem; /* Consistent padding */
+        padding-right: var(--space-sm);
+        width: calc(100% - var(--space-md));
+        box-sizing: border-box;
     }
     
     .clients-section {
         margin-top: var(--space-lg);
+        text-align: left;
+        width: 100%;
+        padding: 0 var(--space-md);
+        box-sizing: border-box;
     }
     
     .clients-section h3 {
         text-align: left;
         margin-bottom: var(--space-md);
         font-size: 1.3rem;
+        width: 100%;
     }
   
     /* Mobile Logo Carousel Adjustments */
@@ -2751,6 +2811,7 @@ body.modal-open {
         width: 100%;
         -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
         mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+        box-sizing: border-box;
     }
   
     .logos-slide a {
@@ -2761,6 +2822,7 @@ body.modal-open {
         border-radius: var(--radius-sm);
         box-shadow: var(--shadow-sm);
         border: 1px solid var(--border-color);
+        box-sizing: border-box;
     }
   
     .logos-slide img {
