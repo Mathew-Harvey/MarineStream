@@ -161,7 +161,7 @@ function generateCapabilityStatement() {
                     </div>
 
                     <!-- Introduction -->
-                    <p style="margin-bottom: 12px; font-size: 10pt;"><strong>MarineStream™</strong>, a Franmarine company, provides a revolutionary integrated system for proactive biofouling management and underwater asset sustainment. We merge Australia's only regulatory-compliant in-water cleaning (IWC) technology with a state-of-the-art, blockchain-secured data platform, delivering unparalleled compliance assurance, operational efficiency, and asset performance intelligence for the global maritime industry.</p>
+                    <p style="margin-bottom: 12px; font-size: 10pt;"><strong>MarineStream™</strong>, a Franmarine technology, provides a revolutionary integrated system for proactive biofouling management and underwater asset sustainment. We merge Australia's only regulatory-compliant in-water cleaning (IWC) technology with a state-of-the-art, blockchain-secured data platform, delivering unparalleled compliance assurance, operational efficiency, and asset performance intelligence for the global maritime industry.</p>
 
                     <!-- Challenge & Solution -->
                     <div style="display: flex; gap: 12px; margin-bottom: 12px;">
@@ -261,14 +261,40 @@ function generateCapabilityStatement() {
                     
                     <!-- Client Logos Section -->
                     <div style="margin-bottom: 15px;">
-                        <h3 style="color: #1a1a1a; font-size: 11pt; margin: 0 0 5px 0;">Trusted By Industry Leaders</h3>
-                        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 8px; border-radius: 6px; border: 1px solid #e9ecef;">
-                            <img src="./assets/AMC.jpg" alt="Client Logo" style="height: 30px; object-fit: contain;">
-                            <img src="./assets/AscLogo150x.jpg" alt="Client Logo" style="height: 30px; object-fit: contain;">
-                            <img src="./assets/austal.jpg" alt="Client Logo" style="height: 30px; object-fit: contain;">
-                            <img src="./assets/bae.jpg" alt="Client Logo" style="height: 30px; object-fit: contain;">
-                            <img src="./assets/Baleen-Logo.jpg" alt="Client Logo" style="height: 30px; object-fit: contain;">
-                            <img src="./assets/freoports.jpg" alt="Client Logo" style="height: 30px; object-fit: contain;">
+                        <h3 style="color: #1a1a1a; font-size: 11pt; margin: 0 0 5px 0;">Clients and Industry Partners</h3>
+                        <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 15px; padding: 8px; border-radius: 6px; border: 1px solid #e9ecef;">
+                            <img src="./assets/AMC.jpg" alt="AMC Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/ame.jpg" alt="AME Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/AscLogo150x.jpg" alt="ASC Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/austal.jpg" alt="Austal Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/babcock.png" alt="Babcock Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/bae.jpg" alt="BAE Systems Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/bp.jpg" alt="BP Shipping Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/carnival.jpg" alt="Carnival Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/cma.jpg" alt="CMA CGM Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/cock.jpg" alt="City of Cockburn Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/dept_trans.jpg" alt="Department of Transport Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/echo.jpg" alt="Echo Marine Group Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/icm.jpg" alt="ICM Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/IKAD-Gold-Black-Smol.png" alt="IKAD Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/jfd.jpg" alt="JFD Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/maersk.jpg" alt="Maersk Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/inchscape.jpg" alt="Inchcape Shipping Services Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/nsm.jpg" alt="NSM Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/oldendorff.jpg" alt="Oldendorff Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/pta.jpg" alt="PTA Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/ran.jpg" alt="RAN Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/rio.jpg" alt="Rio Tinto Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/rotto.jpg" alt="Rottnest Island Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/scamp.jpg" alt="Scamp Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/Seatech-Logo.png" alt="SeaTec Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/silver.jpg" alt="Silver Yachts Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/subsea.jpg" alt="Subsea Global Solutions Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/svitzer.jpg" alt="Svitzer Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/swire.jpg" alt="Swire Shipping Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/teekay.jpg" alt="Teekay Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/wilhelmsen.jpg" alt="Wilhelmsen Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
+                            <img src="./assets/freoports.jpg" alt="Fremantle Ports Logo" style="height: 30px; object-fit: contain; max-width: 100px;">
                         </div>
                     </div>
                     
@@ -282,8 +308,8 @@ function generateCapabilityStatement() {
                             <div>
                                 <p style="margin: 0 0 3px 0; font-size: 9pt;"><strong>Mathew Harvey</strong></p>
                                 <p style="margin: 0 0 3px 0; font-size: 9pt;"><strong>Phone:</strong> +61 408 930 300</p>
-                                <p style="margin: 0 0 3px 0; font-size: 9pt;"><strong>Email:</strong> <a href="mailto:mharvey@franmarine.com.au" style="color: ${accentColor}; text-decoration: none;">mharvey@franmarine.com.au</a></p>
-                                <p style="margin: 0 0 3px 0; font-size: 9pt;"><strong>Web:</strong> <a href="https://www.franmarine.com.au" target="_blank" style="color: ${accentColor}; text-decoration: none;">www.franmarine.com.au</a></p>
+                                <p style="margin: 0 0 3px 0; font-size: 9pt;"><strong>Email:</strong> <a href="mailto:mharvey@franmarine.com.au" style="color: ${accentColor}; text-decoration: none;">mharvey@marinestream.com.au</a></p>
+                                <p style="margin: 0 0 3px 0; font-size: 9pt;"><strong>Web:</strong> <a href="https://www.marinestream.com.au" target="_blank" style="color: ${accentColor}; text-decoration: none;">www.marinestream.com.au</a></p>
                                 <p style="margin: 0 0 3px 0; font-size: 9pt;"><strong>Address:</strong> 13 Possner Way, Henderson, WA 6166, Australia</p>
                             </div>
                             <img src="./assets/logo.png" alt="MarineStream Logo" style="height: 50px; margin-left: 20px;">
