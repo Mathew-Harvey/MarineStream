@@ -13,6 +13,21 @@
     <link rel="manifest" href="./assets/favicon/site.webmanifest">
     <meta name="theme-color" content="#ffffff">
 
+    <!-- Meta Tags for Link Previews -->
+    <meta name="description" content="MarineStream™ offers integrated biofouling and underwater asset management with AI-powered software and sustainable in-water cleaning hardware for vessels worldwide.">
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="MarineStream™ - Streamlining Biofouling Management" />
+    <meta property="og:description" content="Discover MarineStream™, the most versatile biofouling and underwater asset management technology in the world, combining AI-powered software with sustainable in-water cleaning hardware." />
+    <meta property="og:image" content="https://www.marinestream.com.au/assets/socialmedialogo.png" />
+    <meta property="og:url" content="https://www.marinestream.com.au/" />
+
+    <meta property="og:type" content="website" />
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="MarineStream™ - Streamlining Biofouling Management" />
+    <meta name="twitter:description" content="Discover MarineStream™, the most versatile biofouling and underwater asset management technology in the world." />
+    <meta name="twitter:image" content="https://www.marinestream.com.au/assets/socialmedialogo.png" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -30,401 +45,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="./hullCalc.js"></script>
     <script src="./script.js"></script>
-
-    <style>
-        /* Calculator specific styles from the example */
-        .validation-badge {
-            display: inline-flex;
-            align-items: center;
-            background-color: var(--accent-color);
-            color: white;
-            padding: var(--space-xs) var(--space-sm);
-            border-radius: var(--radius-md);
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-top: var(--space-md);
-            gap: var(--space-xs);
-            max-width: fit-content;
-        }
-
-        .result-group {
-            margin-bottom: var(--space-md);
-        }
-
-        .result-group-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-            margin-bottom: var(--space-sm);
-            padding-bottom: var(--space-xs);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .result-group-header h4 {
-            margin: 0;
-            color: var(--accent-color);
-        }
-
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            padding: var(--space-sm);
-            margin-bottom: var(--space-xs);
-            background-color: var(--bg-secondary);
-            border-radius: var(--radius-sm);
-            box-shadow: var(--shadow-sm);
-            transition: transform var(--transition-fast);
-        }
-
-        .result-item:hover {
-            transform: translateX(5px);
-        }
-
-        .result-label {
-            color: var(--text-secondary);
-        }
-
-        .result-value {
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .results-section {
-            background-color: var(--bg-secondary);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            margin-top: var(--space-md);
-            border-left: 4px solid var(--accent-color);
-        }
-
-        .results-section h3 {
-            color: var(--accent-color);
-            margin-top: 0;
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-        }
-
-        .results-section h3 i {
-            color: var(--accent-light);
-        }
-
-        .information-note {
-            background-color: rgba(255, 102, 0, 0.1);
-            border-left: 4px solid var(--accent-color);
-            padding: var(--space-md);
-            border-radius: var(--radius-md);
-            margin: var(--space-md) 0;
-        }
-
-        .information-note h4 {
-            color: var(--accent-dark);
-            margin-bottom: var(--space-xs);
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-        }
-
-        .information-note h4 i {
-            color: var(--accent-color);
-        }
-
-        .research-section {
-            margin-top: var(--space-lg);
-            padding-top: var(--space-md);
-            border-top: 1px solid var(--border-color);
-        }
-
-        .research-highlights {
-            background-color: var(--accent-light);
-            color: white;
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            margin-bottom: var(--space-md);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .highlight h4 {
-            color: white;
-            margin-bottom: var(--space-md);
-        }
-
-        .highlight ul {
-            margin-bottom: var(--space-sm);
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .highlight li {
-            margin-bottom: var(--space-xs);
-        }
-
-        .chart-container {
-            width: 100%;
-            height: 0;
-            padding-bottom: 65%;
-            position: relative;
-            margin-bottom: var(--space-md);
-        }
-
-        .chart-wrapper {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-        }
-
-        .range-tick.active .tick-dot {
-            background-color: var(--accent-color);
-            transform: scale(1.5);
-        }
-
-        .range-tick.active .tick-label {
-            color: var(--accent-color);
-            font-weight: 600;
-        }
-
-        /* Thank You Modal Styles */
-        .thank-you-content {
-            text-align: center;
-            padding: var(--space-md);
-        }
-
-        .thank-you-icon {
-            font-size: 3rem;
-            color: var(--accent-color);
-            margin-bottom: var(--space-md);
-            animation: pulse 1.5s infinite;
-        }
-
-        .thank-you-content h3 {
-            color: var(--accent-color);
-            margin-bottom: var(--space-md);
-        }
-
-        .thank-you-content p {
-            margin-bottom: var(--space-md);
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .modal-footer {
-            margin-top: var(--space-lg);
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.1);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        /* Mobile menu fix - high specificity to ensure override */
-        @media (max-width: 768px) {
-            .nav-links-container {
-                display: none !important;
-            }
-
-            .nav-links-container.active {
-                display: flex !important;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100vh;
-                background-color: rgba(0, 0, 0, 0.95);
-                backdrop-filter: blur(8px);
-                -webkit-backdrop-filter: blur(8px);
-                z-index: 9999;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-            }
-
-            .nav-links-container.active .nav-links {
-                flex-direction: column;
-                align-items: center;
-                gap: 20px;
-            }
-
-            .nav-links-container.active .nav-link {
-                color: white !important;
-                font-size: 1.4rem;
-                text-align: center;
-            }
-
-            .mobile-menu-toggle.active {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 10000;
-                color: white !important;
-                background-color: var(--accent-color);
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-        }
-
-        .partners-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: var(--space-lg);
-            padding: var(--space-lg);
-            background-color: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-        }
-
-        .partner-logo {
-            background-color: white;
-            padding: var(--space-md);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 120px;
-            transition: transform var(--transition-fast);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
-        }
-
-        .partner-logo img {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-            filter: grayscale(100%);
-            transition: filter var(--transition-fast);
-        }
-
-        .partner-logo:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--accent-light);
-        }
-
-        .partner-logo:hover img {
-            filter: grayscale(0%);
-        }
-
-        /* Logo Carousel Styles */
-        .logos {
-          overflow: hidden;
-          position: relative;
-          width: 100%;
-          /* background-color: var(--bg-secondary); Optional: Set background if needed */
-          padding: var(--space-md) 0; /* Add some vertical padding */
-          -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
-          mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
-        }
-
-        .logos-slide {
-          display: flex; /* Use flexbox */
-          align-items: center; /* Vertically center logos */
-          width: fit-content; /* Allow width to grow with content */
-          /* Animation applied via JS or external CSS likely, ensure 'infiniteScroll' name matches */
-          /* animation: infiniteScroll 180s linear infinite; */ /* Example - Updated comment for slower speed */
-        }
-
-        /* Style the link container for logos */
-        .logos-slide a {
-          display: flex; /* Use flex to center image inside link */
-          align-items: center;
-          justify-content: center;
-          height: 165px; /* FURTHER INCREASED height (110px * 1.5) */
-          padding: var(--space-sm); /* Padding inside the link */
-          margin: 0 var(--space-md); /* Use margin for spacing */
-          flex-shrink: 0; /* Prevent logos from shrinking */
-          background-color: white; /* Give logos a white background like in the image */
-          border-radius: var(--radius-sm);
-          box-shadow: var(--shadow-sm);
-          border: 1px solid var(--border-color);
-          transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
-        }
-
-        .logos-slide a:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--accent-light);
-        }
-
-        .logos-slide img {
-          max-height: 120px; /* FURTHER INCREASED max height (80px * 1.5) */
-          max-width: 270px; /* FURTHER INCREASED max width (180px * 1.5) */
-          object-fit: contain;
-          display: block;
-          /* filter: grayscale(100%); REMOVED */
-          transition: filter var(--transition-fast);
-        }
-
-        .logos-slide a:hover img {
-            /* filter: grayscale(0%); REMOVED */
-        }
-
-        /* Pause animation on hover - Add if desired */
-        .logos:hover .logos-slide {
-          /* animation-play-state: paused; */ /* Uncomment if animation is CSS-driven */
-        }
-
-        /* Keyframes likely defined elsewhere (e.g., style.css or JS). Example:
-        @keyframes infiniteScroll {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
-        */
-
-        /* Mobile adjustments for Logo Carousel REMOVED - Moved to style.css */
-
-    </style>
-    <style>
-        /* ... existing styles ... */
-
-        .contact-info .social-links {
-            margin-top: var(--space-lg); /* Add some space above */
-        }
-
-        .contact-info .social-link {
-            display: inline-flex; /* Use flex to center icon inside */
-            align-items: center;
-            justify-content: center;
-            width: 44px; /* Set fixed size */
-            height: 44px;
-            background-color: var(--bg-secondary); /* Subtle background */
-            border-radius: 50%; /* Make it circular */
-            color: var(--text-secondary); /* Default color */
-            font-size: 1.4rem; /* Increase icon size */
-            transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
-            border: 1px solid var(--border-color);
-            text-decoration: none; /* Remove underline */
-        }
-
-        .contact-info .social-link:hover {
-            background-color: var(--accent-color); /* Accent on hover */
-            color: white; /* White icon on hover */
-            transform: translateY(-2px); /* Slight lift effect */
-            border-color: var(--accent-dark);
-        }
-
-        /* Ensure icon is centered vertically */
-        .contact-info .social-link i {
-            line-height: 1;
-        }
-    </style>
 </head>
-
 <body>
     <div id="loading-screen">
         <div class="loading-content">
@@ -470,8 +91,9 @@
             </video>
             <div class="container">
                 <div class="hero-content">
-                    <h1 class="hero-title">Transforming <br>Biofouling <br>Management</h1>
-                    <p class="hero-subtitle">MarineStream™ is an AI-powered, blockchain-based ERP system designed for underwater asset management. Tailored to your needs, it delivers standardisation, transparency, and auditable traceability across sub-sea operation.</p>
+                    <h1 class="hero-title">Streamlining <br>Biofouling <br>Management</h1>
+                    <p class="hero-subtitle">MarineStream™ - The most versatile biofouling and underwater asset
+                        management technology in the world.</p>
                     <div class="hero-cta">
                         <a href="#features" class="btn btn-outline">
                             <i class="fas fa-anchor"></i>
@@ -490,64 +112,131 @@
         <section id="features" class="features">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">Differentiators</h2> 
-                    <p class="section-description">Enabling subsea operators to deliver a complete marine
-                        biosecurity compliance and biofouling management service.</p>
+                    <h2 class="section-title">Sustainable Marine Operations</h2>
+                </div>
+            </div>
+            <p class="section-description">The integrated biofouling and underwater asset management system combines
+                environmentally responsible in-water cleaning and filtration hardware with AI-powered blockchain-based
+                asset management software.
+                <br>
+                <br>
+                Hardware and software systems can be used independently or together to provide a holistic end-to-end
+                management solution for biofouling control, vessel performance, environmental compliance, hull
+                preservation, structural integrity, fuel efficiency, and ESG reporting.
+            </p>
+            <br>
+
+            <div class="section-header">
+                <h2 class="section-title">Differentiators</h2>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card" data-aos="fade-up">
+                    <div class="feature-icon">
+                        <i class="fas fa-ship"></i>
+                    </div>
+                    <h3>Technology-Enabled Capability</h3>
+                    <p>Enabling subsea operators to deliver a consolidated biofouling and underwater asset management
+                        service</p>
                 </div>
 
-                <div class="feature-grid">
-                    <div class="feature-card" data-aos="fade-up">
-                        <div class="feature-icon">
-                            <i class="fas fa-ship"></i>
-                        </div>
-                        <h3>Technology-Enabled Capability</h3>
-                        <p>Designed to enhance the hydrodynamic and acoustic performance of vessels.</p>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
                     </div>
-
-                    <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-                        <div class="feature-icon">
-                            <i class="fas fa-globe"></i>
-                        </div>
-                        <h3>Sovereign Underwater Sustainment</h3>
-                        <p>Capability developed in Australia, extending trusted critical support to international partners.
-                        </p>
-                    </div>
-
-                    <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-                        <div class="feature-icon">
-                            <i class="fas fa-certificate"></i>
-                        </div>
-                        <h3>Consolidated Capability</h3>
-                        <p>Compliant with ABS, Lloyds, DNV, BV, NK Class, and marine biosecurity specification.</p>
-                    </div>
-
-                    <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
-                        <div class="feature-icon">
-                            <i class="fas fa-video"></i>
-                        </div>
-                        <h3>Multi-User Remote Access</h3>
-                        <p>Real-time remote access to highly technical or regulated diving and ROV interventions.</p>
-                    </div>
+                    <h3>Global Underwater Sustainment</h3>
+                    <p>Providing standardisation, transparency, and traceability to fleet operators that depend on a
+                        vast network of suppliers across multiple jurisdictions
+                    </p>
                 </div>
 
-                <!-- PDF Generator Button -->
-                <div class="pdf-generator">
-                    <h3>Print Capability Statement</h3>
-                    <p>Download a comprehensive summary of MarineStream's capabilities, services, and competitive
-                        advantages in a single-page PDF document.</p>
-                    <button id="generate-pdf" class="btn btn-primary">
-                        <i class="fas fa-file-pdf"></i>
-                        Generate PDF
-                    </button>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3>Freedom of Navigation</h3>
+                    <p>Assuring freedom of navigation by assuring biofouling management compliance in a global
+                        context</p>
+                </div>
+
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>Multi-User Asset Management</h3>
+                    <p>Supporting the maritime industry with the only genuine turnkey solution for lifecycle
+                        underwater asset management in the world</p>
+                </div>
+            </div>
+            <br>
+            <div style="text-align: center;">
+                <p class="section-description">Designed to support the <b>seaworthiness</b>, hydrodynamic and acoustic
+                    performance of vessels.
+
+                </p>
+            </div>
+            <!-- PDF Generator Button -->
+            <div class="pdf-generator">
+                <h3>Print Capability Statement</h3>
+                <p>Download a comprehensive summary of MarineStream's capabilities, services, and competitive
+                    advantages in a single-page PDF document.</p>
+                <button id="generate-pdf" class="btn btn-primary">
+                    <i class="fas fa-file-pdf"></i>
+                    Generate PDF
+                </button>
+            </div>
+            </div>
+        </section>
+        <!-- Dashboard Preview Section -->
+        <section id="dashboard-preview" class="dashboard-preview">
+            <div class="container">
+                <div class="section-header center">
+                    <h2 class="section-title">The MarineStream™ Biofouling and Underwater Asset Management Platform</h2>
+                    <p class="section-description">Holds the asset for instant operational readiness, seaworthiness and
+                        compliance demonstration purposes.</p>
+                </div>
+                <div class="dashboard-container">
+                    <div class="dashboard-image">
+                        <!-- Assumes dashboard.png exists -->
+                        <img src="./assets/marinestreamMock1.png" alt="MarineStream Dashboard Preview"
+                            class="placeholder-image">
+                    </div>
+                    <div class="dashboard-features">
+                        <div class="dashboard-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Holds the asset for instant operational readiness, seaworthiness and compliance
+                                demonstration purposes</span>
+                        </div>
+                        <div class="dashboard-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Contains digitised biofouling management plans, record books and multi-party
+                                workflows</span>
+                        </div>
+                        <div class="dashboard-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Captures data directly from integrated underwater inspection hardware (CCTV &
+                                ROV)</span>
+                        </div>
+                        <div class="dashboard-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Enables interrogation of all data by authorised stakeholders within the
+                                ecosystem</span>
+                        </div>
+                        <div class="dashboard-feature">
+                            <i class="fas fa-check"></i>
+                            <span>Standardisation, transparency and traceability of work</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
+
+
 
         <!-- Tech Showcase Section -->
         <section id="tech-showcase" class="tech-showcase">
             <div class="container">
                 <div class="tech-content">
-                    <h2>The MarineStream™ In-water Cleaning System</h2>
+                    <h2>The MarineStream™ <br> In-Water Cleaning System</h2>
                     <ul class="tech-features">
                         <li>
                             <i class="fas fa-check-circle"></i>
@@ -561,15 +250,17 @@
                         </li>
                         <li>
                             <i class="fas fa-check-circle"></i>
-                            <span> Globally deployable, designed for operation from wharf side or suitable support vessel</span>
+                            <span> Globally deployable, designed for operation from wharf side or suitable support
+                                vessel</span>
                         </li>
                         <li>
                             <i class="fas fa-check-circle"></i>
-                            <span>Designed for versatile use with manual hand tools or ROVs, effectively meeting hull and niche area cleaning needs.</span>
+                            <span>Designed for versatile use with manual hand tools or ROVs, effectively meeting hull
+                                and niche area cleaning needs.</span>
                         </li>
                         <li>
                             <i class="fas fa-check-circle"></i>
-                            <span>A multifaceted system with tailored compatible tooling capable of complete clean to
+                            <span>A multifaceted system with tailored compatible tooling capable of cleaning to
                                 biosecurity specification</span>
                         </li>
                     </ul>
@@ -683,59 +374,20 @@
                     <!-- Move text content AFTER image carousel -->
                     <div class="monitoring-content">
                         <h2>Niche Area Cleaning With Capture</h2>
-                        <p>Specialised in-water hull maintenance focusing on removing biofouling from complex, hard-to-reach sections like sea chests, propeller shafts, rudders, and thrusters. These areas are highly susceptible to biofouling due to reduced water flow.</p>
+                        <p>Specialised in-water hull maintenance focusing on removing biofouling from complex,
+                            hard-to-reach sections like sea chests, propeller shafts, rudders, and thrusters. These
+                            areas are highly susceptible to biofouling due to reduced water flow.</p>
                         <ul class="feature-list">
-                            <li>Employs trained commercial divers with specialised manual and mechanised cleaning tools (brushes, scrapers, powered devices).</li>
-                            <li>Utilises containment habitats deployed around the cleaning area to capture dislodged biofouling material.</li>
-                            <li>Complies with Australian in-water cleaning standards, ensuring environmentally responsible practices.</li>
+                            <li>Employs trained commercial divers with specialised manual and mechanised cleaning tools
+                                (brushes, scrapers, powered devices).</li>
+                            <li>Utilises containment habitats deployed around the cleaning area to capture dislodged
+                                biofouling material.</li>
+                            <li>Complies with Australian in-water cleaning standards, ensuring environmentally
+                                responsible practices.</li>
                             <li>Ensures thorough cleaning while upholding environmental protection protocols.</li>
                             <li>Combines diver expertise with innovative capture and filtration technologies.</li>
                         </ul>
                         <!-- <a href="#contact" class="btn btn-primary">Discuss Niche Area Cleaning</a> -->
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Dashboard Preview Section -->
-        <section id="dashboard-preview" class="dashboard-preview">
-            <div class="container">
-                <div class="section-header center">
-                    <h2 class="section-title">The MarineStream™ Biofouling and Underwater Asset Management Platform</h2>
-                    <p class="section-description">Holds the asset for instant operational readiness, seaworthiness and
-                        compliance demonstration purposes.</p>
-                </div>
-                <div class="dashboard-container">
-                    <div class="dashboard-image">
-                        <!-- Assumes dashboard.png exists -->
-                        <img src="./assets/marinestreamMock1.png" alt="MarineStream Dashboard Preview"
-                            class="placeholder-image">
-                    </div>
-                    <div class="dashboard-features">
-                        <div class="dashboard-feature">
-                            <i class="fas fa-check"></i>
-                            <span>Holds the asset for instant operational readiness, seaworthiness and compliance
-                                demonstration purposes</span>
-                        </div>
-                        <div class="dashboard-feature">
-                            <i class="fas fa-check"></i>
-                            <span>Contains digitised biofouling management plans, record books and multi-party
-                                workflows</span>
-                        </div>
-                        <div class="dashboard-feature">
-                            <i class="fas fa-check"></i>
-                            <span>Captures data directly from integrated underwater inspection hardware (CCTV &
-                                ROV)</span>
-                        </div>
-                        <div class="dashboard-feature">
-                            <i class="fas fa-check"></i>
-                            <span>Enables interrogation of all data by authorised stakeholders within the
-                                ecosystem</span>
-                        </div>
-                        <div class="dashboard-feature">
-                            <i class="fas fa-check"></i>
-                            <span>Standardisation, transparency and traceability of work</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -760,7 +412,10 @@
                             <h3 class="tool-title">Hull Fouling Calculator</h3>
                         </div>
                         <!-- <p class="tool-description"><b>What This Calculator Does</b><br><p> -->
-                            <p class="tool-description">This tool helps vessel operators estimate the economic and environmental impact of hull fouling based on actual research data from the University of Melbourne. It synthesizes findings from multiple studies, including measurements on ta 110 COA cruise ship and a typical harbour tugboat.</p>
+                        <p class="tool-description">This tool helps vessel operators estimate the economic and
+                            environmental impact of hull fouling based on actual research data from the University of
+                            Melbourne. It synthesizes findings from multiple studies, including measurements on a 110
+                            COA cruise ship and a typical harbour tugboat.</p>
                         <button id="open-cost-calculator" class="btn btn-primary">Open Calculator</button>
                     </div>
 
@@ -783,13 +438,16 @@
         <!-- Load the Hull Fouling Calculator Modal -->
         <div id="cost-calculator-modal" class="modal-overlay" style="display: none;">
             <div class="modal-content">
+                <!-- Use the structure from the example -->
                 <div class="modal-header">
-                    <h2><i class="fas fa-calculator"></i> Hull Fouling Cost Calculator</h2>
+                    <h2><i class="fas fa-water"></i> Hull Fouling Cost Calculator</h2>
                     <button class="modal-close" aria-label="Close modal"><i class="fas fa-times"></i></button>
                 </div>
                 <div class="modal-body">
-                    <b>What This Calculator Does</b><br><p>
-                        This tool helps vessel operators estimate the economic and environmental impact of hull fouling based on actual research data from the University of Melbourne. It synthesizes findings from multiple studies, including measurements on the Coral Adventurer cruise ship and a Rio Tinto tugboat.</p>
+                    <!-- Hero Section (Simplified for Modal) -->
+                    <div class="hero-badge">University of Melbourne Research</div>
+                    <p>Calculate the economic and environmental impact of hull fouling with precision, backed by advanced 3D underwater scanning research and academic studies.</p>
+
                     <!-- Currency Selector -->
                     <div class="currency-selector-container">
                         <div class="currency-selector">
@@ -801,29 +459,64 @@
                         </div>
                     </div>
 
-                    <!-- Calculator Grid -->
-                    <div class="calculator-grid" id="hull-calculator-container">
-                        <div class="calculator-chart">
-                            <div class="card-header">
-                                <h3 class="card-header-title">Cost & Emissions vs. Speed</h3>
-                                <div class="card-header-icon">
-                                    <i class="fas fa-chart-area"></i>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="chart-container">
-                                    <div class="chart-wrapper">
-                                        <canvas id="myChart" width="600" height="400"></canvas>
-                                    </div>
-                                </div>
-                                <p>This chart shows how operating costs and emissions increase with speed for both clean and
-                                    fouled hulls. The difference between the two cost lines represents your potential
-                                    savings from hull maintenance.</p>
+                    <!-- Introduction Card -->
+                    <div class="card fade-in fade-in-1">
+                        <div class="card-header">
+                            <h3 class="card-header-title">What This Calculator Does</h3>
+                            <div class="card-header-icon">
+                                <i class="fas fa-ship"></i>
                             </div>
                         </div>
+                        <div class="card-body">
+                            <p>This tool helps vessel operators estimate the economic and environmental impact of hull fouling based on actual research data from the University of Melbourne. It synthesizes findings from multiple studies, including measurements on the Coral Adventurer cruise ship and a Rio Tinto tugboat.</p>
+                            <div class="information-note">
+                                <h4><i class="fas fa-info-circle"></i> Research-Based Tool</h4>
+                                <p>This calculator is built using direct measurements and validated outcomes from University of Melbourne studies using AQUAMARS (Advanced Quality Underwater Mapping and Analysis for Rough Surfaces) technology. The calculations represent real-world impacts measured through advanced 3D underwater scanning.</p>
+                            </div>
+                            <p>Simply:</p>
+                            <ol>
+                                <li>Select your vessel type</li>
+                                <li>Adjust operating costs if needed</li>
+                                <li>Set the hull fouling severity</li>
+                            </ol>
+                            <p>The calculator will instantly show you:</p>
+                            <ul>
+                                <li>Additional fuel costs at different speeds</li>
+                                <li>Percentage increase in operating expenses</li>
+                                <li>Added CO₂ emissions from reduced efficiency</li>
+                                <li>Estimated annual impact on your operations</li>
+                            </ul>
+                        </div>
+                    </div>
 
-                        <!-- Controls Card -->
-                        <div class="calculator-controls">
+                    <!-- Source Papers Section -->
+                    <div class="source-papers fade-in fade-in-2">
+                        <h3><i class="fas fa-file-alt"></i> Source Research Papers</h3>
+                        <p>This calculator is based on the following University of Melbourne research studies. You can access these papers to understand the methodology, measurements, and findings in detail:</p>
+                        <!-- TODO: Update these links if PDFs are placed in assets/ -->
+                        <a href="results/Report-UoM-Coral-Adventurer.pdf" class="paper-link" target="_blank">
+                            <i class="fas fa-file-pdf"></i>
+                            <div class="paper-info">
+                                <div class="paper-title">Quantitative assessment of increased frictional drag due to hull fouling using underwater surface scanning - Coral Adventurer Study</div>
+                                <div class="paper-authors">University of Melbourne for Franmarine Underwater Services (2025)</div>
+                            </div>
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <a href="results/DRAFT-UoM-Report.pdf" class="paper-link" target="_blank">
+                            <i class="fas fa-file-pdf"></i>
+                            <div class="paper-info">
+                                <div class="paper-title">Quantitative assessment of increased frictional drag due to hull fouling using underwater surface scanning - Rio Tinto Tugboat Study</div>
+                                <div class="paper-authors">Kevin, L. Tsigaras, A. Kogios, J. Monty - University of Melbourne (2024)</div>
+                            </div>
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <p class="mt-4">As more research studies become available, this calculator will continue to be updated with additional vessel types and more refined friction coefficients for different fouling conditions.</p>
+                    </div>
+
+                    <!-- Calculator Grid -->
+                    <div class="calculator-grid fade-in fade-in-3">
+                        <!-- Controls Card (Left Side) -->
+                        <div class="card calculator-controls"> <!-- Added calculator-controls class -->
                             <div class="card-header">
                                 <h3 class="card-header-title">Vessel Parameters</h3>
                                 <div class="card-header-icon">
@@ -835,17 +528,16 @@
                                 <div class="form-group">
                                     <label for="vesselType">Vessel Type</label>
                                     <div class="input-wrapper">
+                                        <!-- Reduced options to match JS -->
                                         <select id="vesselType">
                                             <option value="tug">Harbor Tug (32m)</option>
                                             <option value="cruiseShip">Passenger Cruise Ship (93m)</option>
-                                            <!-- <option value="osv">Offshore Supply Vessel (50m)</option>
-                                            <option value="coaster">Coastal Freighter (80m)</option> -->
+                                            <option value="osv">Offshore Supply Vessel (50m)</option>
+                                            <option value="coaster">Coastal Freighter (80m)</option>
                                         </select>
                                     </div>
-                                    <span class="help-text">Select vessel to load parameters measured in UoM
-                                        research</span>
+                                    <span class="help-text">Select vessel to load parameters measured in UoM research</span>
                                 </div>
-
                                 <!-- Cost Inputs -->
                                 <div class="form-group">
                                     <label for="costEco">Operating Cost @ Economic Speed</label>
@@ -853,10 +545,8 @@
                                         <i class="fas fa-dollar-sign input-icon"></i>
                                         <input type="number" id="costEco" class="input-with-icon" step="50" min="100">
                                     </div>
-                                    <span class="help-text">Base fuel cost at economic speed ($/hr with clean
-                                        hull)</span>
+                                    <span class="help-text">Base fuel cost at economic speed ($/hr with clean hull)</span>
                                 </div>
-
                                 <div class="form-group">
                                     <label for="costFull">Operating Cost @ Full Speed</label>
                                     <div class="input-wrapper">
@@ -865,188 +555,251 @@
                                     </div>
                                     <span class="help-text">Base fuel cost at full speed ($/hr with clean hull)</span>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Fouling Rating Slider Section -->
-                    <div class="fouling-rating-section">
-                        <div class="card-header">
-                            <h3 class="card-header-title">Hull Fouling Rating</h3>
-                            <div class="card-header-icon">
-                                <i class="fas fa-water"></i>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="slider-container">
-                                <div class="slider-header">
-                                    <label for="frSlider">Current Fouling Level</label>
-                                    <div id="frLabel" class="slider-value">FR2</div>
-                                </div>
-                                <input type="range" id="frSlider" class="range-slider" min="0" max="5" step="1" value="2">
-                                <div class="range-ticks">
-                                    <div class="range-tick" data-value="0">
-                                        <div class="tick-dot"></div>
-                                        <div class="tick-label">FR0</div>
-                                    </div>
-                                    <div class="range-tick" data-value="1">
-                                        <div class="tick-dot"></div>
-                                        <div class="tick-label">FR1</div>
-                                    </div>
-                                    <div class="range-tick" data-value="2">
-                                        <div class="tick-dot"></div>
-                                        <div class="tick-label">FR2</div>
-                                    </div>
-                                    <div class="range-tick" data-value="3">
-                                        <div class="tick-dot"></div>
-                                        <div class="tick-label">FR3</div>
-                                    </div>
-                                    <div class="range-tick" data-value="4">
-                                        <div class="tick-dot"></div>
-                                        <div class="tick-label">FR4</div>
-                                    </div>
-                                    <div class="range-tick" data-value="5">
-                                        <div class="tick-dot"></div>
-                                        <div class="tick-label">FR5</div>
-                                    </div>
-                                </div>
-
-                                <table class="fouling-rating-table">
-                                    <tr>
-                                        <th>Rating</th>
-                                        <th>Description</th>
-                                        <th>Impact</th>
-                                        <th>Validation</th>
-                                    </tr>
-                                    <tr>
-                                        <td>FR0</td>
-                                        <td>Clean hull</td>
-                                        <td>+0%</td>
-                                        <td>Baseline</td>
-                                    </tr>
-                                    <tr>
-                                        <td>FR1</td>
-                                        <td>Light slime</td>
-                                        <td>+15%</td>
-                                        <td>Research calibrated</td>
-                                    </tr>
-                                    <tr>
-                                        <td>FR2</td>
-                                        <td>Medium slime</td>
-                                        <td>+35%</td>
-                                        <td>Research calibrated</td>
-                                    </tr>
-                                    <tr>
-                                        <td>FR3</td>
-                                        <td>Heavy slime</td>
-                                        <td>+60%</td>
-                                        <td>Research calibrated</td>
-                                    </tr>
-                                    <tr>
-                                        <td>FR4</td>
-                                        <td>Light calcareous</td>
-                                        <td>+95%</td>
-                                        <td>Research calibrated</td>
-                                    </tr>
-                                    <tr>
-                                        <td>FR5</td>
-                                        <td>Heavy calcareous</td>
-                                        <td>+193%</td>
-                                        <td>Direct measurement</td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Results Section - Moved outside/after grid -->
-                    <div class="results-section">
-                        <h3><i class="fas fa-chart-line"></i> Cost Impact Analysis</h3>
-                        <div id="resultsText"></div>
-                    </div>
-
-                    <div class="info-section">
-                        <h4><i class="fas fa-lightbulb"></i> Understanding Ship Resistance</h4>
-                        <p>Vessels face two primary types of resistance when moving through water:</p>
-                        <ol>
-                            <li><strong>Frictional Resistance:</strong> The drag created by water flowing along the hull surface. It follows a cubic relationship with speed (∝ speed³) and is the dominant force at lower speeds. Hull fouling directly increases this component.</li>
-                            <li><strong>Wave-Making Resistance:</strong> The energy needed to push water aside and create waves. It increases more rapidly with speed (∝ speed⁴·⁵) and dominates at higher speeds. Hull fouling has minimal impact on this component.</li>
-                        </ol>
+                                <!-- Fouling Rating Slider -->
+                                <div class="fouling-rating-section"> 
+                                    <div class="slider-container">
+                                        <div class="slider-header">
+                                            <label for="frSlider">Hull Fouling Rating</label>
+                                            <div id="frLabel" class="slider-value">FR2</div>
                                         </div>
+                                        <input type="range" id="frSlider" class="range-slider" min="0" max="5" step="1" value="2">
+                                        <div class="range-ticks">
+                                            <div class="range-tick" data-value="0"><div class="tick-dot"></div><div class="tick-label">FR0</div></div>
+                                            <div class="range-tick" data-value="1"><div class="tick-dot"></div><div class="tick-label">FR1</div></div>
+                                            <div class="range-tick" data-value="2"><div class="tick-dot"></div><div class="tick-label">FR2</div></div>
+                                            <div class="range-tick" data-value="3"><div class="tick-dot"></div><div class="tick-label">FR3</div></div>
+                                            <div class="range-tick" data-value="4"><div class="tick-dot"></div><div class="tick-label">FR4</div></div>
+                                            <div class="range-tick" data-value="5"><div class="tick-dot"></div><div class="tick-label">FR5</div></div>
+                                        </div>
+                                        <table class="fouling-rating-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Rating</th>
+                                                    <th>Description</th>
+                                                    <th>Impact</th>
+                                                    <th>Validation</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr><td>FR0</td><td>Clean hull</td><td>+0%</td><td>Baseline</td></tr>
+                                                <tr><td>FR1</td><td>Light slime</td><td>+15%</td><td>Research calibrated</td></tr>
+                                                <tr><td>FR2</td><td>Medium slime</td><td>+35%</td><td>Research calibrated</td></tr>
+                                                <tr><td>FR3</td><td>Heavy slime</td><td>+60%</td><td>Research calibrated</td></tr>
+                                                <tr><td>FR4</td><td>Light calcareous</td><td>+95%</td><td>Research calibrated</td></tr>
+                                                <tr><td>FR5</td><td>Heavy calcareous</td><td>+193%</td><td>Directly measured (UoM)</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!-- Results Section -->
+                                <div class="results-section">
+                                    <h3><i class="fas fa-chart-line"></i> Cost Impact Analysis</h3>
+                                    <div id="resultsText"></div>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="research-section">
-                        <h3>Research Foundation</h3>
-                        <p>This calculator is built using direct measurements and validated outcomes from University of Melbourne studies using AQUAMARS (Advanced Quality Underwater Mapping and Analysis for Rough Surfaces) technology. The calculations represent real-world impacts measured through advanced 3D underwater scanning.</p>
-                        <div class="research-highlights">
-                            <div class="highlight">
-                                <h4>Key Findings</h4>
-                                <ul>
-                                    <li>Heavy calcareous fouling increased friction coefficient by up to 193%</li>
-                                    <li>For a medium-sized cruise ship, this translates to approximately $3M in
-                                        additional annual fuel costs</li>
-                                    <li>CO₂ emissions increase proportionally with fuel consumption</li>
-                                </ul>
+                        <!-- Chart Card (Right Side) -->
+                        <div class="card calculator-chart"> <!-- Added calculator-chart class -->
+                            <div class="card-header">
+                                <h3 class="card-header-title">Cost & Emissions vs. Speed</h3>
+                                <div class="card-header-icon">
+                                    <i class="fas fa-chart-area"></i>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <div class="chart-wrapper">
+                                        <canvas id="myChart"></canvas> <!-- Removed fixed width/height -->
+                                    </div>
+                                </div>
+                                <p>This chart shows how operating costs and emissions increase with speed for both clean and fouled hulls. The difference between the two cost lines represents your potential savings from hull maintenance.</p>
+                                <div class="information-note">
+                                    <h4><i class="fas fa-lightbulb"></i> Understanding The Model</h4>
+                                    <p>The calculator uses a physics-based model that accounts for both frictional resistance (affected by fouling) and wave-making resistance (primarily affected by speed). The fouling impact values at FR5 (193% increase in friction) are directly measured from University of Melbourne research on the Coral Adventurer, with intermediate values derived from fluid dynamics modeling.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
+
+                    <!-- Research Section -->
+                    <div class="research-section fade-in fade-in-4">
+                        <div class="research-header">
+                            <h2>Research Foundation & Technical Background</h2>
+                            <p>This calculator integrates findings from University of Melbourne marine engineering research, making complex scientific data accessible for practical decision-making.</p>
+                        </div>
+                        <div class="research-highlight">
+                            <h3>Research Methodology: AQUAMARS Technology</h3>
+                            <p>The University of Melbourne studies used advanced AQUAMARS 3D underwater scanning technology to precisely map hull roughness. This diver-operated device captured high-resolution images that were reconstructed into 3D surface maps with sub-millimeter accuracy. Key findings:</p>
+                            <ul>
+                                <li>For the Coral Adventurer cruise ship, heavy calcareous fouling increased friction coefficient by <strong>193%</strong></li>
+                                <li>Total resistance increased by <strong>98%</strong> at cruise speed (13.8 knots)</li>
+                                <li>This translated to <strong>$1,273 additional fuel cost per hour</strong> (approximate, varies with fuel price)</li>
+                                <li>And <strong>1.8 tonnes of extra CO₂ emissions per hour</strong></li>
+                                <li>For the Rio Tinto tugboat, a different fouling level increased friction by <strong>125%</strong> and total resistance by <strong>44.2%</strong> at 13 knots</li>
+                            </ul>
+                        </div>
+                        <div class="research-grid">
+                            <div class="research-card">
+                                <h3><i class="fas fa-water"></i> Understanding Ship Resistance</h3>
+                                <p>Vessels face two primary types of resistance when moving through water:</p>
+                                <ol>
+                                    <li><strong>Frictional Resistance:</strong> The drag created by water flowing along the hull surface. It follows a cubic relationship with speed (∝ speed³) and is the dominant force at lower speeds. Hull fouling directly increases this component.</li>
+                                    <li><strong>Wave-Making Resistance:</strong> The energy needed to push water aside and create waves. It increases more rapidly with speed (∝ speed⁴·⁵) and dominates at higher speeds. Hull fouling has minimal impact on this component.</li>
+                                </ol>
+                            </div>
+                            <div class="research-card">
+                                <h3><i class="fas fa-calculator"></i> Our Calculation Method</h3>
+                                <p>The researchers used advanced 3D scanning to measure hull roughness and sophisticated fluid dynamics to calculate drag. We've implemented their methodology into this practical calculator:</p>
+                                <div class="research-equation">
+                                    Cost(speed, FR) = [α·(1 + FR%)·speed³] + [β·speed⁴·⁵]
+                                </div>
+                                <div class="equation-annotation"><div class="equation-dot"></div><p>The first term represents frictional resistance (affected by fouling)</p></div>
+                                <div class="equation-annotation"><div class="equation-dot"></div><p>The second term represents wave-making resistance (unchanged by fouling)</p></div>
+                                <div class="equation-annotation"><div class="equation-dot"></div><p>α and β are calculated from your vessel's known operating costs</p></div>
+                            </div>
+                            <div class="research-card">
+                                <h3><i class="fas fa-table"></i> Hull Fouling Impact Scale</h3>
+                                <p>Based on the University of Melbourne research findings, we've calibrated our fouling rating system to reflect measured impacts on frictional resistance:</p>
+                                <div class="data-table-container">
+                                    <table class="data-table">
+                                         <thead><!-- Added thead -->
+                                            <tr><th>Fouling Rating</th><th>Description</th><th>Impact on Friction</th><th>Validation</th></tr>
+                                        </thead>
+                                        <tbody><!-- Added tbody -->
+                                            <tr><td>FR0</td><td>Clean hull</td><td>+0%</td><td>Baseline</td></tr>
+                                            <tr><td>FR1</td><td>Light Slime</td><td>+15%</td><td>Research calibrated</td></tr>
+                                            <tr><td>FR2</td><td>Medium Slime</td><td>+35%</td><td>Research calibrated</td></tr>
+                                            <tr><td>FR3</td><td>Heavy Slime</td><td>+60%</td><td>Research calibrated</td></tr>
+                                            <tr><td>FR4</td><td>Light Calcareous</td><td>+95%</td><td>Research calibrated</td></tr>
+                                            <tr><td>FR5</td><td>Heavy Calcareous</td><td>+193%</td><td>Directly measured (UoM)</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p>The 193% increase for FR5 was directly measured on the Coral Adventurer cruise ship. Intermediate values (FR1-FR4) are calibrated based on the research findings and fluid dynamics models.</p>
+                            </div>
+                            <div class="research-card">
+                                <h3><i class="fas fa-coins"></i> Real-World Impact</h3>
+                                <p>For the Coral Adventurer cruise ship in the University of Melbourne study, operating 200 days per year at 12 hours per day with heavy fouling (FR5):</p>
+                                <ul>
+                                    <li>Additional annual fuel cost: <strong>~A$3,055,200</strong></li>
+                                    <li>Additional annual CO₂ emissions: <strong>4,320 tonnes</strong></li>
+                                    <li>Reduction in operational range: <strong>~33%</strong></li>
+                                </ul>
+                                <p>Similarly, for the Rio Tinto tugboat with moderate fouling at 13 knots, the added cost was approximately <strong>A$955/hr</strong> with <strong>1.3 tonnes/hr</strong> of additional CO₂ emissions.</p>
+                                <p>These findings demonstrate the significant economic and environmental benefits of maintaining clean hulls.</p>
+                            </div>
+                        </div>
+                        <div class="information-note">
+                            <h4><i class="fas fa-info-circle"></i> Ongoing Research</h4>
+                            <p>This calculator will be updated as more University of Melbourne studies become available. Future enhancements will include additional vessel types, more refined friction coefficients for different fouling conditions, and the ability to calculate acoustic impacts of hull fouling.</p>
+                        </div>
+                    </div>
+                    
+                </div> <!-- End modal-body -->
+            </div> <!-- End modal-content -->
+        </div> <!-- End cost-calculator-modal -->
         <!-- End of Hull Fouling Calculator Modal -->
 
         <!-- About Section -->
         <section id="about" class="about">
             <div class="container">
                 <div class="about-content">
-                    <h2>About MarineStream</h2>
-                    <p>MarineStream is dedicated to solving biofouling challenges through innovative hardware and
-                        blockchain technology, built on a robust SaaS platform. Our mission is to deliver
-                        comprehensive biofouling solutions that enhance compliance, transparency, collaboration, and
-                        real-time monitoring.</p>
-                    <ul class="about-features">
-                        <li>Trusted by commercial vessels and naval fleets worldwide</li>
-                        <li>Implementing transparency and traceability from down under to the world</li>
+                    <h2>Delivering Results</h2>
+                    <p>Employed by leading maritime and subsea operators worldwide, MarineStream™ represents
+                        a single source of truth for transparent, streamlined, and simplified biofouling compliance
+                        across multiple jurisdictions.
+                        <br><br>
+                        We've learned through experience that effective biofouling management is a collaborative effort
+                        and our partners include:
+                    </p>
+                    <ul class="about-features" style="text-align: center; list-style-position: inside;">
+                        <li>Fleet Operators</li>
+                        <li>Vessel Operators</li>
+                        <li>Academia</li>
+                        <li>Anti-Fouling Coating Manufacturers</li>
+                        <li>MGPS Manufacturers</li>
+                        <li>Diving Contractors</li>
+                        <li>Hull Cleaning Contractors</li>
+                        <li>ROV Manufacturers</li>
+                        <li>Environmental Regulators</li>
+                        <li>Port Authorities</li>
                     </ul>
-                    <p class="mt-lg">MarineStream is a technology of Franmarine, a diversified marine and underwater service provider renowned for supporting Defence with consolidated biofouling management and underwater engineering capability.</p>
-                    <a href="#contact" class="btn btn-primary">Learn More About Us</a>
+                    <p class="mt-lg">Contact us to join the global supply chain that is defining environmental
+                        Stewardship</p>
+                    <a href="#contact" class="btn btn-primary">Contact Us Now</a>
                     <!-- Changed link from #about to #contact -->
                 </div>
                 <div class="clients-section">
                     <h3>Clients and Industry Partners</h3>
                     <div class="logos">
                         <div class="logos-slide">
-                            <a href="https://australianmarinecomplex.com.au" target="_blank" rel="noopener noreferrer"><img src="./assets/AMC.jpg" alt="Australian Marine Complex Logo"></a>
-                            <a href="https://www.amepl.com.au" target="_blank" rel="noopener noreferrer"><img src="./assets/ame.jpg" alt="AME Offshore Solutions Logo"></a>
-                            <a href="https://www.asc.com.au" target="_blank" rel="noopener noreferrer"><img src="./assets/AscLogo150x.jpg" alt="ASC Logo"></a>
-                            <a href="https://www.austal.com" target="_blank" rel="noopener noreferrer"><img src="./assets/austal.jpg" alt="Austal Logo"></a>
-                            <a href="https://www.babcock.com.au" target="_blank" rel="noopener noreferrer"><img src="./assets/babcock.png" alt="Babcock Logo"></a>
-                            <a href="https://www.baesystems.com" target="_blank" rel="noopener noreferrer"><img src="./assets/bae.jpg" alt="BAE Systems Logo"></a>
-                            <a href="https://www.bp.com/en/global/bp-supply-trading-and-shipping.html" target="_blank" rel="noopener noreferrer"><img src="./assets/bp.jpg" alt="BP Shipping Logo"></a>
-                            <a href="https://www.carnivalcorp.com" target="_blank" rel="noopener noreferrer"><img src="./assets/carnival.jpg" alt="Carnival Corporation Logo"></a>
-                            <a href="https://www.cma-cgm.com" target="_blank" rel="noopener noreferrer"><img src="./assets/cma.jpg" alt="CMA CGM Logo"></a>
-                            <a href="https://www.cockburn.wa.gov.au" target="_blank" rel="noopener noreferrer"><img src="./assets/cock.jpg" alt="City of Cockburn Logo"></a>
-                            <a href="https://www.transport.wa.gov.au" target="_blank" rel="noopener noreferrer"><img src="./assets/dept_trans.jpg" alt="Department of Transport WA Logo"></a>
-                            <a href="https://www.echomarinegroup.com" target="_blank" rel="noopener noreferrer"><img src="./assets/echo.jpg" alt="Echo Marine Group Logo"></a>
-                            <a href="https://www.innovativecm.com.au" target="_blank" rel="noopener noreferrer"><img src="./assets/icm.jpg" alt="Innovative Corrosion Management Logo"></a>
-                            <a href="https://www.ikad.com.au" target="_blank" rel="noopener noreferrer"><img src="./assets/IKAD-Gold-Black-Smol.png" alt="IKAD Engineering Logo"></a>
-                            <a href="https://www.jfdglobal.com" target="_blank" rel="noopener noreferrer"><img src="./assets/jfd.jpg" alt="JFD Logo"></a>
-                            <a href="https://www.maersk.com" target="_blank" rel="noopener noreferrer"><img src="./assets/maersk.jpg" alt="Maersk Logo"></a>
-                            <a href="https://www.iss-shipping.com" target="_blank" rel="noopener noreferrer"><img src="./assets/inchscape.jpg" alt="Inchcape Shipping Services Logo"></a>
-                            <a href="https://www.navalshipmanagement.com" target="_blank" rel="noopener noreferrer"><img src="./assets/nsm.jpg" alt="NSM Logo"></a>
-                            <a href="https://www.oldendorff.com" target="_blank" rel="noopener noreferrer"><img src="./assets/oldendorff.jpg" alt="Oldendorff Carriers Logo"></a>
-                            <a href="https://www.pta.wa.gov.au" target="_blank" rel="noopener noreferrer"><img src="./assets/pta.jpg" alt="Public Transport Authority WA Logo"></a>
-                            <a href="https://www.navy.gov.au" target="_blank" rel="noopener noreferrer"><img src="./assets/ran.jpg" alt="Royal Australian Navy Logo"></a>
-                            <a href="https://www.riotinto.com" target="_blank" rel="noopener noreferrer"><img src="./assets/rio.jpg" alt="Rio Tinto Logo"></a>
-                            <a href="https://www.rottnestisland.com" target="_blank" rel="noopener noreferrer"><img src="./assets/rotto.jpg" alt="Rottnest Island Authority Logo"></a>
-                            <a href="https://www.scamp.com" target="_blank" rel="noopener noreferrer"><img src="./assets/scamp.jpg" alt="Scamp Logo"></a>
-                            <a href="https://www.seatec-services.com" target="_blank" rel="noopener noreferrer"><img src="./assets/Seatech-Logo.png" alt="SeaTec Logo"></a>
-                            <a href="https://www.silveryachts.com" target="_blank" rel="noopener noreferrer"><img src="./assets/silver.jpg" alt="Silver Yachts Logo"></a>
-                            <a href="https://www.subseaglobalsolutions.com" target="_blank" rel="noopener noreferrer"><img src="./assets/subsea.jpg" alt="Subsea Global Solutions Logo"></a>
-                            <a href="https://www.svitzer.com" target="_blank" rel="noopener noreferrer"><img src="./assets/svitzer.jpg" alt="Svitzer Logo"></a>
-                            <a href="https://www.swireshipping.com" target="_blank" rel="noopener noreferrer"><img src="./assets/swire.jpg" alt="Swire Shipping Logo"></a>
-                            <a href="https://www.teekay.com" target="_blank" rel="noopener noreferrer"><img src="./assets/teekay.jpg" alt="Teekay Logo"></a>
-                            <a href="https://www.wilhelmsen.com" target="_blank" rel="noopener noreferrer"><img src="./assets/wilhelmsen.jpg" alt="Wilhelmsen Logo"></a>
-                            <a href="https://www.fremantleports.com.au" target="_blank" rel="noopener noreferrer"><img src="./assets/freoports.jpg" alt="Fremantle Ports Logo"></a>
+                            <a href="https://australianmarinecomplex.com.au" target="_blank"
+                                rel="noopener noreferrer"><img src="./assets/AMC.jpg"
+                                    alt="Australian Marine Complex Logo"></a>
+                            <a href="https://www.amepl.com.au" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/ame.jpg" alt="AME Offshore Solutions Logo"></a>
+                            <a href="https://www.asc.com.au" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/AscLogo150x.jpg" alt="ASC Logo"></a>
+                            <a href="https://www.austal.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/austal.jpg" alt="Austal Logo"></a>
+                            <a href="https://www.babcock.com.au" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/babcock.png" alt="Babcock Logo"></a>
+                            <a href="https://www.baesystems.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/bae.jpg" alt="BAE Systems Logo"></a>
+                            <a href="https://www.bp.com/en/global/bp-supply-trading-and-shipping.html" target="_blank"
+                                rel="noopener noreferrer"><img src="./assets/bp.jpg" alt="BP Shipping Logo"></a>
+                            <a href="https://www.carnivalcorp.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/carnival.jpg" alt="Carnival Corporation Logo"></a>
+                            <a href="https://www.cma-cgm.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/cma.jpg" alt="CMA CGM Logo"></a>
+                            <a href="https://www.cockburn.wa.gov.au" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/cock.jpg" alt="City of Cockburn Logo"></a>
+                            <a href="https://www.transport.wa.gov.au" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/dept_trans.jpg" alt="Department of Transport WA Logo"></a>
+                            <a href="https://www.echomarinegroup.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/echo.jpg" alt="Echo Marine Group Logo"></a>
+                            <a href="https://www.innovativecm.com.au" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/icm.jpg" alt="Innovative Corrosion Management Logo"></a>
+                            <a href="https://www.ikad.com.au" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/IKAD-Gold-Black-Smol.png" alt="IKAD Engineering Logo"></a>
+                            <a href="https://www.jfdglobal.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/jfd.jpg" alt="JFD Logo"></a>
+                            <a href="https://www.maersk.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/maersk.jpg" alt="Maersk Logo"></a>
+                            <a href="https://www.iss-shipping.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/inchscape.jpg" alt="Inchcape Shipping Services Logo"></a>
+                            <a href="https://www.navalshipmanagement.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/nsm.jpg" alt="NSM Logo"></a>
+                            <a href="https://www.oldendorff.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/oldendorff.jpg" alt="Oldendorff Carriers Logo"></a>
+                            <a href="https://www.pta.wa.gov.au" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/pta.jpg" alt="Public Transport Authority WA Logo"></a>
+                            <a href="https://www.navy.gov.au" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/ran.jpg" alt="Royal Australian Navy Logo"></a>
+                            <a href="https://www.riotinto.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/rio.jpg" alt="Rio Tinto Logo"></a>
+                            <a href="https://www.rottnestisland.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/rotto.jpg" alt="Rottnest Island Authority Logo"></a>
+                            <a href="https://www.scamp.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/scamp.jpg" alt="Scamp Logo"></a>
+                            <a href="https://www.seatec-services.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/Seatech-Logo.png" alt="SeaTec Logo"></a>
+                            <a href="https://www.silveryachts.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/silver.jpg" alt="Silver Yachts Logo"></a>
+                            <a href="https://www.subseaglobalsolutions.com" target="_blank"
+                                rel="noopener noreferrer"><img src="./assets/subsea.jpg"
+                                    alt="Subsea Global Solutions Logo"></a>
+                            <a href="https://www.svitzer.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/svitzer.jpg" alt="Svitzer Logo"></a>
+                            <a href="https://www.swireshipping.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/swire.jpg" alt="Swire Shipping Logo"></a>
+                            <a href="https://www.teekay.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/teekay.jpg" alt="Teekay Logo"></a>
+                            <a href="https://www.wilhelmsen.com" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/wilhelmsen.jpg" alt="Wilhelmsen Logo"></a>
+                            <a href="https://www.fremantleports.com.au" target="_blank" rel="noopener noreferrer"><img
+                                    src="./assets/freoports.jpg" alt="Fremantle Ports Logo"></a>
                         </div>
                     </div>
                 </div>

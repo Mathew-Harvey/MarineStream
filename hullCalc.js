@@ -22,57 +22,141 @@ function initHullFoulingCalculator() {
         GBP: '£'
     };
     
+    // Physical constants (using typical values for seawater at ~15°C)
+    const KNOTS_TO_MPS = 0.514444;
+    const MPS_TO_KNOTS = 1.94384;
+    const NU_WATER = 1.19e-6; // Kinematic viscosity (m²/s)
+    const RHO_WATER = 1025;   // Density of seawater (kg/m³)
+    // Fuel properties (typical for Marine Diesel Oil)
+    const FUEL_CO2_FACTOR = 3.16; // kg CO2 per kg fuel
+    const FUEL_ENERGY_DENSITY = 42.7; // MJ/kg
+    const FUEL_DENSITY = 0.85; // kg/L
+
     // Default currency
     let currentCurrency = 'AUD';
     
-    // Vessel type configurations - updated with research data from UoM studies
+    // Vessel type configurations - extended with physical parameters
     const vesselConfigs = {
         tug: {
             name: "Harbor Tug (32m)",
-            ecoSpeed: 8,
-            fullSpeed: 13,
-            costEco: 600,    
-            costFull: 2160,  
-            waveExp: 4.5   
+            L: 32,           // Length (m) - from paper Table 1
+            ecoSpeed: 8,     // knots
+            fullSpeed: 13,   // knots - from paper Table 3
+            costEco: 600,    // User input default (AUD/hr)
+            costFull: 2160,  // User input default (AUD/hr) - approx from paper ($955 extra cost on baseline = 2160)
+            waveExp: 4.5,    // Speed exponent for wave drag cost component
+            // Physics parameters derived/estimated from paper (Table 3 & 4)
+            CA: 0.0006,      // Correlation allowance at 13kn
+            CrCfRatio_eco: 0.63, // Residuary/Friction ratio at 6.5kn (estimated for 8kn)
+            CrCfRatio_full: 1.83, // Residuary/Friction ratio at 13kn
+            eff_eco: 0.35,      // Estimated engine efficiency at eco speed
+            eff_full: 0.40      // Engine efficiency at full speed (from paper Table 4)
         },
         cruiseShip: {
             name: "Passenger Cruise Ship (93m)",
-            ecoSpeed: 10,
-            fullSpeed: 13.8,
-            costEco: 1600,
-            costFull: 4200,
-            waveExp: 4.6
-        },
-        osv: {
-            name: "Offshore Supply Vessel (50m)",
-            ecoSpeed: 10,
-            fullSpeed: 14,
-            costEco: 850,
-            costFull: 3200,
-            waveExp: 4.5
-        },
-        coaster: {
-            name: "Coastal Freighter (80m)",
-            ecoSpeed: 11,
-            fullSpeed: 15,
-            costEco: 1200,
-            costFull: 4800,
-            waveExp: 4.6
+            L: 93,           // Length (m) - typical assumption
+            ecoSpeed: 10,    // knots
+            fullSpeed: 13.8, // knots
+            costEco: 1600,   // User input default (AUD/hr)
+            costFull: 4200,  // User input default (AUD/hr)
+            waveExp: 4.6,
+            // Physics parameters (Estimates - replace with real data if available)
+            CA: 0.0004,      // Correlation allowance (estimated)
+            CrCfRatio_eco: 1.0,  // Residuary/Friction ratio (estimated)
+            CrCfRatio_full: 2.0, // Residuary/Friction ratio (estimated)
+            eff_eco: 0.40,       // Estimated engine efficiency
+            eff_full: 0.45       // Estimated engine efficiency
         }
+        // Add other vessels with their physical parameters here...
     };
 
-    // FR (Fouling Rating) information - based directly on UoM research findings
-    // The 193% value for FR5 is directly from the Coral Adventurer study
-    const frData = {
-        0: { pct: 0,   desc: "Clean hull" },
-        1: { pct: 15,  desc: "Light slime" },        // Calibrated based on research
-        2: { pct: 35,  desc: "Medium slime" },       // Calibrated based on research
-        3: { pct: 60,  desc: "Heavy slime" },        // Calibrated based on research
-        4: { pct: 95,  desc: "Light calcareous" },   // Calibrated based on research
-        5: { pct: 193, desc: "Heavy calcareous" }    // Matches 193% from UoM Coral Adventurer study
-    };
+    // FR (Fouling Rating) to ks (equivalent sandgrain roughness in meters) mapping
+    // Calibrated: FR4 = 2.8mm (0.0028m) from Rio Tinto tug study paper (Table 2)
+    // Values for other levels are interpolated/extrapolated estimates.
+    const frKsMapping = [
+        0,         // FR0: Smooth
+        0.00015,   // FR1: Light slime (~150 microns)
+        0.00050,   // FR2: Medium slime (~500 microns)
+        0.00120,   // FR3: Heavy slime (~1.2 mm)
+        0.00280,   // FR4: Light calcareous (matches paper 2.8mm)
+        0.00600    // FR5: Heavy calcareous (~6 mm) - Adjusted from previous direct %
+        // Add FR6-FR10 if needed, mapping to higher ks values
+    ];
+    
+    // Old frData (based on cost percentage) - No longer used for main calculation
+    // const frData = { ... }; // Keep commented out for reference if needed
 
     let myChart = null;
+
+    // Helper function: Linear Interpolation
+    function interpolate(x, x1, x2, y1, y2) {
+        if (x <= x1) return y1;
+        if (x >= x2) return y2;
+        return y1 + (y2 - y1) * (x - x1) / (x2 - x1);
+    }
+
+    // Helper function: Knots to m/s
+    function knotsToMps(knots) {
+        return knots * KNOTS_TO_MPS;
+    }
+
+    // Helper function: m/s to Knots
+    function mpsToKnots(mps) {
+        return mps * MPS_TO_KNOTS;
+    }
+
+    // Physics function: Calculate Reynolds Number
+    function calculateReL(speedMps, L, nu) {
+        return speedMps * L / nu;
+    }
+
+    // Physics function: Calculate Smooth Skin Friction Coefficient (ITTC 1957)
+    function calculateCfs(ReL) {
+        if (ReL <= 0) return 0;
+        return 0.075 / Math.pow(Math.log10(ReL) - 2, 2);
+    }
+
+    // Physics function: Calculate Rough Skin Friction Coefficient Cf
+    // Uses a simplified approach blending smooth and fully rough laws
+    // Based on concepts similar to Grigson, incorporating ks influence
+    function calculateCf(ReL, ks, L) {
+        const Cfs = calculateCfs(ReL);
+        if (ks <= 0) {
+            return Cfs; // Hydrodynamically smooth
+        }
+
+        // Estimate fully rough friction coefficient (Prandtl-Schlichting type)
+        // Note: This is one of many possible correlations. Adjust if better model is available.
+        const Cf_rough_fully = Math.pow(1.89 + 1.62 * Math.log10(L / ks), -2.5);
+
+        // Simple blending: Transition based on roughness Reynolds number (approx)
+        // This is a heuristic blend, more sophisticated methods exist
+        const roughnessRey = ReL * (ks / L);
+        const transitionStart = 100; // Approximate Re_k where roughness starts to matter
+        const transitionEnd = 1000;  // Approximate Re_k where flow is fully rough
+
+        if (roughnessRey < transitionStart) {
+            return Cfs; // Still effectively smooth
+        } else if (roughnessRey > transitionEnd) {
+            return Cf_rough_fully; // Fully rough
+        } else {
+            // Linear blend in the transition region
+            const weight = (roughnessRey - transitionStart) / (transitionEnd - transitionStart);
+            return Cfs * (1 - weight) + Cf_rough_fully * weight;
+        }
+         // Alternative simple addition (e.g., Bowden & Davison - needs careful coefficient check)
+        // const deltaCf_rough = 0.044 * (Math.pow(ks/L, 1/3) - 10 * Math.pow(ReL, -1/3)) + 0.00125; // Check formula/coeffs
+        // return Cfs + Math.max(0, deltaCf_rough); // Ensure deltaCf is not negative
+    }
+
+    // Physics function: Calculate % Increase in Total Resistance (from paper Eq 4.2)
+    function calculateDeltaRT(deltaCf, Cfs, CrCfRatio, CA) {
+        if (Cfs <= 0) return 0; // Avoid division by zero for stationary vessel
+        const denominator = Cfs * (1 + CrCfRatio) + CA;
+        if (denominator <= 0) return 0; // Avoid division by zero or negative resistance base
+        // Note: deltaCf = Cf_rough - Cfs
+        return (deltaCf / denominator) * 100; // Returns percentage
+    }
 
     // Currency conversion function
     function convertCurrency(amount, fromCurrency, toCurrency) {
@@ -160,30 +244,40 @@ function initHullFoulingCalculator() {
         const vesselType = document.getElementById("vesselType").value;
         const vessel = vesselConfigs[vesselType];
         
+        // Get vessel-specific physical parameters
+        const L = vessel.L;
+        const nu = NU_WATER; // Assuming constant water properties
+        const CA = vessel.CA; // Using the full speed CA as approximation for now
+
         // Get input costs in current currency
         let costEcoInput = parseFloat(document.getElementById("costEco").value) || vessel.costEco;
         let costFullInput = parseFloat(document.getElementById("costFull").value) || vessel.costFull;
         
-        // Convert input costs to AUD for calculations if needed
+        // Convert input costs to AUD for internal calculations
         let costEco = currentCurrency === 'AUD' ? costEcoInput : convertCurrency(costEcoInput, currentCurrency, 'AUD');
         let costFull = currentCurrency === 'AUD' ? costFullInput : convertCurrency(costFullInput, currentCurrency, 'AUD');
         
         const frLevel = parseInt(document.getElementById("frSlider").value) || 0;
-        const { pct:frPct, desc:frDesc } = frData[frLevel];
+        // Get ks value from the mapping
+        const ks = frKsMapping[frLevel] !== undefined ? frKsMapping[frLevel] : 0;
+        // Get description for label (modify if frData structure changes)
+        // For now, create a simple description
+        const frDesc = `FR${frLevel}` + (ks > 0 ? ` (ks=${(ks * 1000).toFixed(1)}mm)` : ' (Smooth)');
 
         // Update FR label
         const frLabel = `FR${frLevel}`;
-        document.getElementById("frLabel").textContent = frLabel;
+        document.getElementById("frLabel").textContent = frLabel; // Keep simple label for UI
 
         // Calculate speed range for chart
         const minSpeed = Math.max(vessel.ecoSpeed - 4, 4);
         const maxSpeed = vessel.fullSpeed + 2;
         
+        // Solve for alpha and beta of the CLEAN HULL COST curve based on user inputs
         const { alpha, beta } = solveAlphaBeta(
-            costEco, 
-            costFull, 
-            vessel.ecoSpeed, 
-            vessel.fullSpeed, 
+            costEco,
+            costFull,
+            vessel.ecoSpeed,
+            vessel.fullSpeed,
             vessel.waveExp
         );
 
@@ -196,31 +290,49 @@ function initHullFoulingCalculator() {
         const stepSize = (maxSpeed - minSpeed) > 8 ? 0.5 : 0.25;
         
         for (let s = minSpeed; s <= maxSpeed; s += stepSize) {
-            const friction = alpha * Math.pow(s, 3);
-            const wave = beta * Math.pow(s, vessel.waveExp);
-            const costClean = friction + wave;
+            // 1. Calculate Clean Hull Cost (using user-calibrated alpha/beta)
+            const costCleanAUD = alpha * Math.pow(s, 3) + beta * Math.pow(s, vessel.waveExp);
 
-            const frictionFouled = friction * (1 + frPct/100);
-            const costFouled = frictionFouled + wave;
+            // 2. Calculate Physics-Based Fouling Impact (DeltaRT)
+            const speedMps = knotsToMps(s);
+            let DeltaRT = 0; // Default to 0% increase for smooth hull or errors
 
-            // CO2 emission calculation based on UoM research data
-            const extraCost = costFouled - costClean;
-            const extraCO2 = calculateExtraCO2(extraCost, vesselType);
+            if (ks > 0 && speedMps > 0) {
+                const ReL = calculateReL(speedMps, L, nu);
+                const Cfs = calculateCfs(ReL);
+                const Cf_rough = calculateCf(ReL, ks, L);
+                const deltaCf = Math.max(0, Cf_rough - Cfs); // Ensure non-negative delta
 
+                // Interpolate CrCfRatio based on current speed 's'
+                const CrCfRatio = interpolate(s, vessel.ecoSpeed, vessel.fullSpeed, vessel.CrCfRatio_eco, vessel.CrCfRatio_full);
+
+                DeltaRT = calculateDeltaRT(deltaCf, Cfs, CrCfRatio, CA);
+            }
+            
+            // Ensure DeltaRT is non-negative
+            DeltaRT = Math.max(0, DeltaRT);
+
+            // 3. Calculate Fouled Hull Cost
+            const costFouledAUD = costCleanAUD * (1 + DeltaRT / 100);
+
+            // 4. Calculate Extra CO2 (using existing calibrated function based on extra cost)
+            const extraCostAUD = costFouledAUD - costCleanAUD;
+            const extraCO2 = calculateExtraCO2(extraCostAUD, vesselType); // Pass AUD cost
+
+            // 5. Store results for chart (converting back to display currency)
             speeds.push(s.toFixed(1));
             
-            // Convert costs to current currency for display
-            const displayCleanCost = currentCurrency === 'AUD' ? 
-                costClean : 
-                convertCurrency(costClean, 'AUD', currentCurrency);
+            const displayCleanCost = currentCurrency === 'AUD' ?
+                costCleanAUD :
+                convertCurrency(costCleanAUD, 'AUD', currentCurrency);
                 
-            const displayFouledCost = currentCurrency === 'AUD' ? 
-                costFouled : 
-                convertCurrency(costFouled, 'AUD', currentCurrency);
+            const displayFouledCost = currentCurrency === 'AUD' ?
+                costFouledAUD :
+                convertCurrency(costFouledAUD, 'AUD', currentCurrency);
                 
             cleanCosts.push(displayCleanCost);
             fouledCosts.push(displayFouledCost);
-            co2Emissions.push(extraCO2);
+            co2Emissions.push(extraCO2); // CO2 is already in kg/hr
         }
 
         // Get the canvas context
@@ -413,30 +525,54 @@ function initHullFoulingCalculator() {
         });
 
         function costAt(speed) {
-            const friction = alpha * Math.pow(speed, 3);
-            const wave = beta * Math.pow(speed, vessel.waveExp);
-            const frictionFouled = friction * (1 + frPct/100);
-            
-            const clean = friction + wave;
-            const fouled = frictionFouled + wave;
-            
-            // Convert costs to display currency if needed
-            const displayClean = currentCurrency === 'AUD' ? 
-                clean : 
-                convertCurrency(clean, 'AUD', currentCurrency);
-                
-            const displayFouled = currentCurrency === 'AUD' ? 
-                fouled : 
-                convertCurrency(fouled, 'AUD', currentCurrency);
-            
-            // Check if this is a validated data point from UoM research
+            // Get vessel config and alpha/beta (recalculating alpha/beta ensures consistency if user changed inputs)
+             const vesselType = document.getElementById("vesselType").value;
+             const vessel = vesselConfigs[vesselType];
+             let costEcoInput = parseFloat(document.getElementById("costEco").value) || vessel.costEco;
+             let costFullInput = parseFloat(document.getElementById("costFull").value) || vessel.costFull;
+             let costEco = currentCurrency === 'AUD' ? costEcoInput : convertCurrency(costEcoInput, currentCurrency, 'AUD');
+             let costFull = currentCurrency === 'AUD' ? costFullInput : convertCurrency(costFullInput, currentCurrency, 'AUD');
+             const { alpha, beta } = solveAlphaBeta(costEco, costFull, vessel.ecoSpeed, vessel.fullSpeed, vessel.waveExp);
+             const frLevel = parseInt(document.getElementById("frSlider").value) || 0;
+             const ks = frKsMapping[frLevel] !== undefined ? frKsMapping[frLevel] : 0;
+
+            // Calculate clean cost (AUD)
+            const cleanAUD = alpha * Math.pow(speed, 3) + beta * Math.pow(speed, vessel.waveExp);
+
+            // Calculate DeltaRT at this specific speed
+            const speedMps = knotsToMps(speed);
+            let DeltaRT = 0;
+             if (ks > 0 && speedMps > 0) {
+                 const L = vessel.L;
+                 const nu = NU_WATER;
+                 const CA = vessel.CA; // Approximation
+                 const ReL = calculateReL(speedMps, L, nu);
+                 const Cfs = calculateCfs(ReL);
+                 const Cf_rough = calculateCf(ReL, ks, L);
+                 const deltaCf = Math.max(0, Cf_rough - Cfs);
+                 const CrCfRatio = interpolate(speed, vessel.ecoSpeed, vessel.fullSpeed, vessel.CrCfRatio_eco, vessel.CrCfRatio_full);
+                 DeltaRT = calculateDeltaRT(deltaCf, Cfs, CrCfRatio, CA);
+             }
+             DeltaRT = Math.max(0, DeltaRT);
+
+            // Calculate fouled cost (AUD)
+            const fouledAUD = cleanAUD * (1 + DeltaRT / 100);
+
+            // Convert costs to display currency
+            const displayClean = currentCurrency === 'AUD' ?
+                cleanAUD :
+                convertCurrency(cleanAUD, 'AUD', currentCurrency);
+
+            const displayFouled = currentCurrency === 'AUD' ?
+                fouledAUD :
+                convertCurrency(fouledAUD, 'AUD', currentCurrency);
+
+            // Get validation status (remains the same)
             const validation = getValidationStatus(vesselType, frLevel, speed);
-            
+
             return {
                 clean: displayClean,
                 fouled: displayFouled,
-                cleanFriction: friction,
-                cleanWave: wave,
                 validation: validation
             };
         }
@@ -444,16 +580,19 @@ function initHullFoulingCalculator() {
         const cEco = costAt(vessel.ecoSpeed);
         const cFull = costAt(vessel.fullSpeed);
         
-        const increaseEco = ((cEco.fouled - cEco.clean) / cEco.clean * 100).toFixed(1);
-        const increaseFull = ((cFull.fouled - cFull.clean) / cFull.clean * 100).toFixed(1);
+        const increaseEco = cEco.clean > 0 ? ((cEco.fouled - cEco.clean) / cEco.clean * 100).toFixed(1) : 'N/A';
+        const increaseFull = cFull.clean > 0 ? ((cFull.fouled - cFull.clean) / cFull.clean * 100).toFixed(1) : 'N/A';
         
-        const extraCostFull = cFull.fouled - cFull.clean;
-        const extraCO2Full = calculateExtraCO2(extraCostFull, vesselType);
-        
-        // Annual impact calculation (assuming 12hr/day, 200 days/year operation)
+        // Calculate extra cost/CO2 at full speed using costs in AUD for consistency with calculateExtraCO2
+        const costFullCleanAUD = currentCurrency === 'AUD' ? cFull.clean : convertCurrency(cFull.clean, currentCurrency, 'AUD');
+        const costFullFouledAUD = currentCurrency === 'AUD' ? cFull.fouled : convertCurrency(cFull.fouled, currentCurrency, 'AUD');
+        const extraCostFullAUD = costFullFouledAUD - costFullCleanAUD;
+        const extraCO2Full = calculateExtraCO2(extraCostFullAUD, vesselType);
+
+        // Annual impact calculation (using AUD costs for consistency)
         // Based on the operational schedule used in UoM studies
         const annualHours = 12 * 200;
-        const annualExtraCost = extraCostFull * annualHours;
+        const annualExtraCost = extraCostFullAUD * annualHours;
         const annualExtraCO2 = extraCO2Full * annualHours / 1000; // Convert to tonnes
 
         let resultsHtml = `

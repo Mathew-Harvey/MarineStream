@@ -62,19 +62,422 @@
   --card-shadow: var(--shadow-md);
 }
 
+        /* Calculator specific styles from the example */
+        .validation-badge {
+          display: inline-flex;
+          align-items: center;
+          background-color: var(--accent-color);
+          color: white;
+          padding: var(--space-xs) var(--space-sm);
+          border-radius: var(--radius-md);
+          font-size: 0.875rem;
+          font-weight: 500;
+          margin-top: var(--space-md);
+          gap: var(--space-xs);
+          max-width: fit-content;
+      }
+
+      .result-group {
+          margin-bottom: var(--space-md);
+      }
+
+      .result-group-header {
+          display: flex;
+          align-items: center;
+          gap: var(--space-xs);
+          margin-bottom: var(--space-sm);
+          padding-bottom: var(--space-xs);
+          border-bottom: 1px solid var(--border-color);
+      }
+
+      .result-group-header h4 {
+          margin: 0;
+          color: var(--accent-color);
+      }
+
+      .result-item {
+          display: flex;
+          justify-content: space-between;
+          padding: var(--space-sm);
+          margin-bottom: var(--space-xs);
+          background-color: var(--bg-secondary);
+          border-radius: var(--radius-sm);
+          box-shadow: var(--shadow-sm);
+          transition: transform var(--transition-fast);
+      }
+
+      .result-item:hover {
+          transform: translateX(5px);
+      }
+
+      .result-label {
+          color: var(--text-secondary);
+      }
+
+      .result-value {
+          font-weight: 700;
+          color: var(--text-primary);
+      }
+
+      .results-section {
+          background-color: var(--bg-secondary);
+          border-radius: var(--radius-md);
+          padding: var(--space-md);
+          margin-top: var(--space-md);
+          border-left: 4px solid var(--accent-color);
+      }
+
+      .results-section h3 {
+          color: var(--accent-color);
+          margin-top: 0;
+          display: flex;
+          align-items: center;
+          gap: var(--space-xs);
+      }
+
+      .results-section h3 i {
+          color: var(--accent-light);
+      }
+
+      .information-note {
+          background-color: rgba(255, 102, 0, 0.1);
+          border-left: 4px solid var(--accent-color);
+          padding: var(--space-md);
+          border-radius: var(--radius-md);
+          margin: var(--space-md) 0;
+      }
+
+      .information-note h4 {
+          color: var(--accent-dark);
+          margin-bottom: var(--space-xs);
+          display: flex;
+          align-items: center;
+          gap: var(--space-xs);
+      }
+
+      .information-note h4 i {
+          color: var(--accent-color);
+      }
+
+      .research-section {
+          margin-top: var(--space-lg);
+          padding-top: var(--space-md);
+          border-top: 1px solid var(--border-color);
+      }
+
+      .research-highlights {
+          background-color: var(--accent-light);
+          color: white;
+          border-radius: var(--radius-md);
+          padding: var(--space-md);
+          margin-bottom: var(--space-md);
+          position: relative;
+          overflow: hidden;
+      }
+
+      .highlight h4 {
+          color: white;
+          margin-bottom: var(--space-md);
+      }
+
+      .highlight ul {
+          margin-bottom: var(--space-sm);
+          color: rgba(255, 255, 255, 0.9);
+      }
+
+      .highlight li {
+          margin-bottom: var(--space-xs);
+      }
+
+      .chart-container {
+          width: 100%;
+          height: 0;
+          padding-bottom: 65%;
+          position: relative;
+          margin-bottom: var(--space-md);
+      }
+
+      .chart-wrapper {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+      }
+
+      .range-tick.active .tick-dot {
+          background-color: var(--accent-color);
+          transform: scale(1.5);
+      }
+
+      .range-tick.active .tick-label {
+          color: var(--accent-color);
+          font-weight: 600;
+      }
+
+      /* Thank You Modal Styles */
+      .thank-you-content {
+          text-align: center;
+          padding: var(--space-md);
+      }
+
+      .thank-you-icon {
+          font-size: 3rem;
+          color: var(--accent-color);
+          margin-bottom: var(--space-md);
+          animation: pulse 1.5s infinite;
+      }
+
+      .thank-you-content h3 {
+          color: var(--accent-color);
+          margin-bottom: var(--space-md);
+      }
+
+      .thank-you-content p {
+          margin-bottom: var(--space-md);
+          max-width: 500px;
+          margin-left: auto;
+          margin-right: auto;
+      }
+
+      .modal-footer {
+          margin-top: var(--space-lg);
+      }
+
+      @keyframes pulse {
+          0% {
+              transform: scale(1);
+          }
+
+          50% {
+              transform: scale(1.1);
+          }
+
+          100% {
+              transform: scale(1);
+          }
+      }
+
+      /* Mobile menu fix - high specificity to ensure override */
+      @media (max-width: 768px) {
+          .nav-links-container {
+              display: none !important;
+          }
+
+          .nav-links-container.active {
+              display: flex !important;
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100vh;
+              background-color: rgba(0, 0, 0, 0.95);
+              backdrop-filter: blur(8px);
+              -webkit-backdrop-filter: blur(8px);
+              z-index: 9999;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              padding: 20px;
+          }
+
+          .nav-links-container.active .nav-links {
+              flex-direction: column;
+              align-items: center;
+              gap: 20px;
+          }
+
+          .nav-links-container.active .nav-link {
+              color: white !important;
+              font-size: 1.4rem;
+              text-align: center;
+          }
+
+          .mobile-menu-toggle.active {
+              position: fixed;
+              top: 20px;
+              right: 20px;
+              z-index: 10000;
+              color: white !important;
+              background-color: var(--accent-color);
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+          }
+      }
+
+      .partners-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: var(--space-lg);
+          padding: var(--space-lg);
+          background-color: var(--bg-secondary);
+          border-radius: var(--radius-lg);
+          box-shadow: var(--shadow-md);
+      }
+
+      .partner-logo {
+          background-color: white;
+          padding: var(--space-md);
+          border-radius: var(--radius-md);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 120px;
+          transition: transform var(--transition-fast);
+          box-shadow: var(--shadow-sm);
+          border: 1px solid var(--border-color);
+      }
+
+      .partner-logo img {
+          max-width: 90%;
+          max-height: 90%;
+          object-fit: contain;
+          filter: grayscale(100%);
+          transition: filter var(--transition-fast);
+      }
+
+      .partner-logo:hover {
+          transform: translateY(-4px);
+          box-shadow: var(--shadow-md);
+          border-color: var(--accent-light);
+      }
+
+      .partner-logo:hover img {
+          filter: grayscale(0%);
+      }
+
+      /* Logo Carousel Styles */
+      .logos {
+          overflow: hidden;
+          position: relative;
+          width: 100%;
+          /* background-color: var(--bg-secondary); Optional: Set background if needed */
+          padding: var(--space-md) 0;
+          /* Add some vertical padding */
+          -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+      }
+
+      .logos-slide {
+          display: flex;
+          /* Use flexbox */
+          align-items: center;
+          /* Vertically center logos */
+          width: fit-content;
+          /* Allow width to grow with content */
+          /* Animation applied via JS or external CSS likely, ensure 'infiniteScroll' name matches */
+          /* animation: infiniteScroll 180s linear infinite; */
+          /* Example - Updated comment for slower speed */
+      }
+
+      /* Style the link container for logos */
+      .logos-slide a {
+          display: flex;
+          /* Use flex to center image inside link */
+          align-items: center;
+          justify-content: center;
+          height: 165px;
+          /* FURTHER INCREASED height (110px * 1.5) */
+          padding: var(--space-sm);
+          /* Padding inside the link */
+          margin: 0 var(--space-md);
+          /* Use margin for spacing */
+          flex-shrink: 0;
+          /* Prevent logos from shrinking */
+          background-color: white;
+          /* Give logos a white background like in the image */
+          border-radius: var(--radius-sm);
+          box-shadow: var(--shadow-sm);
+          border: 1px solid var(--border-color);
+          transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+      }
+
+      .logos-slide a:hover {
+          transform: translateY(-3px);
+          box-shadow: var(--shadow-md);
+          border-color: var(--accent-light);
+      }
+
+      .logos-slide img {
+          max-height: 120px;
+          /* FURTHER INCREASED max height (80px * 1.5) */
+          max-width: 270px;
+          /* FURTHER INCREASED max width (180px * 1.5) */
+          object-fit: contain;
+          display: block;
+          /* filter: grayscale(100%); REMOVED */
+          transition: filter var(--transition-fast);
+      }
+
+      .logos-slide a:hover img {
+          /* filter: grayscale(0%); REMOVED */
+      }
+
+      /* Pause animation on hover - Add if desired */
+      .logos:hover .logos-slide {
+          /* animation-play-state: paused; */
+          /* Uncomment if animation is CSS-driven */
+      }
+.contact-info .social-links {
+  margin-top: var(--space-lg);
+  /* Add some space above */
+}
+
+.contact-info .social-link {
+  display: inline-flex;
+  /* Use flex to center icon inside */
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  /* Set fixed size */
+  height: 44px;
+  background-color: var(--bg-secondary);
+  /* Subtle background */
+  border-radius: 50%;
+  /* Make it circular */
+  color: var(--text-secondary);
+  /* Default color */
+  font-size: 1.4rem;
+  /* Increase icon size */
+  transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+  border: 1px solid var(--border-color);
+  text-decoration: none;
+  /* Remove underline */
+}
+
+.contact-info .social-link:hover {
+  background-color: var(--accent-color);
+  /* Accent on hover */
+  color: white;
+  /* White icon on hover */
+  transform: translateY(-2px);
+  /* Slight lift effect */
+  border-color: var(--accent-dark);
+}
+
+/* Ensure icon is centered vertically */
+.contact-info .social-link i {
+  line-height: 1;
+}
+
+
 /* Small Mobile Devices */
 @media (max-width: 479px) {
   html {
-      font-size: 12px;
+      font-size: 14px; /* Increased from 12px for better readability */
   }
   
   /* Site Header */
   .main-nav {
-      height: 55px;
+      height: 60px; /* Increased from 55px */
   }
   
   .logo-img {
-      height: 28px;
+      height: 32px; /* Increased from 28px */
   }
   
   /* Section Headers */
@@ -86,48 +489,31 @@
       font-size: 1rem;
   }
   
-  /* About Section Small Mobile Adjustments */
-  .about {
-      padding: var(--space-xl) 0;
-  }
+  /* About section styles moved to dedicated About section */
   
-  .about-content h2 {
-      font-size: 1.7rem;
-  }
-  
-  .about-content p {
-      font-size: 1rem;
-      margin-bottom: var(--space-md);
-  }
-  
-  .about-features li {
-      font-size: 0.95rem;
-      margin-bottom: var(--space-sm);
-  }
-  
-  .about-features li::before {
-      font-size: 0.9rem;
-  }
-  
-  .clients-section h3 {
-      font-size: 1.2rem;
-      margin-bottom: var(--space-sm);
-  }
-  
-  /* Further reduce logo size on very small screens */
+  /* Logo sizes INCREASED for better visibility on mobile */
   .logos {
-      padding: var(--space-xs) 0;
+      padding: var(--space-sm) 0;
+      overflow: hidden;
+      width: 100%;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
   }
   
   .logos-slide a {
-      height: 70px;
-      margin: 0 var(--space-xs);
-      padding: var(--space-xs);
+      height: 110px; /* INCREASED for better visibility */
+      margin: 0 var(--space-sm);
+      padding: var(--space-sm);
+      background-color: white;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
   }
 
   .logos-slide img {
-      max-height: 55px;
-      max-width: 110px;
+      max-height: 80px; /* INCREASED for better visibility */
+      max-width: 160px; /* INCREASED for better visibility */
+      object-fit: contain;
   }
   
   /* Certification Logos */
@@ -172,39 +558,241 @@
       font-size: 2.5rem;
   }
   
-  /* Video Controls */
+  /* Video Controls - IMPORTANT FIX */
   .video-controls {
       flex-direction: column;
       align-items: center;
+      opacity: 1; /* Keep controls visible on mobile */
   }
   
   .video-label {
       margin-top: var(--space-xs);
   }
   
+  /* Hull Fouling Calculator Improvements */
   /* Slider Components */
   .slider-header {
-      flex-direction: column;
-      align-items: flex-start;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-sm);
   }
   
   .slider-value {
+      font-weight: 700;
+      color: var(--accent-color);
+  }
+  
+  /* Slider Styling */
+  .range-slider {
+      width: 100%;
+      margin: var(--space-md) 0;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      border-radius: 4px;
+      background: #ddd;
+      outline: none;
+  }
+  
+  .range-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent-color);
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .range-slider::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent-color);
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      border: none;
+  }
+  
+  .range-ticks {
+      display: flex;
+      justify-content: space-between;
+      min-width: 100%;
       margin-top: var(--space-xs);
+  }
+  
+  .range-tick {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+  }
+  
+  .tick-dot {
+      width: 10px;
+      height: 10px;
+      background-color: #999;
+      border-radius: 50%;
+      margin-bottom: var(--space-xs);
+      transition: transform var(--transition-fast), background-color var(--transition-fast);
+  }
+  
+  .tick-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
   }
   
   /* Info Sections */
   .information-note {
-      padding: var(--space-sm);
+      padding: var(--space-md);
+      background-color: rgba(255, 102, 0, 0.1);
+      border-left: 4px solid var(--accent-color);
+      border-radius: var(--radius-md);
+      margin: var(--space-md) 0;
+  }
+  
+  .information-note h4 {
+      color: var(--accent-dark);
+      margin-bottom: var(--space-xs);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+  }
+  
+  /* Chart Container for Mobile - MUCH LARGER */
+  .chart-container {
+      width: 100%;
+      height: auto;
+      min-height: 300px; /* Force minimum height */
+      position: relative;
+      margin-bottom: var(--space-lg);
+  }
+  
+  /* Fix Calculator UI specifically */
+  #hull-calculator-container .chart-container {
+      min-height: 350px;
+  }
+  
+  /* Make sure Canvas elements are sized properly */
+  canvas {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
+  }
+  
+  .chart-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
   }
   
   /* Footer Bottom */
   .footer-bottom p {
       font-size: 0.8rem;
   }
+
+  /* FIXED: Video container sizes for mobile */
+  .video-container video {
+      width: 100%;
+      height: auto;
+      max-height: none;
+      border-radius: var(--radius-md);
+  }
+
+  /* FIXED: Image sizes for mobile */
+  img, video {
+      max-width: 100% !important;
+      height: auto;
+  }
+
+  /* Play button size adjustment */
+  .play-btn {
+      width: 50px;
+      height: 50px;
+      font-size: 1.3rem;
+  }
   
-  /* Range ticks for sliders */
-  .range-ticks {
-      min-width: 300px; /* Further reduced for smaller screens */
+  /* Vessel Parameters Form Styling */
+  .calculator-controls .form-group {
+      padding: var(--space-md);
+      margin-bottom: var(--space-md);
+      background-color: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+  }
+  
+  .calculator-controls .form-group label {
+      display: block;
+      margin-bottom: var(--space-sm);
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-primary);
+  }
+  
+  .calculator-controls .input-wrapper {
+      position: relative;
+      background-color: var(--bg-primary);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+  }
+  
+  .calculator-controls .input-wrapper:focus-within {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2);
+  }
+  
+  .calculator-controls .form-control {
+      width: 100%;
+      padding: var(--space-md);
+      border: none;
+      background-color: transparent;
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-weight: 500;
+      outline: none;
+  }
+  
+  /* Results display for calc */
+  .results-section {
+      background-color: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      margin-top: var(--space-md);
+      border-left: 4px solid var(--accent-color);
+  }
+  
+  .results-section h3 {
+      color: var(--accent-color);
+      margin-top: 0;
+      margin-bottom: var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+  }
+  
+  .result-item {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--space-sm);
+      margin-bottom: var(--space-xs);
+      background-color: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-sm);
+  }
+  
+  .result-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+  }
+  
+  .result-value {
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 0.9rem;
   }
 }
 
@@ -248,6 +836,129 @@
   
   img, video {
       max-width: 500px !important;
+  }
+}
+
+/* Modal Styles - FIXED */
+.modal-overlay {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  z-index: var(--z-modal); /* Ensure it's above other content */
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto; /* Allow scrolling if content is tall */
+  padding: var(--space-lg); /* Padding around the modal content */
+  opacity: 0; /* Start hidden for animation */
+  transition: opacity 0.3s ease-out;
+  pointer-events: none; /* Prevent interaction when hidden */
+}
+
+.modal-overlay.active {
+  display: flex !important; /* Use flex for alignment, add !important */
+  opacity: 1;
+  pointer-events: auto; /* Allow interaction when visible */
+}
+
+.modal-content {
+  background-color: var(--bg-primary); /* Use theme background */
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  width: 90%;
+  max-width: 1000px; /* Max width for larger modals */
+  max-height: 90vh; /* Limit height */
+  overflow-y: auto; /* Scroll inside modal if needed */
+  position: relative;
+  transform: translateY(-20px); /* Start slightly up for animation */
+  transition: transform 0.3s ease-out;
+}
+
+.modal-overlay.active .modal-content {
+   transform: translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--space-md);
+  margin-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: var(--accent-color);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+  padding: 0.5rem;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: var(--accent-dark);
+}
+
+.modal-body {
+  /* Styles specific to the modal body content */
+  padding-bottom: var(--space-lg); /* Ensure space below content */
+}
+
+body.modal-open {
+  overflow: hidden; /* Prevent background scrolling */
+}
+
+/* Thank You Modal Styles */
+.thank-you-content {
+  text-align: center;
+  padding: var(--space-md);
+}
+
+.thank-you-icon {
+  font-size: 3rem;
+  color: var(--accent-color);
+  margin-bottom: var(--space-md);
+  animation: pulse 1.5s infinite;
+}
+
+.thank-you-content h3 {
+  color: var(--accent-color);
+  margin-bottom: var(--space-md);
+}
+
+.thank-you-content p {
+  margin-bottom: var(--space-md);
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.modal-footer {
+  margin-top: var(--space-lg);
+}
+
+@keyframes pulse {
+  0% {
+      transform: scale(1);
+  }
+  50% {
+      transform: scale(1.1);
+  }
+  100% {
+      transform: scale(1);
   }
 }
 
@@ -830,7 +1541,7 @@ video {
 
 /* Features Section - Cleaner */
 .features {
-  padding: var(--space-2xl) 0;
+  padding: var(--space-2xl) var(--space-lg); /* Added horizontal padding */
   background-color: var(--bg-primary);
 }
 
@@ -878,10 +1589,15 @@ video {
 
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  /* Change to a fixed 2-column layout */
+  grid-template-columns: repeat(2, 1fr); /* Fixed 2x2 grid for desktop */
   gap: var(--space-lg);
   margin-top: var(--space-xl);
+}
+
+@media (max-width: 767px) {
+  .feature-grid {
+    grid-template-columns: 1fr; /* Single column on mobile */
+  }
 }
 
 
@@ -1040,6 +1756,11 @@ video {
 .crawler-capabilities {
   background-color: var(--bg-tertiary);
   /* Alternate background */
+}
+
+.diver-cleaning-capabilities {
+  padding: var(--space-2xl) 0;
+  background-color: var(--bg-primary);
 }
 
 .split-layout {
@@ -1267,7 +1988,7 @@ video {
 /* Tools Section */
 .tools-section {
   padding: var(--space-2xl) 0;
-  background-color: var(--bg-primary);
+  background-color: var(--bg-secondary);
 }
 
 .tools-grid {
@@ -1384,7 +2105,7 @@ video {
   border-color: var(--text-dark);
 }
 
-/* About Section */
+/* About Section - COMPLETELY REBUILT */
 .about {
   padding: var(--space-2xl) 0;
   background-color: var(--bg-tertiary);
@@ -1420,45 +2141,36 @@ video {
 }
 
 .about .container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-xl);
   width: 100%;
   max-width: 1280px;
-  text-align: center;
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+  box-sizing: border-box;
 }
 
 .about-content {
-  text-align: center;
   width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .about-content p {
-  /* Standard paragraph styling */
   font-size: 1.1rem;
-  margin-bottom: var(--space-lg);
+  margin: 0 auto var(--space-lg);
   font-weight: 400;
   color: var(--text-secondary);
-  width: 100%;
   max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
   line-height: 1.7;
-  word-wrap: break-word; /* Ensure text wraps properly */
-  overflow-wrap: break-word;
-  box-sizing: border-box;
   text-align: center;
 }
 
 .about-features {
-  /* Clean bullet points */
   width: 100%;
   max-width: 700px;
-  /* Wider list */
   margin: 0 auto var(--space-lg);
   padding-left: 0;
   list-style: none;
-  /* Remove default bullets */
   box-sizing: border-box;
 }
 
@@ -1467,43 +2179,129 @@ video {
   margin-bottom: var(--space-md);
   text-align: left;
   padding-left: 2rem;
-  /* More space for icon */
   color: var(--text-secondary);
   font-weight: 400;
   font-size: 1.05rem;
   line-height: 1.6;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   word-wrap: break-word; /* Ensure text wraps properly */
   overflow-wrap: break-word;
 }
 
 .about-features li::before {
-  /* Use FontAwesome check */
   content: '\f00c';
-  /* FontAwesome check icon */
   font-family: 'Font Awesome 6 Free';
   font-weight: 900;
-  /* Solid icon */
   position: absolute;
   left: 0;
   top: 0.2em;
   color: var(--accent-color);
   font-size: 1.1rem;
-  /* Adjust icon size */
 }
 
 .about-content .btn {
   display: inline-block;
   max-width: 300px;
   width: auto;
-  /* Wider button */
   margin-top: var(--space-md);
-  background-color: var(--accent-color); /* Ensure orange background */
-  color: white; /* Ensure white text */
+  background-color: var(--accent-color);
+  color: white;
   text-transform: uppercase;
   font-weight: 600;
   padding: 0.9rem 1.8rem;
   border-radius: var(--radius-md);
   text-align: center;
+}
+
+/* CLIENT SECTION IMPROVEMENTS */
+.clients-section {
+  text-align: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: var(--space-xl) auto 0;
+  padding: 0;
+}
+
+.clients-section h3 {
+  font-size: 1.6rem;
+  margin-bottom: var(--space-lg);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* MOBILE SPECIFIC ABOUT SECTION IMPROVEMENTS */
+@media (max-width: 767px) {
+  .about {
+    padding: var(--space-xl) 0;
+  }
+  
+  .about .container {
+    padding: 0 var(--space-md);
+  }
+  
+  .about-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: var(--space-lg);
+    width: 100%;
+    text-align: center;
+  }
+  
+  .about-content p {
+    font-size: 1rem;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: var(--space-md);
+    text-align: left;
+  }
+  
+  .about-features {
+    width: 100%;
+    padding-left: 0;
+    margin-bottom: var(--space-lg);
+  }
+  
+  .about-features li {
+    padding-left: 1.8rem;
+    margin-bottom: var(--space-sm);
+    font-size: 0.95rem;
+  }
+  
+  .about-features li::before {
+    font-size: 1rem;
+  }
+  
+  .about-content .btn {
+    display: block;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto var(--space-lg);
+  }
+  
+  .clients-section h3 {
+    font-size: 1.4rem;
+    margin-bottom: var(--space-md);
+  }
+}
+
+@media (max-width: 479px) {
+  .about {
+    padding: var(--space-lg) 0;
+  }
+  
+  .about .container {
+    padding: 0 var(--space-sm);
+  }
+  
+  .about-content h2 {
+    font-size: 1.6rem;
+  }
+  
+  .about-content p {
+    font-size: 0.95rem;
+  }
 }
 
 .clients-section {
@@ -1527,7 +2325,7 @@ video {
   text-align: center;
 }
 
-/* Partners Grid - Cleaner */
+/* Partners Grid - Cleaner AND LARGER */
 .logos {
   overflow: hidden;
   padding: 30px 0; /* Increase padding for more vertical space */
@@ -1565,23 +2363,42 @@ video {
 
 .logos-slide {
   display: flex;
-  animation: slide 180s linear infinite; /* Increased duration from 30s */
+  animation: slide 90s linear infinite; 
   width: fit-content;
 }
+/* Faster animation for tablets */
+@media (max-width: 991px) {
+  .logos-slide {
+    animation-duration: 40; /* 2.5 minutes for tablets */
+  }
+}
 
-/* Logo link styling */
+/* Even faster animation for mobile */
+@media (max-width: 767px) {
+  .logos-slide {
+    animation-duration: 40s; /* 2 minutes for mobile */
+  }
+}
+
+/* Fastest for smallest screens */
+@media (max-width: 479px) {
+  .logos-slide {
+    animation-duration: 40s; /* 1.5 minutes for small mobile */
+  }
+}
+/* Logo link styling - IMPROVED AND LARGER */
 .logos-slide a {
   display: flex; /* Use flex to center image inside link */
   align-items: center;
   justify-content: center;
-  height: 150px; /* Slightly reduced from 180px for better mobile scaling */
-  margin: 0 var(--space-lg); /* Adjusted margin */
+  height: 165px; /* INCREASED SIZE for better visibility */
+  margin: 0 var(--space-md); /* Adjusted margin */
   flex-shrink: 0; /* Prevent logos from shrinking */
   background-color: white; /* Add white background for consistency with mobile */
   border-radius: var(--radius-sm); /* Add subtle radius */
   box-shadow: var(--shadow-sm); /* Subtle shadow */
   border: 1px solid var(--border-color); /* Subtle border */
-  padding: var(--space-sm);
+  padding: var(--space-md);
   transition: all var(--transition-normal);
 }
 
@@ -1592,8 +2409,8 @@ video {
 }
 
 .logos-slide img {
-  max-height: 120px; /* Adjusted from 160px */
-  max-width: 200px; /* Adjusted from 280px */
+  max-height: 130px; /* INCREASED from 120px */
+  max-width: 240px; /* INCREASED from 200px */
   object-fit: contain;
   display: block;
   transition: all var(--transition-normal);
@@ -1961,6 +2778,271 @@ video {
   box-shadow: var(--shadow-md);
 }
 
+/* Biofouling Management Plan Generator Form Styling */
+.bfmp-form {
+  margin-top: var(--space-md);
+}
+
+.form-section {
+  margin-bottom: var(--space-xl);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.form-section h3 {
+  margin-bottom: var(--space-md);
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-md);
+}
+
+.form-grid .form-group {
+  margin-bottom: var(--space-md);
+}
+
+.form-grid .form-group label {
+  display: block;
+  margin-bottom: var(--space-xs);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.form-grid .form-group input,
+.form-grid .form-group select,
+.form-grid .form-group textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: var(--font-secondary);
+  transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.form-grid .form-group input:focus,
+.form-grid .form-group select:focus,
+.form-grid .form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+}
+
+.form-grid .form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-weight: 400;
+  margin-bottom: var(--space-xs);
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: auto;
+  margin-right: var(--space-xs);
+}
+
+/* Hull Fouling Calculator Styling - IMPROVED */
+.calculator-grid {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  align-items: stretch;
+}
+
+.calculator-chart, .calculator-controls {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.calculator-chart {
+  flex: 2;
+  min-width: 0;
+}
+
+.calculator-controls {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-header {
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.calculator-chart .card-header,
+.calculator-controls .card-header {
+  background-color: var(--bg-tertiary);
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 2px solid var(--accent-light);
+}
+
+.card-header-icon {
+  color: var(--accent-color);
+  font-size: 1.2rem;
+  margin-right: var(--space-sm);
+}
+
+.card-header-title {
+  margin-bottom: 0;
+  font-size: 1.2rem;
+}
+
+.calculator-chart .card-body {
+  flex: 1;
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.calculator-controls .card-body {
+  flex: 1;
+  padding: var(--space-md);
+  overflow-y: auto;
+}
+
+.chart-container {
+  flex: 1;
+  min-height: 350px; /* INCREASED from 250px for better visibility */
+  width: 100%;
+  position: relative;
+  margin-bottom: var(--space-lg);
+}
+
+.chart-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.chart-description {
+  font-size: 0.9rem;
+  color: var(--text-tertiary);
+  margin-bottom: 0;
+}
+
+.form-group {
+  margin-bottom: var(--space-md);
+  background-color: var(--bg-secondary);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--space-xs);
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: var(--space-sm);
+  color: var(--accent-color);
+  font-size: 0.9rem;
+}
+
+.input-with-icon {
+  width: 100%;
+  padding: var(--space-sm) var(--space-sm) var(--space-sm) calc(var(--space-lg) + var(--space-xs));
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.input-with-icon:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(255, 102, 0, 0.2);
+}
+
+.help-text {
+  display: block;
+  margin-top: var(--space-xs);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Fouling Rating Table */
+.fouling-rating-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--space-md);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.fouling-rating-table th,
+.fouling-rating-table td {
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.fouling-rating-table th {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.fouling-rating-table td {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.fouling-rating-table tr:last-child td {
+  border-bottom: none;
+}
+
+.fouling-rating-table tr:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.fouling-rating-table td strong {
+  color: var(--accent-color);
+}
+
 /* Contact Mobile Responsiveness - IMPROVED */
 @media (max-width: 991px) {
   .contact-grid {
@@ -1971,9 +3053,133 @@ video {
   .contact-info {
       margin-top: var(--space-xl);
   }
+  
+  /* Calculator Grid Mobile Adjustments */
+  .calculator-grid {
+    flex-direction: column;
+  }
+  
+  .chart-container {
+    min-height: 300px;
+  }
+  
+  /* Biofouling Management Plan Form Mobile */
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .checkbox-group {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 767px) {
+  .container {
+    width: 100%;
+    padding: 0 var(--space-md);
+    box-sizing: border-box;
+  }
+
+  /* UPDATE: Fix mobile menu display */
+  .mobile-menu-toggle {
+    display: block;
+    font-size: 1.8rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: white;
+    z-index: 1001;
+  }
+
+  /* IMPROVED: Mobile menu styling */
+  .nav-links-container {
+    display: none !important;
+  }
+
+  .nav-links-container.active {
+    display: flex !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+  }
+
+  .nav-links-container.active .nav-links {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+
+  .nav-links-container.active .nav-link {
+    color: white !important;
+    font-size: 1.4rem;
+    text-align: center;
+  }
+
+  .mobile-menu-toggle.active {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    color: white !important;
+    background-color: var(--accent-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* IMPROVED: Fixing the split layouts */
+  .split-layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+
+  .split-layout.reverse {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  /* IMPROVED: Video containers */
+  .video-container {
+    width: 100%;
+    max-width: none;
+  }
+
+  /* FIXED: Hero section on mobile */
+  .hero .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-lg);
+  }
+
+  .hero-title::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .hero-subtitle {
+    text-align: center;
+  }
+
+  .hero-cta {
+    justify-content: center;
+  }
+
+  /* UPDATE Contact section */
   .contact {
       padding: var(--space-xl) 0;
   }
@@ -2023,6 +3229,37 @@ video {
   
   .contact-form textarea {
       min-height: 150px;
+  }
+
+  /* IMPROVED: Dashboard preview section */
+  .dashboard-container {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+
+  /* Footer improved */
+  .footer-content {
+    display: grid;
+    grid-template-columns: 1fr; 
+    gap: var(--space-lg);
+  }
+
+  .footer-brand {
+    grid-column: 1; 
+    text-align: center;
+  }
+
+  .footer-logo {
+    justify-content: center;
+  }
+
+  .footer-links {
+    text-align: center;
+  }
+
+  .footer-links h3::after {
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 
@@ -2190,451 +3427,168 @@ video {
   color: var(--accent-light); /* Lighter orange on hover */
 }
 
-/* Hull Fouling Cost Calculator Specific Styles - Themed */
-.currency-selector-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: var(--space-lg);
-  /* Increased space */
+/* ==== COMPREHENSIVE MOBILE STYLING ==== */
+
+/* Add specific mobile styles for hero buttons - IMPROVED */
+@media (max-width: 767px) {
+  /* Hero button styling for mobile */
+  .hero-cta {
+    flex-wrap: nowrap; /* Prevent wrapping on small screens */
+    width: 100%;      /* Ensure container takes full width */
+    gap: 0.8rem;      /* Slightly reduce gap */
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-cta .btn {
+    flex: 1; /* Make both buttons grow equally */
+    padding: 0.8rem 0.5rem; /* Adjust padding for smaller screens */
+    font-size: 0.9rem;   /* Slightly smaller font */
+    text-align: center; /* Center text/icon */
+    min-width: 0;     /* Allow buttons to shrink if needed */
+    max-width: none;  /* Remove max-width constraint */
+  }
+
+  .hero-cta .btn i {
+    margin-right: 0.3rem; /* Reduce icon margin */
+  }
+
+  /* Feature grid cards - handled in separate media query */
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Dashboard preview */
+  .dashboard-container {
+    grid-template-columns: 1fr;
+  }
+
+  /* Tech showcase section */
+  .tech-showcase .container {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+
+  .tech-image-container {
+    margin-top: var(--space-lg);
+  }
+
+  /* Logo carousel improvements */
+  .logos-slide a {
+    height: 120px;
+    margin: 0 var(--space-sm);
+  }
+
+  .logos-slide img {
+    max-height: 90px;
+    max-width: 160px;
+  }
+
+  /* Tool cards */
+  .tools-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Image carousel for diver cleaning */
+  .image-carousel-container {
+    width: 100%;
+    aspect-ratio: 16/9;
+  }
+
+  /* Enable bigger control elements for touch */
+  .carousel-indicators .indicator {
+    width: 14px;
+    height: 14px;
+    margin: 0 var(--space-xs);
+  }
 }
 
-.currency-selector {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  background-color: var(--bg-secondary);
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-color);
+/* Global adjustments for all mobile devices */
+@media (max-width: 1199px) {
+  html {
+    font-size: 15px;
+  }
+  
+  .container {
+    padding: 0 var(--space-md);
+  }
+  
+  h1 {
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+  }
+  
+  h2 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+  }
+  
+  h3 {
+    font-size: clamp(1.3rem, 3vw, 1.6rem);
+  }
+  
+  .section-header {
+    margin-bottom: var(--space-lg);
+  }
 }
 
-.currency-selector label {
-  margin: 0;
-  font-weight: 600;
-  color: var(--text-primary);
-  font-size: 0.9rem;
+/* Mobile Menu - FIXED */
+@media (max-width: 768px) {
+  .nav-links-container {
+      display: none !important;
+  }
+
+  .nav-links-container.active {
+      display: flex !important;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 9999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+  }
+
+  .nav-links-container.active .nav-links {
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+  }
+
+  .nav-links-container.active .nav-link {
+      color: white !important;
+      font-size: 1.4rem;
+      text-align: center;
+  }
+
+  .mobile-menu-toggle.active {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      color: white !important;
+      background-color: var(--accent-color);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
 }
 
-.currency-selector select {
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.currency-selector select:focus {
-  outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px rgba(255, 102, 0, 0.2);
-}
-
-/* Use Flexbox for the main layout */
-.calculator-grid {
-  display: flex;
-  flex-direction: row;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-lg);
-  align-items: stretch;
-}
-
-.calculator-chart, .calculator-controls {
-  display: flex;
-  flex-direction: column;
-  background-color: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-color);
-  overflow: hidden;
-}
-
-.calculator-chart {
-  flex: 2;
-  min-width: 0;
-}
-
-.calculator-controls {
-  flex: 1;
-  min-width: 0;
-}
-
-.card-header {
-  padding: var(--space-md) var(--space-lg);
-  display: flex;
-  align-items: center;
-  background-color: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-color);
-}
-
-/* Make calculator card headers more visually distinct */
-.calculator-chart .card-header,
-.calculator-controls .card-header {
-  background-color: var(--bg-tertiary);
-  padding: var(--space-sm) var(--space-md);
-  border-bottom: 2px solid var(--accent-light);
-}
-
-.card-header-icon {
-  color: var(--accent-color);
-  font-size: 1.2rem;
-  margin-right: var(--space-sm);
-}
-
-.card-header-title {
-  margin-bottom: 0;
-  font-size: 1.2rem;
-}
-
-.calculator-chart .card-body {
-  flex: 1;
-  padding: var(--space-md) var(--space-lg);
-  display: flex;
-  flex-direction: column;
-}
-
-.calculator-controls .card-body {
-  flex: 1;
-  padding: var(--space-md);
-  overflow-y: auto; /* Allow scrolling if content is too tall */
-}
-
-.chart-container {
-  flex: 1;
-  min-height: 175px; /* Reduced from 350px to half height */
-  width: 100%;
-  position: relative;
-  margin-bottom: var(--space-md);
-}
-
-.chart-description {
-  font-size: 0.9rem;
-  color: var(--text-tertiary);
-  margin-bottom: 0;
-}
-
-.form-group {
-  margin-bottom: var(--space-md);
-  background-color: var(--bg-secondary);
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: var(--space-xs);
-  font-weight: 600;
-  color: var(--text-primary);
-  font-size: 0.9rem;
-}
-
-.input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-icon {
-  position: absolute;
-  left: var(--space-sm);
-  color: var(--accent-color);
-  font-size: 0.9rem;
-}
-
-.input-with-icon {
-  width: 100%;
-  padding: var(--space-sm) var(--space-sm) var(--space-sm) calc(var(--space-lg) + var(--space-xs));
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.input-with-icon:focus {
-  outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px rgba(255, 102, 0, 0.2);
-}
-
-.help-text {
-  display: block;
-  margin-top: var(--space-xs);
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-
-/* Fouling Rating Table */
-.fouling-rating-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: var(--space-md);
-  background-color: var(--bg-secondary);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-}
-
-.fouling-rating-table th,
-.fouling-rating-table td {
-  padding: var(--space-sm) var(--space-md);
-  text-align: left;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.fouling-rating-table th {
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.fouling-rating-table td {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-
-.fouling-rating-table tr:last-child td {
-  border-bottom: none;
-}
-
-.fouling-rating-table tr:hover {
-  background-color: var(--bg-tertiary);
-}
-
-.fouling-rating-table td strong {
-  color: var(--accent-color);
-}
-
-/* Slider Container */
-.slider-container {
-  background-color: var(--bg-secondary);
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-  margin-bottom: var(--space-md);
-}
-
-.slider-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-sm);
-}
-
-.slider-header label {
-  font-weight: 600;
-  color: var(--text-primary);
-  font-size: 0.9rem;
-}
-
-.slider-value {
-  color: var(--accent-color);
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-
-.range-slider {
-  width: 100%;
-  margin: var(--space-md) 0;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 8px;
-  border-radius: 4px;
-  background: #ddd;
-  outline: none;
-}
-
-.range-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--accent-color);
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.range-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--accent-color);
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  border: none;
-}
-
-.range-ticks {
-  display: flex;
-  justify-content: space-between;
-  margin-top: var(--space-xs);
-}
-
-.range-tick {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-}
-
-.tick-dot {
-  width: 8px;
-  height: 8px;
-  background-color: #999;
-  border-radius: 50%;
-  margin-bottom: var(--space-xs);
-  transition: transform var(--transition-fast), background-color var(--transition-fast);
-}
-
-.tick-label {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-
-.range-tick.active .tick-dot {
-  background-color: var(--accent-color);
-  transform: scale(1.5);
-}
-
-.range-tick.active .tick-label {
-  color: var(--accent-color);
-  font-weight: 600;
-}
-
-.range-tick:hover .tick-dot {
-  transform: scale(1.2);
-}
-
-/* Vessel Parameters Section - Enhanced Styling (Revision 2) */
-.calculator-controls .form-group {
-  margin-bottom: var(--space-lg);
-}
-
-.calculator-controls .form-group label {
-  display: block;
-  margin-bottom: var(--space-sm);
-  font-weight: 600;
-  color: var(--text-primary);
-  font-size: 1rem;
-  letter-spacing: 0.02em;
-}
-
-.calculator-controls .input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background-color: var(--bg-primary);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-  /* Add a subtle inner shadow for depth */
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.calculator-controls .input-wrapper:focus-within {
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2); /* Keep focus ring */
-}
-
-.calculator-controls .form-control {
-  width: 100%;
-  /* Adjust padding: top/bottom, right (for arrow), left */
-  padding: var(--space-md) calc(var(--space-lg) + var(--space-md)) var(--space-md) var(--space-md);
-  border: none;
-  background-color: transparent;
-  /* Add background-image: none as extra fallback for hiding arrow */
-  background-image: none;
-  color: var(--text-primary);
-  font-size: 1rem;
-  font-weight: 500;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  cursor: pointer;
-  /* Remove default outline */
-  outline: none;
-}
-
-.calculator-controls .form-control:focus {
-  outline: none;
-}
-
-.calculator-controls .form-control option {
-  padding: var(--space-md);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-.calculator-controls .help-text {
-  display: block;
-  margin-top: var(--space-sm);
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  font-style: italic;
-  line-height: 1.4;
-}
-
-/* Custom select arrow - ensure correct vertical alignment */
-.calculator-controls .input-wrapper::after {
-  content: '\f078'; /* Font Awesome chevron-down */
-  font-family: 'Font Awesome 6 Free';
-  font-weight: 900;
-  position: absolute;
-  right: var(--space-md);
-  top: 50%; /* Center vertically */
-  transform: translateY(-50%); /* Adjust for exact vertical centering */
-  color: var(--accent-color);
-  pointer-events: none;
-  transition: transform var(--transition-fast);
-}
-
-/* Rotate arrow on focus/open - :focus-within on wrapper */
-.calculator-controls .input-wrapper:focus-within::after {
-  transform: translateY(-50%) rotate(180deg);
-}
-
-/* Fouling Rating Section */
-.fouling-rating-section {
-  background-color: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-color);
-  margin-top: var(--space-lg);
-  overflow: hidden;
-}
-
-.fouling-rating-section .card-header {
-  background-color: var(--bg-tertiary);
-  padding: var(--space-sm) var(--space-md);
-  border-bottom: 2px solid var(--accent-light);
-}
-
-.fouling-rating-section .card-body {
-  padding: var(--space-md);
-}
-
-.fouling-rating-section .slider-container {
-  margin-bottom: var(--space-md);
-}
-
-.fouling-rating-section .fouling-rating-table {
-  margin-top: var(--space-md);
-}
-
-/* Image Carousel Showcase (Replaces Video Showcase) */
+/* Image Carousel Showcase (Replaces Video Showcase) - FIXED */
 .image-carousel-showcase {
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-xl);
   grid-column: span 1; /* Match split-layout structure */
+  width: 100%;
 }
 
 .image-carousel-container {
@@ -2698,489 +3652,962 @@ video {
   padding-bottom: var(--space-lg);
 }
 
-/* --- Modal Base Styles --- */
-.modal-overlay {
-  display: none; /* Hidden by default */
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
-  z-index: var(--z-modal); /* Ensure it's above other content */
+/* Partners Grid */
+.partners-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.partner-logo {
+  background-color: white;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  display: flex;
   align-items: center;
   justify-content: center;
-  overflow-y: auto; /* Allow scrolling if content is tall */
-  padding: var(--space-lg); /* Padding around the modal content */
-  opacity: 0; /* Start hidden for animation */
-  transition: opacity 0.3s ease-out;
-  pointer-events: none; /* Prevent interaction when hidden */
+  height: 120px;
+  transition: transform var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
 }
 
-.modal-overlay.active {
-  display: flex !important; /* Use flex for alignment, add !important */
-  opacity: 1;
-  pointer-events: auto; /* Allow interaction when visible */
+.partner-logo img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  filter: grayscale(100%);
+  transition: filter var(--transition-fast);
 }
 
-.modal-content {
-  background-color: var(--bg-primary); /* Use theme background */
-  padding: var(--space-lg);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xl);
-  width: 90%;
-  max-width: 1000px; /* Max width for larger modals */
-  max-height: 90vh; /* Limit height */
-  overflow-y: auto; /* Scroll inside modal if needed */
-  position: relative;
-  transform: translateY(-20px); /* Start slightly up for animation */
-  transition: transform 0.3s ease-out;
+.partner-logo:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent-light);
 }
 
-.modal-overlay.active .modal-content {
-   transform: translateY(0);
+.partner-logo:hover img {
+  filter: grayscale(0%);
 }
 
-.modal-header {
+/* Webmail Links in Email Fallback */
+.webmail-links {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: var(--space-md);
-  margin-bottom: var(--space-lg);
-  border-bottom: 1px solid var(--border-color);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
 }
 
-.modal-header h2 {
-  margin: 0;
-  font-size: 1.6rem;
-  color: var(--accent-color);
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 1.8rem;
-  color: var(--text-tertiary);
-  cursor: pointer;
-  transition: color var(--transition-fast);
-  padding: 0.5rem;
-  line-height: 1;
-}
-
-.modal-close:hover {
-  color: var(--accent-dark);
-}
-
-.modal-body {
-  /* Styles specific to the modal body content */
-  padding-bottom: var(--space-lg); /* Ensure space below content */
-}
-
-body.modal-open {
-  overflow: hidden; /* Prevent background scrolling */
-}
-
-/* Thank You Modal Styles */
-.thank-you-content {
-  text-align: center;
-  padding: var(--space-md);
-}
-
-.thank-you-icon {
-  font-size: 3rem;
-  color: var(--accent-color);
-  margin-bottom: var(--space-md);
-  animation: pulse 1.5s infinite;
-}
-
-.thank-you-content h3 {
-  color: var(--accent-color);
-  margin-bottom: var(--space-md);
-}
-
-.thank-you-content p {
-  margin-bottom: var(--space-md);
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.modal-footer {
-  margin-top: var(--space-lg);
-}
-
-@keyframes pulse {
-  0% {
-      transform: scale(1);
-  }
-  50% {
-      transform: scale(1.1);
-  }
-  100% {
-      transform: scale(1);
-  }
-}
-
-/* ==== COMPREHENSIVE MOBILE STYLING ==== */
-
-/* Global adjustments */
-@media (max-width: 1199px) {
-  html {
-    font-size: 15px; /* Slightly smaller base font for tablets */
-  }
-  
-  .container {
-    padding: 0 var(--space-md);
-  }
-  
-  h1 {
-    font-size: clamp(2.4rem, 5vw, 3.8rem);
-  }
-  
-  h2 {
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
-  }
-  
-  h3 {
-    font-size: clamp(1.3rem, 3vw, 1.6rem);
-  }
-  
-  .section-header {
-    margin-bottom: var(--space-lg);
-  }
-}
-
-/* Tablet & Medium Screens */
-@media (max-width: 991px) {
-  html {
-      font-size: 14px;
-  }
-  
-  /* Section spacing */
-  .features, .tech-showcase, .live-monitoring, 
-  .crawler-capabilities, .dashboard-preview, 
-  .tools-section, .about, .contact {
-      padding: var(--space-xl) 0;
-  }
-  
-  /* Header adjustments */
-  .main-nav {
-      height: 70px;
-  }
-  
-  .logo-img {
-      height: 38px;
-  }
-  
-  /* Split layouts */
-  .split-layout {
-      grid-template-columns: 1fr;
-      gap: var(--space-lg);
-  }
-  
-  .split-layout.reverse {
-      display: flex;
-      flex-direction: column-reverse;
-  }
-  
-  .split-layout > div {
-      width: 100%;
-  }
-  
-  /* Dashboard Preview */
-  .dashboard-container {
-      grid-template-columns: 1fr;
-      gap: var(--space-lg);
-  }
-  
-  .dashboard-image {
-      margin-bottom: var(--space-lg);
-  }
-  
-  /* Tech Showcase */
-  .tech-showcase .container {
-      grid-template-columns: 1fr;
-  }
-  
-  .tech-image-container {
-      margin-top: var(--space-lg);
-  }
-  
-  /* Calculator Modal */
-  .calculator-grid {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-md);
-  }
-  
-  .fouling-rating-section {
-      overflow-x: auto;
-  }
-  
-  .fouling-rating-table {
-      min-width: 600px;
-  }
-  
-  /* Footer */
-  .footer-content {
-      /* Adjust grid for tablets */
-      grid-template-columns: 1fr 1fr; 
-      gap: var(--space-lg);
-  }
-  
-  .footer-brand {
-      /* Brand still spans full width */
-      grid-column: span 2; 
-      margin-bottom: var(--space-md);
-  }
-}
-
-/* Mobile Landscape and Small Tablets */
-@media (max-width: 767px) {
-  html {
-      font-size: 13px;
-  }
-
-  /* Display mobile toggle */
-  .mobile-menu-toggle {
-      display: block; /* Or flex, depending on desired alignment */
-  }
-
-  /* Hide desktop nav links container */
-  .main-header .nav-links-container:not(.active) {
-      display: none;
-  }
-
-  /* Container padding */
-  .container {
-      padding: 0 var(--space-md);
-      max-width: 100%;
-      width: 100%;
-      box-sizing: border-box;
-  }
-  
-  /* About Section - Mobile Styling Override */
-  .about {
-      padding: var(--space-xl) 0;
-  }
-  
-  /* Refined About Section Mobile Overrides - Attempt 2 */
-  .about .container {
-    display: block !important; /* Force block layout */
-    padding-left: var(--space-md) !important;
-    padding-right: var(--space-md) !important;
-  }
-
-  .about-content,
-  .about-content h2,
-  .about-features,
-  .about-features li {
-    /* Keep general alignment and width rules */
-    text-align: left !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    box-sizing: border-box;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-
-  .about-content p {
-    /* Explicit text wrapping for paragraph */
-    text-align: left !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    box-sizing: border-box;
-    word-wrap: break-word !important; /* Ensure wrapping */
-    overflow-wrap: break-word !important; /* Ensure wrapping */
-  }
-
-  .about-content h2 {
-      margin-bottom: var(--space-lg) !important;
-  }
-
-  .about-content h2::after {
-    left: 0 !important;
-    transform: none !important;
-    width: 80px !important;
-  }
-
-  .about-features {
-      padding-left: 0 !important;
-      margin-bottom: var(--space-lg) !important;
-  }
-
-   .about-features li {
-      padding-left: 2rem !important;
-      margin-bottom: var(--space-sm) !important;
-   }
-
-  .about-content .btn {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: var(--space-lg) 0 var(--space-xl) 0 !important;
-    /* removed text-align: center !important; */
-    padding: 0.9rem 1.5rem !important;
-    box-sizing: border-box !important; /* Ensure padding included in width */
-  }
-
-  /* Align Clients section heading left */
-   .clients-section {
-       text-align: left !important;
-       padding-left: var(--space-md) !important; /* Match container padding */
-       padding-right: var(--space-md) !important;
-       margin-top: 0 !important; /* Reset top margin, rely on button's bottom margin */
-   }
-
-   .clients-section h3 {
-       text-align: left !important;
-       margin-bottom: var(--space-lg) !important;
-   }
-
-  /* Footer Mobile */
-  .footer-content {
-      /* Stack columns on mobile */
-      grid-template-columns: 1fr; 
-      gap: var(--space-lg);
-  }
-
-  .footer-brand {
-      /* Reset span for single column */
-      grid-column: auto; 
-      text-align: center; /* Center brand text on mobile */
-      margin-bottom: var(--space-lg);
-  }
-
-  .footer-brand p {
-      max-width: 100%; /* Allow full width */
-      margin-left: auto;
-      margin-right: auto;
-  }
-
-  .footer-logo {
-      justify-content: center; /* Center logo */
-  }
-
-  .footer-logo img {
-       height: 28px; /* Smaller logo on mobile */
-       max-width: 180px;
-  }
-
-  .footer-links {
-      text-align: center; /* Center link sections */
-  }
-
-  .footer-links h3 {
-       display: inline-block; /* Center the heading itself */
-       margin-bottom: var(--space-md);
-  }
-  .footer-links h3::after {
-       left: 50%;
-       transform: translateX(-50%); /* Center underline */
-  }
-
-  .footer-links ul {
-       padding-left: 0;
-  }
-
-  .footer-links ul li a:hover {
-       transform: none; /* Disable hover transform on mobile */
-  }
-
-  .footer-bottom {
-      font-size: 0.85rem; /* Slightly smaller text */
-  }
+.webmail-links .btn {
+  flex: 1;
+  min-width: 120px;
 }
 
 @media (max-width: 479px) {
-  .contact {
-      padding: var(--space-lg) 0;
+  .webmail-links {
+    flex-direction: column;
   }
   
-  .contact-info {
-      padding: var(--space-md);
-  }
-  
-  .contact-item i, 
-  .contact-icon {
-      font-size: 1.2rem;
-      width: 20px;
-  }
-  
-  .contact-item {
-      gap: var(--space-sm);
-  }
-  
-  .social-link {
-      width: 40px;
-      height: 40px;
-      font-size: 1.1rem;
-  }
-  
-  .contact-form input[type="text"],
-  .contact-form input[type="email"],
-  .contact-form textarea {
-      padding: 1rem;
-      font-size: 0.95rem;
-  }
-  
-  .contact-form label {
-      top: 1rem;
-      left: 1rem;
-      font-size: 0.95rem;
+  .webmail-links .btn {
+    width: 100%;
   }
 }
 
-/* ==== COMPREHENSIVE MOBILE STYLING ==== */
+/* Fix for loading screen z-index */
+#loading-screen {
+  z-index: 10000;
+}
 
-/* Add specific mobile styles for hero buttons */
-@media (max-width: 767px) {
-  .hero-cta {
-    flex-wrap: nowrap; /* Prevent wrapping on small screens */
-    width: 100%;      /* Ensure container takes full width */
-    gap: 0.8rem;      /* Slightly reduce gap */
-  }
-
-  .hero-cta .btn {
-    flex: 1; /* Make both buttons grow equally */
-    padding: 0.8rem 0.5rem; /* Adjust padding for smaller screens */
-    font-size: 0.9rem;   /* Slightly smaller font */
-    text-align: center; /* Center text/icon */
-    min-width: 0;     /* Allow buttons to shrink if needed */
-  }
-
-  .hero-cta .btn i {
-    margin-right: 0.3rem; /* Reduce icon margin */
+@media print {
+  .hero, .features, .tech-showcase, 
+  .live-monitoring, .crawler-capabilities,
+  .diver-cleaning-capabilities, .dashboard-preview, 
+  .tools-section, .about, .contact {
+      background-color: white !important;
   }
 }
 
-/* Global adjustments */
-@media (max-width: 1199px) {
-  html {
-    font-size: 15px; /* Slightly smaller base font for tablets */
-  }
-  
-  .container {
-    padding: 0 var(--space-md);
-  }
-  
-  h1 {
-    font-size: clamp(2.4rem, 5vw, 3.8rem);
-  }
-  
-  h2 {
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
-  }
-  
-  h3 {
-    font-size: clamp(1.3rem, 3vw, 1.6rem);
-  }
-  
-  .section-header {
-    margin-bottom: var(--space-lg);
-  }
+/* === Hull Fouling Calculator Modal Styles === */
+#cost-calculator-modal {
+    /* Define modal-specific theme variables based on example */
+    --modal-primary: #1E4D78;
+    --modal-primary-light: #3A6EA5;
+    --modal-primary-dark: #0D3356;
+    --modal-secondary: #E87722;
+    --modal-secondary-light: #FF9A47;
+    --modal-accent: #108565;
+    --modal-accent-light: #1DB286;
+    --modal-accent-dark: #096F53;
+    --modal-neutral-100: #FFFFFF;
+    --modal-neutral-200: #F7FAFC;
+    --modal-neutral-300: #EDF2F7;
+    --modal-neutral-400: #E2E8F0;
+    --modal-neutral-500: #CBD5E0;
+    --modal-neutral-600: #718096;
+    --modal-neutral-700: #4A5568;
+    --modal-neutral-800: #2D3748;
+    --modal-neutral-900: #1A202C;
+    
+    /* Spacing (using existing vars if possible, otherwise define modal-specific) */
+    --modal-space-1: 0.25rem; /* var(--space-xs) is 0.3rem */
+    --modal-space-2: 0.5rem; /* var(--space-sm) is 0.6rem */
+    --modal-space-3: 0.75rem;
+    --modal-space-4: 1rem; /* var(--space-md) is 1.2rem */
+    --modal-space-5: 1.5rem;
+    --modal-space-6: 2rem;
+    --modal-space-8: 3rem; /* var(--space-lg) is 2.4rem */
+    --modal-space-10: 4rem;
+    --modal-space-12: 6rem; /* var(--space-xl) is 4.8rem */
+
+    /* Radius */
+    --modal-radius-sm: 0.25rem; /* var(--radius-sm) is 0.3rem */
+    --modal-radius-md: 0.5rem; /* var(--radius-md) is 0.6rem */
+    --modal-radius-lg: 0.75rem; /* var(--radius-lg) is 1rem */
+    --modal-radius-xl: 1rem;
+
+    /* Shadows */
+    --modal-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --modal-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --modal-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --modal-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+    /* Animation */
+    --modal-transition-fast: 150ms;
+    --modal-transition-normal: 250ms;
+    --modal-transition-slow: 350ms;
+}
+
+#cost-calculator-modal .modal-body {
+    /* Base styles for modal content */
+    font-family: var(--font-sans, 'Inter', sans-serif);
+    color: var(--modal-neutral-800);
+    line-height: 1.6;
+}
+
+#cost-calculator-modal h1, 
+#cost-calculator-modal h2, 
+#cost-calculator-modal h3, 
+#cost-calculator-modal h4, 
+#cost-calculator-modal h5, 
+#cost-calculator-modal h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: var(--modal-space-4);
+    color: var(--modal-primary-dark);
+}
+
+#cost-calculator-modal h1 { font-size: 2.5rem; }
+#cost-calculator-modal h2 { font-size: 2rem; }
+#cost-calculator-modal h3 { font-size: 1.5rem; }
+#cost-calculator-modal h4 { font-size: 1.25rem; }
+#cost-calculator-modal h5 { font-size: 1.125rem; }
+#cost-calculator-modal h6 { font-size: 1rem; }
+
+#cost-calculator-modal p,
+#cost-calculator-modal ul,
+#cost-calculator-modal ol {
+    margin-bottom: var(--modal-space-4);
+}
+
+#cost-calculator-modal ol,
+#cost-calculator-modal ul {
+    padding-left: var(--modal-space-5); /* Add default padding for lists */
+    list-style: revert; /* Use browser default list styles */
+}
+
+#cost-calculator-modal a {
+    color: var(--modal-primary);
+    text-decoration: none;
+    transition: all var(--modal-transition-fast);
+}
+
+#cost-calculator-modal a:hover {
+    color: var(--modal-primary-light);
+}
+
+/* Hero Section */
+#cost-calculator-modal .hero-badge {
+    display: inline-block;
+    background-color: var(--modal-primary);
+    color: var(--modal-neutral-100);
+    padding: var(--modal-space-2) var(--modal-space-4);
+    border-radius: var(--modal-radius-xl);
+    margin-bottom: var(--modal-space-4);
+    font-weight: 500;
+}
+
+/* Currency Selector */
+#cost-calculator-modal .currency-selector-container {
+    display: flex;
+    justify-content: center; /* Center alignment as per example */
+    padding: var(--modal-space-4) 0;
+    margin-bottom: var(--modal-space-4);
+    position: relative;
+    z-index: 10;
+}
+
+#cost-calculator-modal .currency-selector {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--modal-neutral-100);
+    padding: var(--modal-space-2) var(--modal-space-4);
+    border-radius: var(--modal-radius-lg);
+    box-shadow: var(--modal-shadow-md);
+}
+
+#cost-calculator-modal .currency-selector label {
+    margin-right: var(--modal-space-3);
+    margin-bottom: 0;
+    font-weight: 600;
+    color: var(--modal-primary);
+}
+
+#cost-calculator-modal .currency-selector select {
+    padding: var(--modal-space-1) var(--modal-space-3);
+    border-radius: var(--modal-radius-md);
+    border: 1px solid var(--modal-neutral-400);
+    background-color: var(--modal-neutral-100);
+    color: var(--modal-primary-dark);
+    font-weight: 500;
+}
+
+#cost-calculator-modal .currency-selector select:focus {
+    outline: none;
+    border-color: var(--modal-primary-light);
+    box-shadow: 0 0 0 2px rgba(58, 110, 165, 0.2);
+}
+
+/* Cards */
+#cost-calculator-modal .card {
+    background-color: var(--modal-neutral-100);
+    border-radius: var(--modal-radius-lg);
+    box-shadow: var(--modal-shadow-md);
+    transition: transform var(--modal-transition-normal), box-shadow var(--modal-transition-normal);
+    margin-bottom: var(--modal-space-6);
+    overflow: hidden;
+    border: 1px solid var(--modal-neutral-300); /* Added border */
+}
+
+#cost-calculator-modal .card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--modal-shadow-lg);
+}
+
+#cost-calculator-modal .card-header {
+    padding: var(--modal-space-4); /* Adjusted padding */
+    border-bottom: 1px solid var(--modal-neutral-300);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--modal-neutral-200); /* Match example */
+}
+
+#cost-calculator-modal .card-header-title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--modal-primary);
+    font-weight: 600; /* Ensure weight is sufficient */
+}
+
+#cost-calculator-modal .card-header-icon {
+    color: var(--modal-primary-light);
+    font-size: 1.5rem;
+}
+
+#cost-calculator-modal .card-body {
+    padding: var(--modal-space-5);
+}
+
+/* Calculator Grid */
+#cost-calculator-modal .calculator-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Default mobile */
+    gap: var(--modal-space-6);
+    margin-bottom: var(--modal-space-8);
+    align-items: start; /* Align items to the top */
+}
+
+@media (min-width: 992px) { /* Matches example breakpoint */
+    #cost-calculator-modal .calculator-grid {
+        grid-template-columns: 1fr 1.6fr; /* Example layout: Controls | Chart */
+    }
+}
+
+/* Assign specific classes for grid children if needed */
+#cost-calculator-modal .calculator-controls {
+    grid-column: auto; /* Let grid place it */
+}
+
+#cost-calculator-modal .calculator-chart {
+    grid-column: auto; /* Let grid place it */
+}
+
+@media (min-width: 992px) {
+    #cost-calculator-modal .calculator-controls {
+        grid-column: 1 / 2; /* Controls on left */
+    }
+    #cost-calculator-modal .calculator-chart {
+        grid-column: 2 / 3; /* Chart on right */
+    }
+}
+
+/* Form Elements within Modal */
+#cost-calculator-modal .form-group {
+    margin-bottom: var(--modal-space-5);
+}
+
+#cost-calculator-modal label {
+    display: block;
+    margin-bottom: var(--modal-space-2);
+    font-weight: 600;
+    color: var(--modal-neutral-700);
+}
+
+#cost-calculator-modal .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#cost-calculator-modal .input-icon {
+    position: absolute;
+    left: var(--modal-space-3);
+    color: var(--modal-neutral-600);
+}
+
+#cost-calculator-modal input[type="number"],
+#cost-calculator-modal select {
+    width: 100%;
+    padding: var(--modal-space-3) var(--modal-space-5);
+    font-size: 1rem;
+    border: 2px solid var(--modal-neutral-400);
+    border-radius: var(--modal-radius-md);
+    background-color: var(--modal-neutral-100);
+    color: var(--modal-neutral-800);
+    transition: border-color var(--modal-transition-fast), box-shadow var(--modal-transition-fast);
+}
+
+#cost-calculator-modal input[type="number"]:focus,
+#cost-calculator-modal select:focus {
+    outline: none;
+    border-color: var(--modal-primary-light);
+    box-shadow: 0 0 0 3px rgba(58, 110, 165, 0.2);
+}
+
+#cost-calculator-modal select {
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23718096" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+    background-repeat: no-repeat;
+    background-position: right var(--modal-space-3) center;
+    background-size: 1em;
+}
+
+#cost-calculator-modal .input-with-icon {
+    padding-left: var(--modal-space-8);
+}
+
+#cost-calculator-modal .help-text {
+    display: block;
+    margin-top: var(--modal-space-2);
+    font-size: 0.875rem;
+    color: var(--modal-neutral-600);
+}
+
+/* Slider */
+#cost-calculator-modal .slider-container {
+    margin-bottom: var(--modal-space-5);
+}
+
+#cost-calculator-modal .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--modal-space-3);
+}
+
+#cost-calculator-modal .slider-value {
+    font-weight: 700;
+    padding: var(--modal-space-2) var(--modal-space-3);
+    border-radius: var(--modal-radius-md);
+    background-color: var(--modal-primary);
+    color: white;
+}
+
+#cost-calculator-modal .range-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: var(--modal-neutral-300);
+    border-radius: var(--modal-radius-xl);
+    outline: none;
+    margin: var(--modal-space-4) 0;
+}
+
+#cost-calculator-modal .range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: var(--modal-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background var(--modal-transition-fast), transform var(--modal-transition-fast);
+    box-shadow: var(--modal-shadow-md);
+}
+
+#cost-calculator-modal .range-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: var(--modal-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background var(--modal-transition-fast), transform var(--modal-transition-fast);
+    box-shadow: var(--modal-shadow-md);
+    border: none;
+}
+
+#cost-calculator-modal .range-slider::-webkit-slider-thumb:hover,
+#cost-calculator-modal .range-slider::-moz-range-thumb:hover {
+    background: var(--modal-primary-light);
+    transform: scale(1.1);
+}
+
+#cost-calculator-modal .range-ticks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--modal-space-2);
+}
+
+#cost-calculator-modal .range-tick {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: auto; /* Adjust width based on content */
+    cursor: pointer;
+    text-align: center; /* Center label */
+    padding: 0 var(--modal-space-1); /* Add some horizontal padding */
+}
+
+#cost-calculator-modal .tick-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--modal-neutral-500);
+    border-radius: 50%;
+    margin-bottom: var(--modal-space-1);
+    transition: background-color var(--modal-transition-fast), transform var(--modal-transition-fast);
+}
+
+#cost-calculator-modal .tick-label {
+    font-size: 0.75rem;
+    color: var(--modal-neutral-600);
+}
+
+/* Active tick state (JS should handle adding/removing '.active-tick' or style directly) */
+#cost-calculator-modal .range-tick .tick-dot.active {
+    background-color: var(--modal-primary);
+    transform: scale(1.5);
+}
+
+
+#cost-calculator-modal .fouling-rating-table {
+    width: 100%;
+    margin-top: var(--modal-space-4);
+    border-spacing: 0;
+    border-collapse: collapse; /* Ensure borders connect */
+    border-radius: var(--modal-radius-md);
+    overflow: hidden;
+    box-shadow: var(--modal-shadow-sm);
+    border: 1px solid var(--modal-neutral-300); /* Add border */
+}
+
+#cost-calculator-modal .fouling-rating-table th,
+#cost-calculator-modal .fouling-rating-table td {
+    padding: var(--modal-space-3);
+    text-align: left;
+    border-bottom: 1px solid var(--modal-neutral-300);
+}
+
+#cost-calculator-modal .fouling-rating-table th {
+    background-color: var(--modal-primary);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+#cost-calculator-modal .fouling-rating-table td {
+    background-color: var(--modal-neutral-100);
+    font-size: 0.9rem;
+    color: var(--modal-neutral-700);
+}
+
+#cost-calculator-modal .fouling-rating-table tr:last-child td {
+    border-bottom: none;
+}
+
+#cost-calculator-modal .fouling-rating-table tr:nth-child(even) td {
+    background-color: var(--modal-neutral-200);
+}
+
+#cost-calculator-modal .fouling-rating-table tr:hover td {
+    background-color: var(--modal-neutral-300);
+}
+
+/* Results Section */
+#cost-calculator-modal .results-section {
+    background-color: var(--modal-neutral-200);
+    border-radius: var(--modal-radius-lg);
+    padding: var(--modal-space-5);
+    margin-top: var(--modal-space-5);
+    border-left: 4px solid var(--modal-primary);
+}
+
+#cost-calculator-modal .results-section h3 {
+    color: var(--modal-primary);
+    margin-top: 0;
+    margin-bottom: var(--modal-space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--modal-space-2);
+    font-size: 1.3rem;
+}
+
+#cost-calculator-modal .results-section h3 i {
+    color: var(--modal-secondary); /* Icon color from example */
+}
+
+#cost-calculator-modal .result-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--modal-space-3);
+    margin-bottom: var(--modal-space-2);
+    background-color: white;
+    border-radius: var(--modal-radius-md);
+    box-shadow: var(--modal-shadow-sm);
+    transition: transform var(--modal-transition-fast);
+}
+
+#cost-calculator-modal .result-item:hover {
+    transform: translateX(5px);
+}
+
+#cost-calculator-modal .result-label {
+    color: var(--modal-neutral-700);
+    font-size: 0.9rem;
+}
+
+#cost-calculator-modal .result-value {
+    font-weight: 700;
+    color: var(--modal-primary-dark);
+    font-size: 0.9rem;
+}
+
+#cost-calculator-modal .result-group {
+    margin-bottom: var(--modal-space-4);
+}
+
+#cost-calculator-modal .result-group-header {
+    display: flex;
+    align-items: center;
+    gap: var(--modal-space-2);
+    margin-bottom: var(--modal-space-3);
+    padding-bottom: var(--modal-space-2);
+    border-bottom: 1px solid var(--modal-neutral-300);
+}
+
+#cost-calculator-modal .result-group-header h4 {
+    margin: 0;
+    color: var(--modal-primary);
+    font-size: 1.1rem;
+}
+
+#cost-calculator-modal .validation-badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--modal-accent-light);
+    color: white;
+    padding: var(--modal-space-2) var(--modal-space-3);
+    border-radius: var(--modal-radius-xl);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-top: var(--modal-space-4);
+    gap: var(--modal-space-2);
+    max-width: fit-content;
+}
+
+/* Chart Container */
+#cost-calculator-modal .chart-container {
+    width: 100%;
+    height: 0;
+    padding-bottom: 65%; /* Maintain aspect ratio */
+    position: relative;
+    margin-bottom: var(--modal-space-5);
+}
+
+#cost-calculator-modal .chart-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#cost-calculator-modal canvas {
+    /* Ensure canvas resizes correctly */
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Research Section */
+#cost-calculator-modal .research-section {
+    margin-top: var(--modal-space-10);
+    padding-top: var(--modal-space-8);
+    border-top: 1px solid var(--modal-neutral-400);
+}
+
+#cost-calculator-modal .research-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto var(--modal-space-8);
+}
+
+#cost-calculator-modal .research-header h2 {
+    font-size: 1.8rem; /* Adjust heading size */
+}
+
+#cost-calculator-modal .research-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--modal-space-6);
+}
+
+@media (min-width: 768px) {
+    #cost-calculator-modal .research-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+#cost-calculator-modal .research-card {
+    background-color: var(--modal-neutral-100);
+    border-radius: var(--modal-radius-lg);
+    padding: var(--modal-space-5); /* Adjusted padding */
+    box-shadow: var(--modal-shadow-md);
+    transition: transform var(--modal-transition-normal);
+    border: 1px solid var(--modal-neutral-300); /* Added border */
+}
+
+#cost-calculator-modal .research-card:hover {
+    transform: translateY(-5px);
+}
+
+#cost-calculator-modal .research-card h3 {
+    display: flex;
+    align-items: center;
+    gap: var(--modal-space-2);
+    color: var(--modal-primary-dark);
+    margin-bottom: var(--modal-space-4);
+    font-size: 1.3rem; /* Adjusted size */
+}
+
+#cost-calculator-modal .research-card i {
+    font-size: 1.5rem;
+    color: var(--modal-secondary);
+}
+
+#cost-calculator-modal .research-highlight {
+    background-color: var(--modal-primary-light);
+    color: white;
+    border-radius: var(--modal-radius-lg);
+    padding: var(--modal-space-5);
+    margin-bottom: var(--modal-space-6);
+    position: relative;
+    overflow: hidden;
+}
+
+#cost-calculator-modal .research-highlight h3 {
+    color: white;
+    margin-bottom: var(--modal-space-4);
+}
+
+#cost-calculator-modal .research-highlight p,
+#cost-calculator-modal .research-highlight ul li {
+    margin-bottom: var(--modal-space-3);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+#cost-calculator-modal .research-highlight ul {
+    padding-left: var(--modal-space-5);
+    list-style: disc;
+}
+
+#cost-calculator-modal .data-table-container {
+    overflow-x: auto;
+    margin: var(--modal-space-5) 0;
+    border-radius: var(--modal-radius-md);
+    box-shadow: var(--modal-shadow-md);
+    border: 1px solid var(--modal-neutral-300);
+}
+
+#cost-calculator-modal .data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#cost-calculator-modal .data-table th {
+    background-color: var(--modal-primary);
+    color: white;
+    text-align: left;
+    padding: var(--modal-space-3) var(--modal-space-4);
+    font-size: 0.9rem;
+}
+
+#cost-calculator-modal .data-table td {
+    padding: var(--modal-space-3) var(--modal-space-4);
+    border-top: 1px solid var(--modal-neutral-300);
+    font-size: 0.9rem;
+}
+
+#cost-calculator-modal .data-table tr:nth-child(odd) td {
+    background-color: var(--modal-neutral-100);
+}
+
+#cost-calculator-modal .data-table tr:nth-child(even) td {
+    background-color: var(--modal-neutral-200);
+}
+
+#cost-calculator-modal .data-table tr:hover td {
+    background-color: var(--modal-neutral-300);
+}
+
+#cost-calculator-modal .research-equation {
+    background-color: var(--modal-neutral-200);
+    padding: var(--modal-space-4);
+    border-radius: var(--modal-radius-md);
+    margin: var(--modal-space-5) 0;
+    text-align: center;
+    font-family: var(--font-serif, 'Georgia', serif);
+    font-size: 1.25rem;
+    border: 1px solid var(--modal-neutral-300);
+}
+
+#cost-calculator-modal .equation-annotation {
+    display: flex;
+    align-items: flex-start;
+    margin-top: var(--modal-space-3);
+}
+
+#cost-calculator-modal .equation-annotation .equation-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--modal-primary);
+    margin-right: var(--modal-space-2);
+    margin-top: 0.5em;
+    flex-shrink: 0;
+}
+
+#cost-calculator-modal .equation-annotation p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--modal-neutral-700);
+    text-align: left;
+}
+
+/* Source Papers Section */
+#cost-calculator-modal .source-papers {
+    background-color: var(--modal-neutral-300);
+    padding: var(--modal-space-5); /* Adjusted padding */
+    border-radius: var(--modal-radius-lg);
+    margin: var(--modal-space-6) 0; /* Adjusted margin */
+    border-left: 4px solid var(--modal-accent);
+}
+
+#cost-calculator-modal .source-papers h3 {
+    color: var(--modal-accent-dark);
+    display: flex;
+    align-items: center;
+    gap: var(--modal-space-2);
+    margin-bottom: var(--modal-space-4);
+    font-size: 1.3rem;
+}
+
+#cost-calculator-modal .source-papers h3 i {
+    color: var(--modal-accent);
+}
+
+#cost-calculator-modal .paper-link {
+    display: flex;
+    align-items: center;
+    gap: var(--modal-space-3);
+    padding: var(--modal-space-3) var(--modal-space-4);
+    background-color: var(--modal-neutral-100);
+    border-radius: var(--modal-radius-md);
+    margin-bottom: var(--modal-space-3);
+    transition: all var(--modal-transition-normal);
+    border-left: 3px solid var(--modal-primary);
+}
+        
+#cost-calculator-modal .paper-link:hover {
+    background-color: var(--modal-neutral-200);
+    transform: translateX(5px);
+}
+
+#cost-calculator-modal .paper-link i.fa-file-pdf {
+    color: var(--modal-primary);
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+#cost-calculator-modal .paper-link i.fa-external-link-alt {
+    color: var(--modal-neutral-600);
+    font-size: 1rem;
+    margin-left: auto; /* Push external link icon to the right */
+}
+
+#cost-calculator-modal .paper-info {
+    flex: 1;
+    min-width: 0; /* Prevent text overflow issues */
+}
+
+#cost-calculator-modal .paper-title {
+    font-weight: 600;
+    color: var(--modal-primary-dark);
+    margin-bottom: var(--modal-space-1);
+    font-size: 0.95rem;
+}
+
+#cost-calculator-modal .paper-authors {
+    font-size: 0.875rem;
+    color: var(--modal-neutral-700);
+}
+
+#cost-calculator-modal .information-note {
+    background-color: rgba(16, 133, 101, 0.08); /* Subtler background */
+    border-left: 4px solid var(--modal-accent);
+    padding: var(--modal-space-4);
+    border-radius: var(--modal-radius-md);
+    margin: var(--modal-space-4) 0;
+}
+
+#cost-calculator-modal .information-note h4 {
+    color: var(--modal-accent-dark);
+    margin-bottom: var(--modal-space-2);
+    display: flex;
+    align-items: center;
+    gap: var(--modal-space-2);
+    font-size: 1.1rem;
+}
+
+#cost-calculator-modal .information-note h4 i {
+    color: var(--modal-accent);
+}
+
+#cost-calculator-modal .information-note p {
+    margin-bottom: 0; /* Remove default bottom margin */
+    font-size: 0.9rem;
+}
+
+/* Responsive Adjustments within Modal */
+@media (max-width: 768px) {
+    #cost-calculator-modal .card-header,
+    #cost-calculator-modal .card-body {
+        padding: var(--modal-space-4);
+    }
+    #cost-calculator-modal .research-grid {
+        gap: var(--modal-space-4);
+    }
+    #cost-calculator-modal .research-card {
+        padding: var(--modal-space-4);
+    }
+    #cost-calculator-modal .research-equation {
+        font-size: 1rem;
+        padding: var(--modal-space-3);
+    }
+    #cost-calculator-modal .chart-container {
+        padding-bottom: 80%; /* Make chart taller on mobile */
+    }
+    #cost-calculator-modal .currency-selector-container {
+        margin-top: var(--modal-space-4);
+    }
+}
+
+@media (max-width: 768px) {
+    /* ... existing styles ... */
+
+    #cost-calculator-modal .fouling-rating-table th,
+    #cost-calculator-modal .fouling-rating-table td {
+        padding: var(--modal-space-2) var(--modal-space-3); /* Slightly adjust padding */
+        font-size: 0.85rem; /* Ensure readable font size */
+    }
+
+    #cost-calculator-modal .chart-container {
+        min-height: 320px; /* Ensure chart has enough space */
+        padding-bottom: 75%; /* Adjust aspect ratio if needed */
+    }
+
+    /* ... existing styles ... */
+}
+
+/* Apply specific mobile styles to the calculator modal */
+@media (max-width: 479px) {
+    #cost-calculator-modal .modal-content {
+        padding: var(--space-md);
+    }
+
+    #cost-calculator-modal .card-header,
+    #cost-calculator-modal .card-body {
+        padding: var(--modal-space-3);
+    }
+
+    #cost-calculator-modal .fouling-rating-table th,
+    #cost-calculator-modal .fouling-rating-table td {
+        font-size: 0.8rem; /* Smaller font for very small screens */
+        padding: var(--modal-space-2);
+    }
+    
+    #cost-calculator-modal .chart-container {
+        min-height: 280px; /* Reduce min-height for very small screens */
+        padding-bottom: 80%;
+    }
+
+    #cost-calculator-modal .result-label,
+    #cost-calculator-modal .result-value {
+        font-size: 0.85rem;
+    }
+
+    #cost-calculator-modal .slider-value {
+        padding: var(--modal-space-1) var(--modal-space-2);
+        font-size: 0.9rem;
+    }
+
+    #cost-calculator-modal .range-tick {
+        padding: 0;
+    }
+
+    #cost-calculator-modal .tick-label {
+        font-size: 0.7rem;
+    }
+
+    #cost-calculator-modal .form-group label {
+        font-size: 0.85rem;
+    }
+
+    #cost-calculator-modal input[type="number"],
+    #cost-calculator-modal select,
+    #cost-calculator-modal .input-with-icon {
+        font-size: 0.85rem;
+        padding: var(--modal-space-2) var(--modal-space-3);
+    }
+
+    #cost-calculator-modal .input-with-icon {
+        padding-left: var(--modal-space-6);
+    }
+
+    #cost-calculator-modal .help-text {
+        font-size: 0.75rem;
+    }
+
 }

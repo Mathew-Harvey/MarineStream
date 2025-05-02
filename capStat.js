@@ -161,7 +161,7 @@ function generateCapabilityStatement() {
                     </div>
 
                     <!-- Introduction -->
-                    <p style="margin-bottom: 12px; font-size: 10pt;"><strong>MarineStream™</strong>, a Franmarine technology, provides a revolutionary integrated system for proactive biofouling management and underwater asset sustainment. We merge Australia's only regulatory-compliant in-water cleaning (IWC) technology with a state-of-the-art, blockchain-secured data platform, delivering unparalleled compliance assurance, operational efficiency, and asset performance intelligence for the global maritime industry.</p>
+                    <p style="margin-bottom: 12px; font-size: 10pt;"><strong>MarineStream™</strong> is a Franmarine technology, provides a revolutionary integrated system for proactive biofouling management and underwater asset sustainment. We merge Australia's only regulatory-compliant in-water cleaning (IWC) technology with a state-of-the-art, blockchain-secured data platform, delivering unparalleled compliance assurance, operational efficiency, and asset performance intelligence for the global maritime industry.</p>
 
                     <!-- Challenge & Solution -->
                     <div style="display: flex; gap: 12px; margin-bottom: 12px;">
@@ -193,10 +193,10 @@ function generateCapabilityStatement() {
                         </div>
                         <!-- Cleaning System -->
                         <div style="flex: 1; border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden;">
-                            <h3 style="background-color: #343a40; color: #ffffff; font-size: 11pt; margin: 0; padding: 6px 10px;">Compliant In-Water Cleaning System</h3>
+                            <h3 style="background-color: #343a40; color: #ffffff; font-size: 11pt; margin: 0; padding: 6px 10px;">Compliant In-Water Cleaning System (IWCS)</h3>
                             <div style="padding: 8px;">
                                 <ul style="margin: 0; padding-left: 15px; font-size: 9pt;">
-                                    <li><strong>Australian IWCS Compliant:</strong> Our IWC system fully compliant with Australia's stringent standards, mitigating biosecurity risks.</li>
+                                    <li><strong>Australian IWCS Compliant:</strong> Our IWCS fully compliant with Australia's stringent standards, mitigating biosecurity risks.</li>
                                     <li><strong>Advanced Filtration & Treatment:</strong> Containerised 10µ filtration with UV sterilisation ensures effluent meets environmental regulations.</li>
                                     <li><strong>Full Biofouling Capture:</strong> Using a combination of divers and ROV we can clean with full capture, vessel hulls and complex niche areas.</li>
                                     <li><strong>Rapid & Versatile Deployment:</strong> Self-contained system deployable from wharf or vessel for maximum operational flexibility.</li>
