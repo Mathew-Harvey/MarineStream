@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // --- Other Initializations ---
-    if (document.getElementById('rov-video') || document.getElementById('crawler-video')) {
+    if (document.getElementById('rov-video') || document.getElementById('ms-video') || document.getElementById('crawler-video')) {
         initVideos();
     }
     initHeroCarousel();
@@ -494,6 +494,7 @@ function initVideos() {
     // Set up the specific videos
     setupVideo('rov-video', 'rov-play-btn');
     setupVideo('crawler-video', 'crawler-play-btn');
+    setupVideo('ms-video', 'ms-play-btn');
 }
 
 // Initialize hero carousel
