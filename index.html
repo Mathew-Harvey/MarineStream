@@ -199,11 +199,21 @@
                         compliance demonstration purposes.</p>
                 </div>
                 <div class="dashboard-container">
-                    <div class="dashboard-image">
-                        <!-- Assumes dashboard.png exists -->
-                        <img src="./assets/marinestreamMock1.png" alt="MarineStream Dashboard Preview"
-                            class="placeholder-image">
+                    <div class="video-showcase">
+                        <div class="video-container">
+                            <video id="rov-video" controls poster="./assets/Banner.jpeg" data-autoplay="true">
+                                <source src="./assets/MarineStreamWebLoop.mp4" type="video/mp4">
+                                Your browser does not support HTML5 video.
+                            </video>
+                            <div class="video-controls">
+                                <button class="play-btn" id="ms-play-btn" aria-label="Play MarineStream Demo Video">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <span class="video-label">MarineStream Software Demonstration</span>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="dashboard-features">
                         <div class="dashboard-feature">
                             <i class="fas fa-check"></i>
