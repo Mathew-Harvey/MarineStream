@@ -720,7 +720,7 @@ function initSocialMediaLinks() {
                 url = "https://www.facebook.com/profile.php?id=100029694686734";
                 break;
             case 'youtube':
-                url = "https://www.youtube.com/@franmarine5117";
+                url = "https://www.youtube.com/@MarineStream";
                 break;
         }
 
