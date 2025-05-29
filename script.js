@@ -22,31 +22,58 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // --- Set up Cost Calculator Modal ---
-    const openCostCalculatorBtn = document.getElementById('open-cost-calculator');
-    const costCalculatorModal = document.getElementById('cost-calculator-modal');
+    // Set up Cost Calculator Modal
+const openCostCalculatorBtn = document.getElementById('open-cost-calculator');
+const calculatorIframe = document.getElementById('hull-calculator-iframe');
 
-    if (openCostCalculatorBtn && costCalculatorModal) {
-        openCostCalculatorBtn.addEventListener('click', function() {
-            toggleModal(costCalculatorModal, true);
-            // Initialize calculator if not already done
-            if (!window.calculatorInitialized && typeof initHullFoulingCalculator === 'function') {
-                initHullFoulingCalculator();
-                window.calculatorInitialized = true; // Ensure it's initialized only once
-            }
-        });
+if (openCostCalculatorBtn && calculatorIframe) {
+    openCostCalculatorBtn.addEventListener('click', function() {
+        console.log('Opening hull calculator iframe');
+        calculatorIframe.style.display = 'block';
+        document.body.classList.add('modal-open');
+        
+        // Wait a moment for iframe to be visible, then send message
+        setTimeout(() => {
+            calculatorIframe.contentWindow.postMessage('showModal', '*');
+        }, 100);
+    });
+}
 
-        // Close Logic
-        costCalculatorModal.addEventListener('click', function(event) {
-            if (event.target === costCalculatorModal) { // Click outside content
-                toggleModal(costCalculatorModal, false);
-            }
-        });
-        const closeBtnCost = costCalculatorModal.querySelector('.modal-close');
-        if (closeBtnCost) {
-            closeBtnCost.addEventListener('click', () => toggleModal(costCalculatorModal, false));
+// Listen for close messages from iframe
+window.addEventListener('message', function(event) {
+    if (event.data === 'closeModal') {
+        const iframe = document.getElementById('hull-calculator-iframe');
+        if (iframe) {
+            iframe.style.display = 'none';
+            document.body.classList.remove('modal-open');
         }
     }
+});
+    // // --- Set up Cost Calculator Modal ---
+    // const openCostCalculatorBtn = document.getElementById('open-cost-calculator');
+    // const costCalculatorModal = document.getElementById('cost-calculator-modal');
+
+    // if (openCostCalculatorBtn && costCalculatorModal) {
+    //     openCostCalculatorBtn.addEventListener('click', function() {
+    //         toggleModal(costCalculatorModal, true);
+    //         // Initialize calculator if not already done
+    //         if (!window.calculatorInitialized && typeof initHullFoulingCalculator === 'function') {
+    //             initHullFoulingCalculator();
+    //             window.calculatorInitialized = true; // Ensure it's initialized only once
+    //         }
+    //     });
+
+    //     // Close Logic
+    //     costCalculatorModal.addEventListener('click', function(event) {
+    //         if (event.target === costCalculatorModal) { // Click outside content
+    //             toggleModal(costCalculatorModal, false);
+    //         }
+    //     });
+    //     const closeBtnCost = costCalculatorModal.querySelector('.modal-close');
+    //     if (closeBtnCost) {
+    //         closeBtnCost.addEventListener('click', () => toggleModal(costCalculatorModal, false));
+    //     }
+    // }
 
     // --- Set up BFMP Modals ---
     console.log("Setting up BFMP Modals..."); // Log setup start

@@ -1,176 +1,325 @@
 // Hull Fouling Calculator - MarineStream™
-// Physics-based model based on University of Melbourne research
+// Enhanced physics-based model with custom vessel support
 
 function initHullFoulingCalculator() {
-    // If the calculator is already initialized, don't initialize it again
     if (window.calculatorInitialized) {
         console.log('Hull Fouling Calculator already initialized, skipping...');
         return;
     }
-    
+
     console.log('Initializing Hull Fouling Calculator...');
-    
-    // Currency conversion rates - updated for March 2025
+
+    // Currency conversion rates (relative to AUD)
     const conversionRates = {
         AUD: 1,
-        GBP: 0.52 // 1 AUD = 0.52 GBP (March 2025 rate)
+        GBP: 0.495,  // 1 AUD = 0.495 GBP (current rate ~0.495)
+        USD: 0.644   // 1 AUD = 0.644 USD (current rate ~0.644)
     };
-    
-    // Currency symbols
+
     const currencySymbols = {
         AUD: '$',
-        GBP: '£'
+        GBP: '£',
+        USD: '$'
     };
-    
-    // Physical constants (using typical values for seawater at ~15°C)
+
+    // Physical constants
     const KNOTS_TO_MPS = 0.514444;
     const MPS_TO_KNOTS = 1.94384;
     const NU_WATER = 1.19e-6; // Kinematic viscosity (m²/s)
     const RHO_WATER = 1025;   // Density of seawater (kg/m³)
-    // Fuel properties (typical for Marine Diesel Oil)
+    const GRAVITY = 9.81;     // Gravity (m/s²)
+
+    // Fuel properties
     const FUEL_CO2_FACTOR = 3.16; // kg CO2 per kg fuel
     const FUEL_ENERGY_DENSITY = 42.7; // MJ/kg
     const FUEL_DENSITY = 0.85; // kg/L
+    const FUEL_PRICE_PER_LITER = 1.92; // $/L
 
-    // Default currency
+    // Engine and propulsion constants
+    const propEfficiency = 0.65; // Propulsive efficiency
+    const sfoc = 200; // Specific fuel oil consumption (g/kWh)
+    const fuelCostPerKg = FUEL_PRICE_PER_LITER / FUEL_DENSITY;
+    const co2PerKgFuel = FUEL_CO2_FACTOR;
+
     let currentCurrency = 'AUD';
-    
-    // Vessel type configurations - extended with physical parameters
+
+    // Enhanced vessel configurations
     const vesselConfigs = {
         tug: {
             name: "Harbor Tug (32m)",
-            L: 32,           // Length (m) - from paper Table 1
-            ecoSpeed: 8,     // knots
-            fullSpeed: 13,   // knots - from paper Table 3
-            costEco: 600,    // User input default (AUD/hr)
-            costFull: 2160,  // User input default (AUD/hr) - approx from paper ($955 extra cost on baseline = 2160)
-            waveExp: 4.5,    // Speed exponent for wave drag cost component
-            // Physics parameters derived/estimated from paper (Table 3 & 4)
-            CA: 0.0006,      // Correlation allowance at 13kn
-            CrCfRatio_eco: 0.63, // Residuary/Friction ratio at 6.5kn (estimated for 8kn)
-            CrCfRatio_full: 1.83, // Residuary/Friction ratio at 13kn
-            eff_eco: 0.35,      // Estimated engine efficiency at eco speed
-            eff_full: 0.40      // Engine efficiency at full speed (from paper Table 4)
+            length: 32,
+            beam: 10,
+            draft: 4.5,
+            cb: 0.65,
+            ecoSpeed: 8,
+            fullSpeed: 13,
+            costEco: 600,    
+            costFull: 2160,  
+            waveExp: 4.5,
+            category: 'workboat'
         },
         cruiseShip: {
             name: "Passenger Cruise Ship (93m)",
-            L: 93,           // Length (m) - typical assumption
-            ecoSpeed: 10,    // knots
-            fullSpeed: 13.8, // knots
-            costEco: 1600,   // User input default (AUD/hr)
-            costFull: 4200,  // User input default (AUD/hr)
+            length: 93,
+            beam: 16,
+            draft: 5.2,
+            cb: 0.62,
+            ecoSpeed: 10,
+            fullSpeed: 13.8,
+            costEco: 1600,
+            costFull: 4200,
             waveExp: 4.6,
-            // Physics parameters (Estimates - replace with real data if available)
-            CA: 0.0004,      // Correlation allowance (estimated)
-            CrCfRatio_eco: 1.0,  // Residuary/Friction ratio (estimated)
-            CrCfRatio_full: 2.0, // Residuary/Friction ratio (estimated)
-            eff_eco: 0.40,       // Estimated engine efficiency
-            eff_full: 0.45       // Estimated engine efficiency
+            category: 'cruise'
+        },
+        custom: {
+            name: "Custom Vessel",
+            // Will be populated dynamically
         }
-        // Add other vessels with their physical parameters here...
     };
 
-    // FR (Fouling Rating) to ks (equivalent sandgrain roughness in meters) mapping
-    // Calibrated: FR4 = 2.8mm (0.0028m) from Rio Tinto tug study paper (Table 2)
-    // Values for other levels are interpolated/extrapolated estimates.
+    // Enhanced FR to ks mapping - calibrated for simplified model
     const frKsMapping = [
-        0,         // FR0: Smooth
-        0.00015,   // FR1: Light slime (~150 microns)
-        0.00050,   // FR2: Medium slime (~500 microns)
-        0.00120,   // FR3: Heavy slime (~1.2 mm)
-        0.00280,   // FR4: Light calcareous (matches paper 2.8mm)
-        0.00600    // FR5: Heavy calcareous (~6 mm) - Adjusted from previous direct %
-        // Add FR6-FR10 if needed, mapping to higher ks values
+        0,         // FR0: Smooth (0% increase)
+        0.00003,   // FR1: Light slime (10-20% increase)
+        0.00010,   // FR2: Medium slime (20-40% increase)
+        0.00030,   // FR3: Heavy slime (40-80% increase)
+        0.00080,   // FR4: Light calcareous (80-140% increase)
+        0.00200    // FR5: Heavy calcareous (140-200% increase)
     ];
-    
-    // Old frData (based on cost percentage) - No longer used for main calculation
-    // const frData = { ... }; // Keep commented out for reference if needed
 
     let myChart = null;
 
-    // Helper function: Linear Interpolation
+    // Helper functions
     function interpolate(x, x1, x2, y1, y2) {
         if (x <= x1) return y1;
         if (x >= x2) return y2;
         return y1 + (y2 - y1) * (x - x1) / (x2 - x1);
     }
 
-    // Helper function: Knots to m/s
     function knotsToMps(knots) {
         return knots * KNOTS_TO_MPS;
     }
 
-    // Helper function: m/s to Knots
     function mpsToKnots(mps) {
         return mps * MPS_TO_KNOTS;
     }
 
-    // Physics function: Calculate Reynolds Number
+    // Add missing physics functions
+    function calculateReynolds(speedMs, length) {
+        return speedMs * length / NU_WATER;
+    }
+
+    function calculateWettedSurface(L, B, T, Cb) {
+        // Holtrop & Mennen approximation for wetted surface area
+        const displacement = L * B * T * Cb * RHO_WATER / 1000;
+        const S = L * (2 * T + B) * Math.sqrt(Cb) * (0.453 + 0.4425 * Cb - 0.2862 * Cb * Cb + 0.003467 * B / T + 0.3696 * 0.65);
+        return S;
+    }
+
+    function calculateWaveResistance(vessel, speedMs) {
+        // Simplified wave resistance calculation - smooth and predictable
+        const Fr = speedMs / Math.sqrt(GRAVITY * vessel.length);
+        
+        // Simple smooth wave resistance coefficient
+        // Increases gradually with speed, no humps or discontinuities
+        let Cw = 0;
+        if (Fr > 0.05) {
+            // Smooth polynomial increase - no humps
+            Cw = 0.00008 * Math.pow(Fr, 4); // Simple 4th power law
+        }
+        
+        const wettedSurface = calculateWettedSurface(vessel.length, vessel.beam, vessel.draft, vessel.cb);
+        return 0.5 * RHO_WATER * wettedSurface * Cw * speedMs * speedMs;
+    }
+
+    function estimateFuelCost(vessel, speed, wettedSurface) {
+        const speedMs = speed * KNOTS_TO_MPS;
+        const Re = calculateReynolds(speedMs, vessel.length);
+        const cf = calculateCf(Re, 0);
+        
+        const frictionResistance = 0.5 * RHO_WATER * wettedSurface * cf * speedMs * speedMs;
+        const waveResistance = calculateWaveResistance(vessel, speedMs);
+        const totalResistance = frictionResistance + waveResistance;
+        
+        const power = totalResistance * speedMs / 1000 / propEfficiency; // kW
+        const fuelConsumption = power * sfoc / 1000; // kg/hr
+        const cost = fuelConsumption * fuelCostPerKg;
+        
+        return cost;
+    }
+
+    // Enhanced physics functions
     function calculateReL(speedMps, L, nu) {
         return speedMps * L / nu;
     }
 
-    // Physics function: Calculate Smooth Skin Friction Coefficient (ITTC 1957)
     function calculateCfs(ReL) {
         if (ReL <= 0) return 0;
         return 0.075 / Math.pow(Math.log10(ReL) - 2, 2);
     }
 
-    // Physics function: Calculate Rough Skin Friction Coefficient Cf
-    // Uses a simplified approach blending smooth and fully rough laws
-    // Based on concepts similar to Grigson, incorporating ks influence
+    // Improved rough skin friction coefficient calculation
     function calculateCf(ReL, ks, L) {
         const Cfs = calculateCfs(ReL);
-        if (ks <= 0) {
-            return Cfs; // Hydrodynamically smooth
+        if (ks <= 0 || !ks) return Cfs;
+
+        // For simplified calculation when L is not provided
+        if (!L) {
+            L = 50; // Default vessel length
         }
 
-        // Estimate fully rough friction coefficient (Prandtl-Schlichting type)
-        // Note: This is one of many possible correlations. Adjust if better model is available.
-        const Cf_rough_fully = Math.pow(1.89 + 1.62 * Math.log10(L / ks), -2.5);
-
-        // Simple blending: Transition based on roughness Reynolds number (approx)
-        // This is a heuristic blend, more sophisticated methods exist
-        const roughnessRey = ReL * (ks / L);
-        const transitionStart = 100; // Approximate Re_k where roughness starts to matter
-        const transitionEnd = 1000;  // Approximate Re_k where flow is fully rough
-
-        if (roughnessRey < transitionStart) {
-            return Cfs; // Still effectively smooth
-        } else if (roughnessRey > transitionEnd) {
-            return Cf_rough_fully; // Fully rough
-        } else {
-            // Linear blend in the transition region
-            const weight = (roughnessRey - transitionStart) / (transitionEnd - transitionStart);
-            return Cfs * (1 - weight) + Cf_rough_fully * weight;
-        }
-         // Alternative simple addition (e.g., Bowden & Davison - needs careful coefficient check)
-        // const deltaCf_rough = 0.044 * (Math.pow(ks/L, 1/3) - 10 * Math.pow(ReL, -1/3)) + 0.00125; // Check formula/coeffs
-        // return Cfs + Math.max(0, deltaCf_rough); // Ensure deltaCf is not negative
-    }
-
-    // Physics function: Calculate % Increase in Total Resistance (from paper Eq 4.2)
-    function calculateDeltaRT(deltaCf, Cfs, CrCfRatio, CA) {
-        if (Cfs <= 0) return 0; // Avoid division by zero for stationary vessel
-        const denominator = Cfs * (1 + CrCfRatio) + CA;
-        if (denominator <= 0) return 0; // Avoid division by zero or negative resistance base
-        // Note: deltaCf = Cf_rough - Cfs
-        return (deltaCf / denominator) * 100; // Returns percentage
-    }
-
-    // Currency conversion function
-    function convertCurrency(amount, fromCurrency, toCurrency) {
-        // Convert to AUD first (base currency)
-        const amountInAUD = fromCurrency === 'AUD' 
-            ? amount 
-            : amount / conversionRates[fromCurrency];
+        // Simplified approach - smooth transition from smooth to rough
+        // Avoid complex transitional regime calculations
+        const roughnessRatio = ks / L;
         
-        // Then convert to target currency
+        // Simple interpolation based on roughness
+        // This gives a smooth increase in Cf with roughness
+        const roughnessFactor = 1 + 100 * roughnessRatio; // Linear increase with roughness
+        
+        // Blend between smooth and rough based on roughness level
+        const CfRough = Cfs * roughnessFactor;
+        
+        // Ensure reasonable bounds
+        return Math.min(CfRough, Cfs * 3); // Cap at 3x smooth friction
+    }
+
+    // Calculate form factor K
+    function calculateFormFactor(vessel) {
+        const L = vessel.length;
+        const B = vessel.beam || L / 5;
+        const T = vessel.draft || B / 2.5;
+        const Cb = vessel.cb || 0.65;
+
+        const LR = L / Math.pow(vessel.displacement || (L * B * T * Cb * RHO_WATER / 1000), 1 / 3);
+
+        // Simplified Holtrop & Mennen correlation
+        const c14 = 1 + 0.011 * Cb;
+        const K = c14 - 0.001 * LR;
+
+        return Math.max(0, K);
+    }
+
+    // Get speed-dependent CA
+    function getCA(speed, vessel) {
+        if (vessel.CA_eco && vessel.CA_full) {
+            return interpolate(speed, vessel.ecoSpeed, vessel.fullSpeed,
+                vessel.CA_eco, vessel.CA_full);
+        }
+        return vessel.CA || 0.0005;
+    }
+
+    // Get speed-dependent CR/Cf ratio
+    function getCrCfRatio(speed, vessel) {
+        const Fr = speed * KNOTS_TO_MPS / Math.sqrt(GRAVITY * vessel.length);
+
+        if (Fr < 0.15) {
+            return vessel.CrCfRatio_eco || 0.5;
+        } else if (Fr > 0.25) {
+            return vessel.CrCfRatio_full || 2.0;
+        } else {
+            // Quadratic interpolation in transition zone
+            const t = (Fr - 0.15) / 0.10;
+            const eco = vessel.CrCfRatio_eco || 0.5;
+            const full = vessel.CrCfRatio_full || 2.0;
+            return eco + t * t * (full - eco);
+        }
+    }
+
+    // Calculate total resistance increase
+    function calculateDeltaRT(deltaCf, Cfs, CrCfRatio, CA, K) {
+        if (Cfs <= 0) return 0;
+        const Cv_smooth = Cfs * (1 + K);
+        const denominator = Cv_smooth * (1 + CrCfRatio) + CA;
+        if (denominator <= 0) return 0;
+        return (deltaCf * (1 + K) / denominator) * 100;
+    }
+
+    // Estimate vessel parameters for custom vessels
+    function estimateVesselParameters(L, B, T, Cb, category) {
+        const displacement = L * B * T * Cb * RHO_WATER / 1000; // tonnes
+
+        // Estimate speeds based on vessel category and size
+        let speedFactor = 1.0;
+        let efficiencyBase = 0.35;
+
+        switch (category) {
+            case 'cargo':
+                speedFactor = 0.8;
+                efficiencyBase = 0.40;
+                break;
+            case 'container':
+                speedFactor = 1.2;
+                efficiencyBase = 0.42;
+                break;
+            case 'cruise':
+                speedFactor = 1.1;
+                efficiencyBase = 0.43;
+                break;
+            case 'naval':
+                speedFactor = 1.4;
+                efficiencyBase = 0.38;
+                break;
+            case 'workboat':
+                speedFactor = 0.9;
+                efficiencyBase = 0.35;
+                break;
+            case 'yacht':
+                speedFactor = 1.3;
+                efficiencyBase = 0.37;
+                break;
+        }
+
+        // Estimate speeds using Froude number relationships
+        const ecoFr = 0.18 * speedFactor;
+        const fullFr = 0.25 * speedFactor;
+        const ecoSpeed = ecoFr * Math.sqrt(GRAVITY * L) * MPS_TO_KNOTS;
+        const fullSpeed = fullFr * Math.sqrt(GRAVITY * L) * MPS_TO_KNOTS;
+
+        // Estimate costs based on displacement and speed
+        const powerEco = displacement * Math.pow(ecoSpeed, 2.5) * 0.015;
+        const powerFull = displacement * Math.pow(fullSpeed, 2.5) * 0.015;
+
+        const costEco = powerEco * FUEL_PRICE_PER_LITER / (efficiencyBase * FUEL_ENERGY_DENSITY * 3.6);
+        const costFull = powerFull * FUEL_PRICE_PER_LITER / ((efficiencyBase + 0.05) * FUEL_ENERGY_DENSITY * 3.6);
+
+        return {
+            length: L,
+            beam: B,
+            draft: T,
+            cb: Cb,
+            displacement: displacement,
+            ecoSpeed: Math.round(ecoSpeed * 2) / 2,
+            fullSpeed: Math.round(fullSpeed * 2) / 2,
+            costEco: Math.round(costEco / 50) * 50,
+            costFull: Math.round(costFull / 50) * 50,
+            waveExp: 4.5 + (Cb - 0.65) * 2,
+            CA_eco: 0.0005 + (Cb - 0.65) * 0.001,
+            CA_full: 0.0004 + (Cb - 0.65) * 0.0008,
+            CrCfRatio_eco: 0.5 + (Cb - 0.65) * 2,
+            CrCfRatio_full: 1.5 + (Cb - 0.65) * 3,
+            eff_eco: efficiencyBase,
+            eff_full: efficiencyBase + 0.05
+        };
+    }
+
+    // Update custom vessel calculations
+    function updateCustomVesselCalculations() {
+        const L = parseFloat(document.getElementById('customLength').value) || 50;
+        const B = parseFloat(document.getElementById('customBeam').value) || 10;
+        const T = parseFloat(document.getElementById('customDraft').value) || 4;
+        const Cb = parseFloat(document.getElementById('customCb').value) || 0.65;
+
+        const displacement = L * B * T * Cb * RHO_WATER / 1000;
+        document.getElementById('customDisplacement').value = Math.round(displacement);
+    }
+
+    function convertCurrency(amount, fromCurrency, toCurrency) {
+        const amountInAUD = fromCurrency === 'AUD'
+            ? amount
+            : amount / conversionRates[fromCurrency];
         return amountInAUD * conversionRates[toCurrency];
     }
-    
-    // Solve for alpha (friction coefficient) and beta (wave coefficient)
-    // This implementation follows the physics model described in the UoM papers
+
     function solveAlphaBeta(costEco, costFull, ecoSpeed, fullSpeed, waveExp = 4.5) {
         const s1 = ecoSpeed, s2 = fullSpeed;
         const x1 = Math.pow(s1, 3);
@@ -178,177 +327,246 @@ function initHullFoulingCalculator() {
         const x2 = Math.pow(s2, 3);
         const y2 = Math.pow(s2, waveExp);
 
-        const det = x1*y2 - x2*y1;
-        const alpha = (costEco*y2 - costFull*y1) / det;
-        const beta  = (costFull*x1 - costEco*x2) / det;
+        const det = x1 * y2 - x2 * y1;
+        const alpha = (costEco * y2 - costFull * y1) / det;
+        const beta = (costFull * x1 - costEco * x2) / det;
 
         return { alpha, beta };
     }
 
     function formatCurrency(value) {
+        // Determine the correct currency code for Intl.NumberFormat
+        let currencyCode = currentCurrency;
+        
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: currentCurrency === 'AUD' ? 'AUD' : 'GBP',
+            currency: currencyCode,
             currencyDisplay: 'symbol',
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
         }).format(value);
     }
 
-    // Function to calculate CO2 emissions based on UoM research data
-    // Calibrated to match the direct measurements in the papers
-    function calculateExtraCO2(extraCost, vesselType) {
-        // Convert extraCost to AUD for consistent emission calculation
-        const extraCostAUD = currentCurrency === 'AUD' 
-            ? extraCost 
-            : convertCurrency(extraCost, currentCurrency, 'AUD');
-            
-        // Calibrated to match research: 1.8T CO2/hr at $1,273/hr extra cost for cruise ship
-        let emissionFactor;
-        
-        if (vesselType === 'cruiseShip') {
-            emissionFactor = 1800 / 1273; // kg CO2 per $ of extra fuel (from Coral Adventurer study)
-        } else if (vesselType === 'tug') {
-            emissionFactor = 1300 / 955; // kg CO2 per $ from Rio Tinto tugboat study
-        } else {
-            // For other vessel types, use a slightly modified factor based on engine efficiency
-            emissionFactor = 1.45; // kg CO2 per $ of extra fuel
-        }
-        
-        return extraCostAUD * emissionFactor;
+    // Physics-based CO2 calculation
+    function calculateCO2FromPower(powerKW, efficiency) {
+        const fuelConsumption = powerKW / (efficiency * FUEL_ENERGY_DENSITY * 1000 / 3600);
+        return fuelConsumption * FUEL_CO2_FACTOR;
     }
 
-    // Get validation status for current configuration
-    // Identifies when we're showing values directly measured in the UoM studies
+    function calculateExtraCO2(extraCost, vessel, speed) {
+        const efficiency = interpolate(speed, vessel.ecoSpeed, vessel.fullSpeed,
+            vessel.eff_eco, vessel.eff_full);
+        const fuelPricePerKg = FUEL_PRICE_PER_LITER / FUEL_DENSITY;
+        const extraFuelKgHr = extraCost / fuelPricePerKg;
+        return extraFuelKgHr * FUEL_CO2_FACTOR;
+    }
+
     function getValidationStatus(vesselType, frLevel, speed) {
-        if (vesselType === 'cruiseShip' && frLevel === 5 && 
+        if (vesselType === 'cruiseShip' && frLevel === 5 &&
             Math.abs(speed - vesselConfigs.cruiseShip.fullSpeed) < 0.5) {
             return {
                 validated: true,
                 message: "Values validated by University of Melbourne Coral Adventurer study"
             };
-        } else if (vesselType === 'tug' && frLevel === 4 && 
+        } else if (vesselType === 'tug' && frLevel === 4 &&
             Math.abs(speed - vesselConfigs.tug.fullSpeed) < 0.5) {
             return {
                 validated: true,
                 message: "Values validated by University of Melbourne Rio Tinto tugboat study"
             };
         }
-        return {
-            validated: false,
-            message: ""
-        };
+        return { validated: false, message: "" };
     }
 
     function updateCalculator() {
         const vesselType = document.getElementById("vesselType").value;
-        const vessel = vesselConfigs[vesselType];
+        let vessel;
         
-        // Get vessel-specific physical parameters
-        const L = vessel.L;
-        const nu = NU_WATER; // Assuming constant water properties
-        const CA = vessel.CA; // Using the full speed CA as approximation for now
+        if (vesselType === 'custom') {
+            // Show custom vessel parameters
+            document.getElementById('customVesselParams').style.display = 'block';
+            
+            // Get custom vessel parameters
+            vessel = {
+                name: "Custom Vessel",
+                length: parseFloat(document.getElementById("customLength").value) || 50,
+                beam: parseFloat(document.getElementById("customBeam").value) || 10,
+                draft: parseFloat(document.getElementById("customDraft").value) || 4,
+                cb: parseFloat(document.getElementById("customCb").value) || 0.65,
+                ecoSpeed: parseFloat(document.getElementById("customEcoSpeed").value) || 10,
+                fullSpeed: parseFloat(document.getElementById("customFullSpeed").value) || 15,
+                category: document.getElementById("vesselCategory").value || 'cargo'
+            };
+            
+            // Calculate displacement
+            const displacement = vessel.length * vessel.beam * vessel.draft * vessel.cb * 1.025;
+            document.getElementById("customDisplacement").value = displacement.toFixed(0);
+            
+            // Calculate wetted surface area
+            const wettedSurface = calculateWettedSurface(vessel.length, vessel.beam, vessel.draft, vessel.cb);
+            
+            // If costs aren't manually entered, estimate them
+            if (!document.getElementById("costEco").value) {
+                vessel.costEco = estimateFuelCost(vessel, vessel.ecoSpeed, wettedSurface);
+                document.getElementById("costEco").value = Math.round(vessel.costEco);
+            }
+            if (!document.getElementById("costFull").value) {
+                vessel.costFull = estimateFuelCost(vessel, vessel.fullSpeed, wettedSurface);
+                document.getElementById("costFull").value = Math.round(vessel.costFull);
+            }
+        } else {
+            // Hide custom vessel parameters
+            document.getElementById('customVesselParams').style.display = 'none';
+            vessel = vesselConfigs[vesselType];
+            
+            // Only update cost inputs if they're empty or if switching from custom
+            const costEcoInput = document.getElementById("costEco");
+            const costFullInput = document.getElementById("costFull");
+            
+            const previousType = document.getElementById("vesselType").getAttribute('data-previous') || '';
+            
+            // Check if we should update the values
+            const shouldUpdate = !costEcoInput.hasAttribute('data-user-edited') || previousType === 'custom';
+            
+            if (shouldUpdate) {
+                const costEcoConverted = currentCurrency === 'AUD' ?
+                    vessel.costEco :
+                    convertCurrency(vessel.costEco, 'AUD', currentCurrency);
+                const costFullConverted = currentCurrency === 'AUD' ?
+                    vessel.costFull :
+                    convertCurrency(vessel.costFull, 'AUD', currentCurrency);
 
-        // Get input costs in current currency
-        let costEcoInput = parseFloat(document.getElementById("costEco").value) || vessel.costEco;
-        let costFullInput = parseFloat(document.getElementById("costFull").value) || vessel.costFull;
+                costEcoInput.value = Math.round(costEcoConverted);
+                costFullInput.value = Math.round(costFullConverted);
+                
+                // Remove the user-edited flag since we're setting defaults
+                costEcoInput.removeAttribute('data-user-edited');
+                costFullInput.removeAttribute('data-user-edited');
+            }
+        }
         
-        // Convert input costs to AUD for internal calculations
+        // Store the current type as previous for next change
+        document.getElementById("vesselType").setAttribute('data-previous', vesselType);
+        
+        // Get input costs in current currency
+        let costEcoInput = parseFloat(document.getElementById("costEco").value);
+        let costFullInput = parseFloat(document.getElementById("costFull").value);
+        
+        // If no user input, use vessel defaults converted to current currency
+        if (!costEcoInput || isNaN(costEcoInput)) {
+            costEcoInput = currentCurrency === 'AUD' ? 
+                vessel.costEco : 
+                convertCurrency(vessel.costEco, 'AUD', currentCurrency);
+        }
+        if (!costFullInput || isNaN(costFullInput)) {
+            costFullInput = currentCurrency === 'AUD' ? 
+                vessel.costFull : 
+                convertCurrency(vessel.costFull, 'AUD', currentCurrency);
+        }
+        
+        // Convert input costs to AUD for calculations if needed
         let costEco = currentCurrency === 'AUD' ? costEcoInput : convertCurrency(costEcoInput, currentCurrency, 'AUD');
         let costFull = currentCurrency === 'AUD' ? costFullInput : convertCurrency(costFullInput, currentCurrency, 'AUD');
         
         const frLevel = parseInt(document.getElementById("frSlider").value) || 0;
-        // Get ks value from the mapping
-        const ks = frKsMapping[frLevel] !== undefined ? frKsMapping[frLevel] : 0;
-        // Get description for label (modify if frData structure changes)
-        // For now, create a simple description
-        const frDesc = `FR${frLevel}` + (ks > 0 ? ` (ks=${(ks * 1000).toFixed(1)}mm)` : ' (Smooth)');
-
+        const roughness = frKsMapping[frLevel] !== undefined ? frKsMapping[frLevel] : 0;
+        
         // Update FR label
         const frLabel = `FR${frLevel}`;
-        document.getElementById("frLabel").textContent = frLabel; // Keep simple label for UI
-
+        document.getElementById("frLabel").textContent = frLabel;
+        
         // Calculate speed range for chart
         const minSpeed = Math.max(vessel.ecoSpeed - 4, 4);
         const maxSpeed = vessel.fullSpeed + 2;
         
-        // Solve for alpha and beta of the CLEAN HULL COST curve based on user inputs
-        const { alpha, beta } = solveAlphaBeta(
-            costEco,
-            costFull,
-            vessel.ecoSpeed,
-            vessel.fullSpeed,
-            vessel.waveExp
-        );
-
+        // Calculate wetted surface area
+        const wettedSurface = calculateWettedSurface(vessel.length, vessel.beam, vessel.draft, vessel.cb);
+        
+        // Prepare data for chart
         const speeds = [];
         const cleanCosts = [];
         const fouledCosts = [];
+        const fouledCostsLower = [];
+        const fouledCostsUpper = [];
         const co2Emissions = [];
         
         // Adjust step size based on speed range for better readability
         const stepSize = (maxSpeed - minSpeed) > 8 ? 0.5 : 0.25;
         
         for (let s = minSpeed; s <= maxSpeed; s += stepSize) {
-            // 1. Calculate Clean Hull Cost (using user-calibrated alpha/beta)
-            const costCleanAUD = alpha * Math.pow(s, 3) + beta * Math.pow(s, vessel.waveExp);
-
-            // 2. Calculate Physics-Based Fouling Impact (DeltaRT)
-            const speedMps = knotsToMps(s);
-            let DeltaRT = 0; // Default to 0% increase for smooth hull or errors
-
-            if (ks > 0 && speedMps > 0) {
-                const ReL = calculateReL(speedMps, L, nu);
-                const Cfs = calculateCfs(ReL);
-                const Cf_rough = calculateCf(ReL, ks, L);
-                const deltaCf = Math.max(0, Cf_rough - Cfs); // Ensure non-negative delta
-
-                // Interpolate CrCfRatio based on current speed 's'
-                const CrCfRatio = interpolate(s, vessel.ecoSpeed, vessel.fullSpeed, vessel.CrCfRatio_eco, vessel.CrCfRatio_full);
-
-                DeltaRT = calculateDeltaRT(deltaCf, Cfs, CrCfRatio, CA);
+            const speedKnots = s;
+            
+            // Use the alpha-beta model for base costs (respecting user inputs)
+            const { alpha, beta } = solveAlphaBeta(costEco, costFull, vessel.ecoSpeed, vessel.fullSpeed, 4.5);
+            const baseCleanCost = alpha * Math.pow(speedKnots, 3) + beta * Math.pow(speedKnots, 4.5);
+            
+            // Simple empirical fouling model
+            // FR0: 0%, FR1: 15%, FR2: 35%, FR3: 60%, FR4: 95%, FR5: 193%
+            const foulingIncreases = [0, 0.15, 0.35, 0.60, 0.95, 1.93];
+            const baseFoulingIncrease = foulingIncreases[frLevel] || 0;
+            
+            // Speed-dependent reduction factor
+            // At low speeds (Fr < 0.15), full fouling impact
+            // At high speeds (Fr > 0.35), fouling impact is reduced
+            const Fr = speedKnots * 0.514444 / Math.sqrt(9.81 * vessel.length);
+            let speedReduction = 1.0;
+            if (Fr > 0.15) {
+                // Linear reduction from Fr 0.15 to 0.35
+                speedReduction = Math.max(0.3, 1.0 - 2.0 * (Fr - 0.15));
             }
             
-            // Ensure DeltaRT is non-negative
-            DeltaRT = Math.max(0, DeltaRT);
-
-            // 3. Calculate Fouled Hull Cost
-            const costFouledAUD = costCleanAUD * (1 + DeltaRT / 100);
-
-            // 4. Calculate Extra CO2 (using existing calibrated function based on extra cost)
-            const extraCostAUD = costFouledAUD - costCleanAUD;
-            const extraCO2 = calculateExtraCO2(extraCostAUD, vesselType); // Pass AUD cost
-
-            // 5. Store results for chart (converting back to display currency)
+            // Apply fouling increase with speed reduction
+            const effectiveFoulingIncrease = baseFoulingIncrease * speedReduction;
+            const costFouledHr = baseCleanCost * (1 + effectiveFoulingIncrease);
+            
+            // Calculate confidence intervals (±15% for fouling impact)
+            const confidenceInterval = 0.15;
+            const costFouledLower = baseCleanCost * (1 + effectiveFoulingIncrease * (1 - confidenceInterval));
+            const costFouledUpper = baseCleanCost * (1 + effectiveFoulingIncrease * (1 + confidenceInterval));
+            
+            // CO2 emissions based on extra fuel - always calculate in base currency (AUD)
+            const extraCost = costFouledHr - baseCleanCost;
+            const extraFuel = extraCost / fuelCostPerKg;
+            const co2Extra = extraFuel * co2PerKgFuel;
+            
             speeds.push(s.toFixed(1));
             
-            const displayCleanCost = currentCurrency === 'AUD' ?
-                costCleanAUD :
-                convertCurrency(costCleanAUD, 'AUD', currentCurrency);
+            // Convert costs to current currency for display
+            const displayCleanCost = currentCurrency === 'AUD' ? 
+                baseCleanCost : 
+                convertCurrency(baseCleanCost, 'AUD', currentCurrency);
                 
-            const displayFouledCost = currentCurrency === 'AUD' ?
-                costFouledAUD :
-                convertCurrency(costFouledAUD, 'AUD', currentCurrency);
+            const displayFouledCost = currentCurrency === 'AUD' ? 
+                costFouledHr : 
+                convertCurrency(costFouledHr, 'AUD', currentCurrency);
                 
+            const displayFouledLower = currentCurrency === 'AUD' ? 
+                costFouledLower : 
+                convertCurrency(costFouledLower, 'AUD', currentCurrency);
+                
+            const displayFouledUpper = currentCurrency === 'AUD' ? 
+                costFouledUpper : 
+                convertCurrency(costFouledUpper, 'AUD', currentCurrency);
+            
             cleanCosts.push(displayCleanCost);
             fouledCosts.push(displayFouledCost);
-            co2Emissions.push(extraCO2); // CO2 is already in kg/hr
+            fouledCostsLower.push(displayFouledLower);
+            fouledCostsUpper.push(displayFouledUpper);
+            co2Emissions.push(co2Extra);
         }
-
-        // Get the canvas context
+        
+        // Update chart
         const ctx = document.getElementById("myChart");
         if (!ctx) {
             console.error("Chart canvas element not found");
             return;
         }
-        
-        // Properly destroy the existing chart instance if it exists
+
         if (myChart) {
             myChart.destroy();
             myChart = null;
         }
-        
-        // Create a new chart
+
         myChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -358,21 +576,47 @@ function initHullFoulingCalculator() {
                         label: 'Clean Hull (FR0)',
                         data: cleanCosts,
                         borderColor: 'rgba(30, 77, 120, 1)',
-                        backgroundColor: 'rgba(30, 77, 120, 0.2)',
+                        backgroundColor: 'rgba(30, 77, 120, 0.1)',
                         fill: true,
                         tension: 0.4,
                         yAxisID: 'y',
-                        borderWidth: 3
+                        borderWidth: 2
                     },
                     {
                         label: `Fouled Hull (${frLabel})`,
                         data: fouledCosts,
                         borderColor: 'rgba(232, 119, 34, 1)',
-                        backgroundColor: 'rgba(232, 119, 34, 0.2)',
+                        backgroundColor: 'rgba(232, 119, 34, 0.1)',
                         fill: true,
                         tension: 0.4,
                         yAxisID: 'y',
-                        borderWidth: 3
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Confidence Interval',
+                        data: fouledCostsUpper,
+                        borderColor: 'rgba(232, 119, 34, 0.3)',
+                        backgroundColor: 'rgba(232, 119, 34, 0.05)',
+                        fill: '+1',
+                        tension: 0.4,
+                        yAxisID: 'y',
+                        borderWidth: 0,
+                        pointRadius: 0,
+                        pointHoverRadius: 0,
+                        showLine: true
+                    },
+                    {
+                        label: 'Confidence Lower',
+                        data: fouledCostsLower,
+                        borderColor: 'rgba(232, 119, 34, 0.3)',
+                        backgroundColor: 'rgba(232, 119, 34, 0.05)',
+                        fill: false,
+                        tension: 0.4,
+                        yAxisID: 'y',
+                        borderWidth: 0,
+                        pointRadius: 0,
+                        pointHoverRadius: 0,
+                        showLine: true
                     },
                     {
                         label: 'Additional CO₂ Emissions',
@@ -383,7 +627,7 @@ function initHullFoulingCalculator() {
                         tension: 0.4,
                         yAxisID: 'y1',
                         borderDash: [5, 5],
-                        borderWidth: 3
+                        borderWidth: 2
                     }
                 ]
             },
@@ -401,13 +645,23 @@ function initHullFoulingCalculator() {
                     tooltip: {
                         callbacks: {
                             label: function(ctx) {
+                                // Hide confidence interval datasets from tooltip
+                                if (ctx.dataset.label === 'Confidence Interval' || 
+                                    ctx.dataset.label === 'Confidence Lower') {
+                                    return null;
+                                }
                                 if (ctx.dataset.yAxisID === 'y1') {
                                     return `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} kg/hr`;
                                 }
                                 return `${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y)}/hr`;
                             }
                         },
-                        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                        filter: function(tooltipItem) {
+                            // Filter out confidence interval datasets
+                            return tooltipItem.dataset.label !== 'Confidence Interval' && 
+                                   tooltipItem.dataset.label !== 'Confidence Lower';
+                        },
+                        backgroundColor: 'rgba(26, 32, 44, 0.9)',
                         titleFont: {
                             size: 14,
                             weight: 'bold'
@@ -416,21 +670,25 @@ function initHullFoulingCalculator() {
                             size: 13
                         },
                         padding: 12,
-                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                        borderColor: 'rgba(203, 213, 224, 0.3)',
                         borderWidth: 1
                     },
                     legend: {
                         position: 'top',
                         align: 'start',
                         labels: {
-                            boxWidth: 15,
+                            boxWidth: 12,
                             padding: 15,
                             font: {
-                                size: window.innerWidth < 768 ? 12 : 14,
-                                weight: 'bold'
+                                size: window.innerWidth < 768 ? 10 : 12
                             },
                             usePointStyle: true,
-                            pointStyle: 'circle'
+                            pointStyle: 'circle',
+                            filter: function(legendItem) {
+                                // Hide confidence interval datasets from legend
+                                return legendItem.text !== 'Confidence Interval' && 
+                                       legendItem.text !== 'Confidence Lower';
+                            }
                         }
                     }
                 },
@@ -441,22 +699,21 @@ function initHullFoulingCalculator() {
                             text: 'Speed (knots)',
                             font: { 
                                 weight: 'bold',
-                                size: window.innerWidth < 768 ? 12 : 14
+                                size: window.innerWidth < 768 ? 10 : 12
                             },
-                            color: 'rgba(0, 0, 0, 0.8)'
+                            color: 'rgba(74, 85, 104, 1)'
                         },
                         grid: {
                             display: true,
-                            color: 'rgba(0, 0, 0, 0.1)'
+                            color: 'rgba(226, 232, 240, 0.6)'
                         },
                         ticks: {
                             maxRotation: 45,
                             minRotation: 45,
                             font: {
-                                size: window.innerWidth < 768 ? 10 : 12,
-                                weight: '600'
+                                size: window.innerWidth < 768 ? 8 : 10
                             },
-                            color: 'rgba(0, 0, 0, 0.8)',
+                            color: 'rgba(74, 85, 104, 0.8)',
                             callback: function(value, index, values) {
                                 // Show fewer labels on small screens
                                 if (window.innerWidth < 768) {
@@ -475,23 +732,22 @@ function initHullFoulingCalculator() {
                             text: `Operating Cost (${currencySymbols[currentCurrency]}/hr)`,
                             font: { 
                                 weight: 'bold',
-                                size: window.innerWidth < 768 ? 12 : 14
+                                size: window.innerWidth < 768 ? 10 : 12
                             },
-                            color: 'rgba(0, 0, 0, 0.8)'
+                            color: 'rgba(74, 85, 104, 1)'
                         },
                         beginAtZero: true,
                         ticks: {
                             font: {
-                                size: window.innerWidth < 768 ? 10 : 12,
-                                weight: '600'
+                                size: window.innerWidth < 768 ? 8 : 10
                             },
-                            color: 'rgba(0, 0, 0, 0.8)',
+                            color: 'rgba(74, 85, 104, 0.8)',
                             callback: function(value) {
                                 return currencySymbols[currentCurrency] + value;
                             }
                         },
                         grid: {
-                            color: 'rgba(0, 0, 0, 0.1)'
+                            color: 'rgba(226, 232, 240, 0.6)'
                         }
                     },
                     y1: {
@@ -503,98 +759,91 @@ function initHullFoulingCalculator() {
                             text: 'Additional CO₂ (kg/hr)',
                             font: { 
                                 weight: 'bold',
-                                size: window.innerWidth < 768 ? 12 : 14
+                                size: window.innerWidth < 768 ? 10 : 12
                             },
-                            color: 'rgba(0, 0, 0, 0.8)'
+                            color: 'rgba(74, 85, 104, 1)'
                         },
                         beginAtZero: true,
                         grid: {
                             drawOnChartArea: false,
-                            color: 'rgba(0, 0, 0, 0.1)'
+                            color: 'rgba(226, 232, 240, 0.6)'
                         },
                         ticks: {
                             font: {
-                                size: window.innerWidth < 768 ? 10 : 12,
-                                weight: '600'
+                                size: window.innerWidth < 768 ? 8 : 10
                             },
-                            color: 'rgba(0, 0, 0, 0.8)'
+                            color: 'rgba(74, 85, 104, 0.8)'
                         }
                     }
                 }
             }
         });
-
-        function costAt(speed) {
-            // Get vessel config and alpha/beta (recalculating alpha/beta ensures consistency if user changed inputs)
-             const vesselType = document.getElementById("vesselType").value;
-             const vessel = vesselConfigs[vesselType];
-             let costEcoInput = parseFloat(document.getElementById("costEco").value) || vessel.costEco;
-             let costFullInput = parseFloat(document.getElementById("costFull").value) || vessel.costFull;
-             let costEco = currentCurrency === 'AUD' ? costEcoInput : convertCurrency(costEcoInput, currentCurrency, 'AUD');
-             let costFull = currentCurrency === 'AUD' ? costFullInput : convertCurrency(costFullInput, currentCurrency, 'AUD');
-             const { alpha, beta } = solveAlphaBeta(costEco, costFull, vessel.ecoSpeed, vessel.fullSpeed, vessel.waveExp);
-             const frLevel = parseInt(document.getElementById("frSlider").value) || 0;
-             const ks = frKsMapping[frLevel] !== undefined ? frKsMapping[frLevel] : 0;
-
-            // Calculate clean cost (AUD)
-            const cleanAUD = alpha * Math.pow(speed, 3) + beta * Math.pow(speed, vessel.waveExp);
-
-            // Calculate DeltaRT at this specific speed
-            const speedMps = knotsToMps(speed);
-            let DeltaRT = 0;
-             if (ks > 0 && speedMps > 0) {
-                 const L = vessel.L;
-                 const nu = NU_WATER;
-                 const CA = vessel.CA; // Approximation
-                 const ReL = calculateReL(speedMps, L, nu);
-                 const Cfs = calculateCfs(ReL);
-                 const Cf_rough = calculateCf(ReL, ks, L);
-                 const deltaCf = Math.max(0, Cf_rough - Cfs);
-                 const CrCfRatio = interpolate(speed, vessel.ecoSpeed, vessel.fullSpeed, vessel.CrCfRatio_eco, vessel.CrCfRatio_full);
-                 DeltaRT = calculateDeltaRT(deltaCf, Cfs, CrCfRatio, CA);
-             }
-             DeltaRT = Math.max(0, DeltaRT);
-
-            // Calculate fouled cost (AUD)
-            const fouledAUD = cleanAUD * (1 + DeltaRT / 100);
-
-            // Convert costs to display currency
-            const displayClean = currentCurrency === 'AUD' ?
-                cleanAUD :
-                convertCurrency(cleanAUD, 'AUD', currentCurrency);
-
-            const displayFouled = currentCurrency === 'AUD' ?
-                fouledAUD :
-                convertCurrency(fouledAUD, 'AUD', currentCurrency);
-
-            // Get validation status (remains the same)
-            const validation = getValidationStatus(vesselType, frLevel, speed);
-
+        
+        // Calculate results for display
+        function calculateCostAt(speed) {
+            // Use the alpha-beta model for base costs
+            const { alpha, beta } = solveAlphaBeta(costEco, costFull, vessel.ecoSpeed, vessel.fullSpeed, 4.5);
+            const baseCleanCost = alpha * Math.pow(speed, 3) + beta * Math.pow(speed, 4.5);
+            
+            // Simple empirical fouling model
+            const foulingIncreases = [0, 0.15, 0.35, 0.60, 0.95, 1.93];
+            const baseFoulingIncrease = foulingIncreases[frLevel] || 0;
+            
+            // Speed-dependent reduction factor
+            // At low speeds (Fr < 0.15), full fouling impact
+            // At high speeds (Fr > 0.35), fouling impact is reduced
+            const Fr = speed * 0.514444 / Math.sqrt(9.81 * vessel.length);
+            let speedReduction = 1.0;
+            if (Fr > 0.15) {
+                // Linear reduction from Fr 0.15 to 0.35
+                speedReduction = Math.max(0.3, 1.0 - 2.0 * (Fr - 0.15));
+            }
+            
+            // Apply fouling increase with speed reduction
+            const effectiveFoulingIncrease = baseFoulingIncrease * speedReduction;
+            const costFouledHr = baseCleanCost * (1 + effectiveFoulingIncrease);
+            
+            // Calculate fuel consumption for emissions - in base currency
+            const fuelClean = baseCleanCost / fuelCostPerKg;
+            const fuelFouled = costFouledHr / fuelCostPerKg;
+            const extraFuel = fuelFouled - fuelClean;
+            const extraCO2 = extraFuel * co2PerKgFuel;
+            
+            // Convert costs to display currency if needed
+            const displayClean = currentCurrency === 'AUD' ? 
+                baseCleanCost : 
+                convertCurrency(baseCleanCost, 'AUD', currentCurrency);
+                
+            const displayFouled = currentCurrency === 'AUD' ? 
+                costFouledHr : 
+                convertCurrency(costFouledHr, 'AUD', currentCurrency);
+            
             return {
                 clean: displayClean,
                 fouled: displayFouled,
-                validation: validation
+                fuelClean: fuelClean,
+                fuelFouled: fuelFouled,
+                extraFuel: extraFuel,
+                extraCO2: extraCO2,
+                frictionIncrease: (effectiveFoulingIncrease * 100)
             };
         }
-
-        const cEco = costAt(vessel.ecoSpeed);
-        const cFull = costAt(vessel.fullSpeed);
         
-        const increaseEco = cEco.clean > 0 ? ((cEco.fouled - cEco.clean) / cEco.clean * 100).toFixed(1) : 'N/A';
-        const increaseFull = cFull.clean > 0 ? ((cFull.fouled - cFull.clean) / cFull.clean * 100).toFixed(1) : 'N/A';
+        const cEco = calculateCostAt(vessel.ecoSpeed);
+        const cFull = calculateCostAt(vessel.fullSpeed);
         
-        // Calculate extra cost/CO2 at full speed using costs in AUD for consistency with calculateExtraCO2
-        const costFullCleanAUD = currentCurrency === 'AUD' ? cFull.clean : convertCurrency(cFull.clean, currentCurrency, 'AUD');
-        const costFullFouledAUD = currentCurrency === 'AUD' ? cFull.fouled : convertCurrency(cFull.fouled, currentCurrency, 'AUD');
-        const extraCostFullAUD = costFullFouledAUD - costFullCleanAUD;
-        const extraCO2Full = calculateExtraCO2(extraCostFullAUD, vesselType);
-
-        // Annual impact calculation (using AUD costs for consistency)
-        // Based on the operational schedule used in UoM studies
+        const increaseEco = ((cEco.fouled - cEco.clean) / cEco.clean * 100).toFixed(1);
+        const increaseFull = ((cFull.fouled - cFull.clean) / cFull.clean * 100).toFixed(1);
+        
+        const extraCostFull = cFull.fouled - cFull.clean;
+        const extraFuelFull = cFull.extraFuel;
+        const extraCO2Full = cFull.extraCO2;
+        
+        // Annual impact calculation (assuming 12hr/day, 200 days/year operation)
         const annualHours = 12 * 200;
-        const annualExtraCost = extraCostFullAUD * annualHours;
+        const annualExtraCost = extraCostFull * annualHours;
         const annualExtraCO2 = extraCO2Full * annualHours / 1000; // Convert to tonnes
-
+        
         let resultsHtml = `
             <div class="result-item">
                 <span class="result-label">Vessel Type:</span>
@@ -638,7 +887,26 @@ function initHullFoulingCalculator() {
                     <span class="result-value">${increaseFull}%</span>
                 </div>
             </div>
-
+        `;
+        
+        // Add validation badge if applicable
+        if (vesselType === 'cruiseShip' && frLevel === 5) {
+            resultsHtml += `
+                <div class="validation-badge">
+                    <i class="fas fa-check-circle"></i>
+                    <span>FR5 impact validated by University of Melbourne Coral Adventurer study</span>
+                </div>
+            `;
+        } else if (vesselType === 'tug' && frLevel === 4) {
+            resultsHtml += `
+                <div class="validation-badge">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Fouling impact calibrated with University of Melbourne tugboat study</span>
+                </div>
+            `;
+        }
+        
+        resultsHtml += `
             <div class="result-group">
                 <div class="result-group-header">
                     <i class="fas fa-leaf"></i>
@@ -649,20 +917,7 @@ function initHullFoulingCalculator() {
                     <span class="result-value">${extraCO2Full.toFixed(1)} kg/hr</span>
                 </div>
             </div>
-        `;
-
-        // Add validation badge if applicable
-        if (cFull.validation.validated) {
-            resultsHtml += `
-                <div class="validation-badge">
-                    <i class="fas fa-check-circle"></i>
-                    <span>${cFull.validation.message}</span>
-                </div>
-            `;
-        }
-
-        // Add annual impact section
-        resultsHtml += `
+            
             <div class="result-group">
                 <div class="result-group-header">
                     <i class="fas fa-calendar-alt"></i>
@@ -682,134 +937,189 @@ function initHullFoulingCalculator() {
                 </div>
             </div>
         `;
-
+        
         document.getElementById("resultsText").innerHTML = resultsHtml;
-
+        
         // Highlight active tick on slider
         document.querySelectorAll('.range-tick').forEach(tick => {
             const tickValue = parseInt(tick.getAttribute('data-value'));
             const tickDot = tick.querySelector('.tick-dot');
             
             if (tickValue === frLevel) {
-                tickDot.style.backgroundColor = 'var(--accent-color)';
+                tickDot.style.backgroundColor = 'var(--primary)';
                 tickDot.style.transform = 'scale(1.5)';
-                tick.classList.add('active');
             } else {
                 tickDot.style.backgroundColor = 'var(--neutral-500)';
                 tickDot.style.transform = 'scale(1)';
-                tick.classList.remove('active');
-            }
-        });
-    }
-    
-    // Update input placeholders based on currency
-    function updateInputPlaceholders() {
-        // Get the current vessel
-        const vesselType = document.getElementById("vesselType").value;
-        const vessel = vesselConfigs[vesselType];
-        
-        // Convert base costs to current currency for placeholders
-        const costEcoConverted = currentCurrency === 'AUD' ? 
-            vessel.costEco : 
-            convertCurrency(vessel.costEco, 'AUD', currentCurrency);
-            
-        const costFullConverted = currentCurrency === 'AUD' ? 
-            vessel.costFull : 
-            convertCurrency(vessel.costFull, 'AUD', currentCurrency);
-        
-        // Update input values if they're empty
-        const costEcoInput = document.getElementById("costEco");
-        const costFullInput = document.getElementById("costFull");
-        
-        if (!costEcoInput.value) {
-            costEcoInput.value = Math.round(costEcoConverted);
-        }
-        
-        if (!costFullInput.value) {
-            costFullInput.value = Math.round(costFullConverted);
-        }
-        
-        // Update input labels to reflect current currency
-        document.querySelectorAll('.help-text').forEach(helpText => {
-            if (helpText.textContent.includes('fuel cost')) {
-                helpText.textContent = helpText.textContent.replace(/\$/, currencySymbols[currentCurrency]);
             }
         });
     }
 
-    // Set up event listeners
-    document.getElementById("vesselType").addEventListener("change", function() {
+    function updateInputPlaceholders() {
+        const vesselType = document.getElementById("vesselType").value;
+        let vessel = vesselConfigs[vesselType];
+
+        if (vesselType === 'custom') {
+            // Generate default values for custom vessel
+            const L = parseFloat(document.getElementById('customLength').value) || 50;
+            const B = parseFloat(document.getElementById('customBeam').value) || 10;
+            const T = parseFloat(document.getElementById('customDraft').value) || 4;
+            const Cb = parseFloat(document.getElementById('customCb').value) || 0.65;
+            const category = document.getElementById('vesselCategory').value;
+
+            vessel = estimateVesselParameters(L, B, T, Cb, category);
+        }
+
+        const costEcoConverted = currentCurrency === 'AUD' ?
+            vessel.costEco :
+            convertCurrency(vessel.costEco, 'AUD', currentCurrency);
+
+        const costFullConverted = currentCurrency === 'AUD' ?
+            vessel.costFull :
+            convertCurrency(vessel.costFull, 'AUD', currentCurrency);
+
+        const costEcoInput = document.getElementById("costEco");
+        const costFullInput = document.getElementById("costFull");
+
+        if (!costEcoInput.value || vesselType === 'custom') {
+            costEcoInput.value = Math.round(costEcoConverted);
+        }
+
+        if (!costFullInput.value || vesselType === 'custom') {
+            costFullInput.value = Math.round(costFullConverted);
+        }
+
+        document.querySelectorAll('.help-text').forEach(helpText => {
+            if (helpText.textContent.includes('fuel cost')) {
+                helpText.textContent = helpText.textContent.replace(/[\$£]/g, currencySymbols[currentCurrency]);
+            }
+        });
+    }
+
+    // Event listeners
+    document.getElementById("vesselType").addEventListener("change", function () {
         const vesselType = this.value;
-        const config = vesselConfigs[vesselType];
-        
-        // Convert costs to current currency for display
-        const costEcoConverted = currentCurrency === 'AUD' ? 
-            config.costEco : 
-            convertCurrency(config.costEco, 'AUD', currentCurrency);
+        const customParams = document.getElementById('customVesselParams');
+        const previousType = this.getAttribute('data-previous') || '';
+
+        if (vesselType === 'custom') {
+            customParams.style.display = 'block';
+            updateCustomVesselCalculations();
+        } else {
+            customParams.style.display = 'none';
+            const config = vesselConfigs[vesselType];
             
-        const costFullConverted = currentCurrency === 'AUD' ? 
-            config.costFull : 
-            convertCurrency(config.costFull, 'AUD', currentCurrency);
+            // Only update costs if user hasn't manually edited them
+            const costEcoInput = document.getElementById("costEco");
+            const costFullInput = document.getElementById("costFull");
+            
+            // Check if we should update the values
+            const shouldUpdate = !costEcoInput.hasAttribute('data-user-edited') || previousType === 'custom';
+            
+            if (shouldUpdate) {
+                const costEcoConverted = currentCurrency === 'AUD' ?
+                    config.costEco :
+                    convertCurrency(config.costEco, 'AUD', currentCurrency);
+                const costFullConverted = currentCurrency === 'AUD' ?
+                    config.costFull :
+                    convertCurrency(config.costFull, 'AUD', currentCurrency);
+
+                costEcoInput.value = Math.round(costEcoConverted);
+                costFullInput.value = Math.round(costFullConverted);
+                
+                // Remove the user-edited flag since we're setting defaults
+                costEcoInput.removeAttribute('data-user-edited');
+                costFullInput.removeAttribute('data-user-edited');
+            }
+        }
         
-        document.getElementById("costEco").value = Math.round(costEcoConverted);
-        document.getElementById("costFull").value = Math.round(costFullConverted);
-        
+        // Store the current type as previous for next change
+        this.setAttribute('data-previous', vesselType);
+
         updateCalculator();
     });
 
-    document.getElementById("costEco").addEventListener("input", updateCalculator);
-    document.getElementById("costFull").addEventListener("input", updateCalculator);
-    document.getElementById("frSlider").addEventListener("input", updateCalculator);
-    
-    // Currency selector event listener
-    document.getElementById("currencySelect").addEventListener("change", function() {
-        const newCurrency = this.value;
-        
-        // Skip if currency hasn't changed
-        if (newCurrency === currentCurrency) return;
-        
-        // Get current costs in current currency
-        const costEcoInput = parseFloat(document.getElementById("costEco").value) || 0;
-        const costFullInput = parseFloat(document.getElementById("costFull").value) || 0;
-        
-        // Update currency
-        currentCurrency = newCurrency;
-        
-        // Convert the input costs to the new currency
-        if (costEcoInput > 0) {
-            const convertedCostEco = convertCurrency(costEcoInput, 
-                newCurrency === 'AUD' ? 'GBP' : 'AUD', 
-                newCurrency);
-            document.getElementById("costEco").value = Math.round(convertedCostEco);
-        }
-        
-        if (costFullInput > 0) {
-            const convertedCostFull = convertCurrency(costFullInput, 
-                newCurrency === 'AUD' ? 'GBP' : 'AUD', 
-                newCurrency);
-            document.getElementById("costFull").value = Math.round(convertedCostFull);
-        }
-        
-        // Update input placeholders and calculator
+    // Custom vessel input listeners
+    document.getElementById('customLength').addEventListener('input', function () {
+        updateCustomVesselCalculations();
         updateInputPlaceholders();
         updateCalculator();
     });
+
+    document.getElementById('customBeam').addEventListener('input', function () {
+        updateCustomVesselCalculations();
+        updateInputPlaceholders();
+        updateCalculator();
+    });
+
+    document.getElementById('customDraft').addEventListener('input', function () {
+        updateCustomVesselCalculations();
+        updateInputPlaceholders();
+        updateCalculator();
+    });
+
+    document.getElementById('customCb').addEventListener('input', function () {
+        updateCustomVesselCalculations();
+        updateInputPlaceholders();
+        updateCalculator();
+    });
+
+    document.getElementById('vesselCategory').addEventListener('change', function () {
+        updateInputPlaceholders();
+        updateCalculator();
+    });
+
+    document.getElementById('customEcoSpeed').addEventListener("input", updateCalculator);
+    document.getElementById('customFullSpeed').addEventListener("input", updateCalculator);
+
+    document.getElementById("costEco").addEventListener("input", function() {
+        this.setAttribute('data-user-edited', 'true');
+        updateCalculator();
+    });
     
-    // Make ticks clickable
+    document.getElementById("costFull").addEventListener("input", function() {
+        this.setAttribute('data-user-edited', 'true');
+        updateCalculator();
+    });
+
+    document.getElementById("frSlider").addEventListener("input", updateCalculator);
+
+    document.getElementById("currencySelect").addEventListener("change", function () {
+        const newCurrency = this.value;
+        const oldCurrency = currentCurrency;
+
+        if (newCurrency === oldCurrency) return;
+
+        const costEcoInput = parseFloat(document.getElementById("costEco").value) || 0;
+        const costFullInput = parseFloat(document.getElementById("costFull").value) || 0;
+
+        currentCurrency = newCurrency;
+
+        if (costEcoInput > 0) {
+            const convertedCostEco = convertCurrency(costEcoInput, oldCurrency, newCurrency);
+            document.getElementById("costEco").value = Math.round(convertedCostEco);
+        }
+
+        if (costFullInput > 0) {
+            const convertedCostFull = convertCurrency(costFullInput, oldCurrency, newCurrency);
+            document.getElementById("costFull").value = Math.round(convertedCostFull);
+        }
+
+        updateInputPlaceholders();
+        updateCalculator();
+    });
+
     document.querySelectorAll('.range-tick').forEach(tick => {
-        tick.addEventListener('click', function() {
+        tick.addEventListener('click', function () {
             const value = this.getAttribute('data-value');
             document.getElementById('frSlider').value = value;
             updateCalculator();
         });
     });
-    
-    // Handle window resize for responsive chart
-    window.addEventListener('resize', function() {
-        // Update chart size based on container
+
+    window.addEventListener('resize', function () {
         const chartContainer = document.querySelector('.chart-container');
         if (chartContainer && myChart) {
-            // Short delay to allow container to resize first
             setTimeout(() => {
                 myChart.resize();
                 updateCalculator();
@@ -819,59 +1129,38 @@ function initHullFoulingCalculator() {
         }
     });
 
-    // Initial calculation
+    // Initialize
     const initialVessel = vesselConfigs[document.getElementById("vesselType").value];
     document.getElementById("costEco").value = initialVessel.costEco;
     document.getElementById("costFull").value = initialVessel.costFull;
     updateInputPlaceholders();
     updateCalculator();
-    
-    // Mark the calculator as initialized
+
     window.calculatorInitialized = true;
 }
 
-// Initialize the calculator when DOM is loaded - updating to prevent multiple initializations
-document.addEventListener('DOMContentLoaded', function() {
-    // We'll let script.js handle the initialization when the modal opens
-    // This prevents double initialization
-    
-    // Set up modal button handlers directly in the DOMContentLoaded event
-    const openCalcBtn = document.getElementById('open-cost-calculator');
-    if (openCalcBtn && !openCalcBtn._eventHandlerAttached) {
-        openCalcBtn.addEventListener('click', function() {
-            const calcModal = document.getElementById('cost-calculator-modal');
-            if (calcModal) {
-                calcModal.style.display = 'flex';
-                document.body.classList.add('modal-open');
-                
-                // Initialize calculator if it hasn't been initialized yet
-                if (!window.calculatorInitialized) {
-                    initHullFoulingCalculator();
-                }
+
+// Handle messages from parent window
+window.addEventListener('message', function (event) {
+    if (event.data === 'showModal') {
+        const modal = document.getElementById('cost-calculator-modal');
+        if (modal) {
+            modal.style.display = 'flex';
+            if (!window.calculatorInitialized) {
+                initHullFoulingCalculator();
             }
-        });
-        openCalcBtn._eventHandlerAttached = true; // Mark that we've attached the handler
-    }
-    
-    // Close calculator modal if clicked outside
-    const calcModal = document.getElementById('cost-calculator-modal');
-    if (calcModal && !calcModal._eventHandlerAttached) {
-        calcModal.addEventListener('click', function(event) {
-            if (event.target === calcModal) {
-                calcModal.style.display = 'none';
-                document.body.classList.remove('modal-open');
-            }
-        });
-        
-        // Close button handler
-        const closeBtn = calcModal.querySelector('.modal-close');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function() {
-                calcModal.style.display = 'none';
-                document.body.classList.remove('modal-open');
-            });
         }
-        
-        calcModal._eventHandlerAttached = true;
     }
-}); 
+});
+
+// Update close handlers to communicate with parent
+function closeCalculatorModal() {
+    const modal = document.getElementById('cost-calculator-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    // Tell parent window to hide iframe
+    if (window.parent !== window) {
+        window.parent.postMessage('closeModal', '*');
+    }
+}
