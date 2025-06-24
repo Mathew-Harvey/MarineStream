@@ -953,6 +953,98 @@
             }
         }
 
+        /* Contact Modal Styles */
+        .contact-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .contact-modal-content {
+            background-color: var(--neutral-100);
+            margin: 15% auto;
+            padding: var(--space-6);
+            border-radius: var(--radius-lg);
+            max-width: 500px;
+            width: 90%;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .contact-modal-close {
+            position: absolute;
+            top: var(--space-4);
+            right: var(--space-4);
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--neutral-600);
+            cursor: pointer;
+            transition: color var(--transition-fast);
+            line-height: 1;
+        }
+
+        .contact-modal-close:hover {
+            color: var(--neutral-800);
+        }
+
+        .contact-modal h3 {
+            color: var(--primary);
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .contact-modal h3 i {
+            color: var(--secondary);
+        }
+
+        .contact-modal p {
+            margin-bottom: var(--space-3);
+            color: var(--neutral-700);
+            line-height: 1.6;
+        }
+
+        .contact-email {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            background-color: var(--primary);
+            color: white;
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all var(--transition-fast);
+            margin-top: var(--space-2);
+        }
+
+        .contact-email:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            color: white;
+        }
+
         /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -1045,24 +1137,24 @@
                 <!-- Source Papers Section -->
                 <div class="source-papers fade-in fade-in-2">
                     <h3><i class="fas fa-file-alt"></i> Source Research Papers</h3>
-                    <p>This calculator is based on the following University of Melbourne research studies. You can access these papers to understand the methodology, measurements, and findings in detail:</p>
+                    <p>This calculator is based on the following University of Melbourne research studies. To access these papers and understand the methodology, measurements, and findings in detail, please click on the papers below:</p>
                     
-                    <a href="results/Report-UoM-Coral-Adventurer.pdf" class="paper-link" target="_blank">
+                    <a href="#" class="paper-link" onclick="showContactModal(); return false;">
                         <i class="fas fa-file-pdf"></i>
                         <div class="paper-info">
                             <div class="paper-title">Quantitative assessment of increased frictional drag due to hull fouling using underwater surface scanning - Coral Adventurer Study</div>
                             <div class="paper-authors">University of Melbourne for Franmarine Underwater Services (2025)</div>
                         </div>
-                        <i class="fas fa-external-link-alt"></i>
+                        <i class="fas fa-envelope"></i>
                     </a>
                     
-                    <a href="results/DRAFT-UoM-Report.pdf" class="paper-link" target="_blank">
+                    <a href="#" class="paper-link" onclick="showContactModal(); return false;">
                         <i class="fas fa-file-pdf"></i>
                         <div class="paper-info">
                             <div class="paper-title">Quantitative assessment of increased frictional drag due to hull fouling using underwater surface scanning - Rio Tinto Tugboat Study</div>
                             <div class="paper-authors">Kevin, L. Tsigaras, A. Kogios, J. Monty - University of Melbourne (2024)</div>
                         </div>
-                        <i class="fas fa-external-link-alt"></i>
+                        <i class="fas fa-envelope"></i>
                     </a>
                     
                     <p class="mt-4">As more research studies become available, this calculator will continue to be updated with additional vessel types and more refined friction coefficients for different fouling conditions.</p>
@@ -1363,10 +1455,40 @@
         </main>
     </div>
 
+    <!-- Contact Modal -->
+    <div id="contactModal" class="contact-modal">
+        <div class="contact-modal-content">
+            <span class="contact-modal-close" onclick="closeContactModal()">&times;</span>
+            <h3><i class="fas fa-info-circle"></i> Access Research Papers</h3>
+            <p>To access the full research papers and detailed findings from the University of Melbourne studies, please contact:</p>
+            <a href="mailto:kevin.kevin@unimelb.edu.au" class="contact-email">
+                <i class="fas fa-envelope"></i>
+                kevin.kevin@unimelb.edu.au
+            </a>
+        </div>
+    </div>
+
     <!-- Load the calculator script -->
     <script src="./hullCalc.js"></script>
     
     <script>
+        // Contact modal functions
+        function showContactModal() {
+            document.getElementById('contactModal').style.display = 'block';
+        }
+        
+        function closeContactModal() {
+            document.getElementById('contactModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside of it
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('contactModal');
+            if (event.target === modal) {
+                closeContactModal();
+            }
+        });
+        
         // Initialize the calculator when the page loads
         window.addEventListener('load', function() {
             console.log('Hull calculator window loaded, initializing...');
