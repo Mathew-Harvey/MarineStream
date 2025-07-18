@@ -1474,7 +1474,7 @@ video {
 }
 
 .hero-title {
-  font-size: clamp(2.8rem, 6vw, 4.5rem);
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
   font-weight: 800;
   color: #fff;
   line-height: 1.1;
